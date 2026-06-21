@@ -1,12 +1,12 @@
 # Minesweeper
 
-A polished single-file HTML Minesweeper game built with Material Design 3, with no external dependencies.
+A polished single-file HTML Minesweeper game built with Material Design 3 and no external dependencies.
 
 ## Live Demo
 
 GitHub Pages: https://cizuwuxin.github.io/minesweeper/
 
-## Features
+## Feature Highlights
 
 - Material Design 3 visuals
 - Classic and no-guess modes
