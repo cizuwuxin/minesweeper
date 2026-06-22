@@ -1,70 +1,73 @@
 <div align="center">
-  <img src="screenshot.png" alt="Minesweeper Banner" width="100%" style="border-radius: 24px; box-shadow: 0 12px 48px rgba(0,0,0,0.25); margin-bottom: 30px;">
-  
-  <h1>💣 <span style="background: linear-gradient(135deg, #D0BCFF, #6750A4); -webkit-background-clip: text; color: transparent;">Minesweeper</span></h1>
-  
-  <p align="center">
-    <img src="https://img.shields.io/badge/Material_Design_3-D0BCFF?style=for-the-badge&logo=materialdesign&logoColor=21005D" alt="M3">
-    <img src="https://img.shields.io/badge/Pure_HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
-    <img src="https://img.shields.io/badge/Zero_Dependencies-22C55E?style=for-the-badge" alt="Zero Dep">
-    <img src="https://img.shields.io/badge/License-MIT-6750A4?style=for-the-badge" alt="License">
-  </p>
 
-  <p>
-    <em>A beautifully crafted single-file Minesweeper with logical No-Guess mode, Material Design 3, and buttery smooth animations.</em>
-  </p>
+# 💣 Minesweeper
 
-  <div style="margin-top: 25px;">
-    <a href="https://cizuwuxin.github.io/minesweeper/">
-      <img src="https://img.shields.io/badge/▶_Play_Live_Demo-6750A4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Live Demo" height="50">
-    </a>
-  </div>
+**A beautifully crafted single-file Minesweeper — zero dependencies, pure elegance.**
+
+[![Live Demo](https://img.shields.io/badge/▶_Play_Now-GitHub_Pages-6750a4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://cizuwuxin.github.io/minesweeper/)
+[![HTML5](https://img.shields.io/badge/HTML5-Single_File-e34f26?style=for-the-badge&logo=html5&logoColor=white)](index.html)
+[![Material 3](https://img.shields.io/badge/Material-Design_3-6750a4?style=for-the-badge&logo=materialdesign&logoColor=white)](#)
+[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](#license)
+
+<br>
+
+<img src="screenshot.png" alt="Minesweeper Screenshot" width="680" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+
+<br>
+
+*Classic puzzle • No-guess mode • Dark & Light themes • Desktop & Mobile*
+
 </div>
 
 <br>
 
-<div align="center">
-  <h2>✨ Why this Minesweeper?</h2>
-</div>
+## ✨ Features
 
 <table>
-  <tr>
-    <td align="center" width="25%">
-      <b>🧠 No-Guess</b><br>
-      <sub>Every puzzle is logically solvable from the first click.</sub>
-    </td>
-    <td align="center" width="25%">
-      <b>🎨 M3 Design</b><br>
-      <sub>Smooth surfaces, dynamic color, true dark/light mode.</sub>
-    </td>
-    <td align="center" width="25%">
-      <b>⚡ Zero Latency</b><br>
-      <sub>Single file, no frameworks. Instant load, 60fps.</sub>
-    </td>
-    <td align="center" width="25%">
-      <b>📱🖥 Responsive</b><br>
-      <sub>Pixel-perfect on any screen size.</sub>
-    </td>
-  </tr>
+<tr>
+<td width="50%">
+
+🎨 **Material Design 3** — Smooth surfaces, dynamic color, and elegant typography
+
+🧠 **No-Guess Mode** — Every puzzle is logically solvable, no luck required
+
+🎚️ **Custom Difficulty** — Tailor grid size and mine count to your skill
+
+🌓 **Theme Toggle** — Seamless dark/light mode switching
+
+</td>
+<td width="50%">
+
+🔊 **Sound Effects** — Satisfying audio feedback for every action
+
+🛡️ **First-Click Safety** — Your first reveal is always safe
+
+↩️ **Undo & Restart** — Recover from mistakes instantly
+
+📱 **Fully Responsive** — Pixel-perfect on any screen size
+
+</td>
+</tr>
 </table>
 
 <br>
 
-## 🛠️ Tech Stack
+## 🎮 Controls
 
-<div align="center">
-    <img src="https://img.shields.io/badge/HTML5-Semantic-orange?style=flat-square&logo=html5" />
-    <img src="https://img.shields.io/badge/CSS3-Custom_Properties-blue?style=flat-square&logo=css3" />
-    <img src="https://img.shields.io/badge/JavaScript-ES2020+-yellow?style=flat-square&logo=javascript" />
-    <img src="https://img.shields.io/badge/Solver-DPLL-green?style=flat-square" />
-</div>
+| Action | 🖱️ Mouse | 📱 Touch | ⌨️ Keyboard |
+|:------:|:---------:|:--------:|:-----------:|
+| Reveal | Left click | Tap | `↑↓←→` + `Enter` |
+| Flag | Right click | Long press | `F` |
+| Chord | Double-click | — | Double-click |
+| Undo | Toolbar | Toolbar | `Ctrl+Z` |
+| New Game | Toolbar | Toolbar | `R` |
 
 <br>
 
 ## 🚀 Quick Start
 
 ```bash
-# Just open it
+# Just open it — no build step, no install, no nonsense
 open index.html
 
 # Or deploy anywhere that serves static files
@@ -75,32 +78,7 @@ Or visit the **[Live Demo →](https://cizuwuxin.github.io/minesweeper/)**
 
 <br>
 
-## 🎮 Controls
-
-| Action | 🖱 Mouse | 📱 Touch | ⌨ Keyboard |
-|:---:|:---:|:---:|:---:|
-| **Reveal** | Left Click | Tap | `↑↓←→` + `Enter` |
-| **Flag** | Right Click | Long Press | `F` |
-| **Chord** | Double-Click | — | `Space` |
-| **Undo** | Toolbar | Toolbar | `Ctrl+Z` |
-| **New Game** | Toolbar | Toolbar | `R` |
-
-<br>
-
-## 🌟 Features
-
-- 🎨 **Material Design 3** — Smooth surfaces, dynamic color, elegant typography
-- 🧠 **No-Guess Mode** — Every puzzle is logically solvable, no luck required
-- 🎬 **Custom Difficulty** — Tailor grid size and mine count to your skill
-- 🌓 **Theme Toggle** — Seamless dark/light mode switching
-- 🔊 **Sound Effects** — Satisfying audio feedback for every action
-- 🛡 **First-Click Safety** — Your first reveal is always safe
-- ↩ **Undo & Restart** — Recover from mistakes instantly
-- 📱 **Fully Responsive** — Pixel-perfect on any screen size
-
-<br>
-
-## 🌍 Languages
+## 🌐 Languages
 
 <p>
   <a href="./docs/README.en.md">🇬🇧 English</a> •
@@ -116,5 +94,5 @@ Released under the [MIT License](LICENSE).
 ---
 
 <div align="center">
-  <sub>Made with ❤️ by <a href="https://github.com/cizuwuxin">苇林</a></sub>
+<sub>Made with ♥ by <a href="https://github.com/cizuwuxin">芲林</a></sub>
 </div>
