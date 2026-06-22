@@ -396,7 +396,7 @@ if(state.settlement)return state.settlement;
 const dk=diffRecordKey(), k=dk+'_stats', data=records(), st=normalizeStats(data[k]);
 const prev=isPlainObject(data[dk])?data[dk]:null;
 const beforeRaw=rawRecords();
-const commitSettlement=(result)=>{data[k]=st;writeRecords(data);return (state.settlement=result);};
+const commitSettlement=(result)=>{const fresh=readJsonObject(rawRecords());fresh[k]=st;if(data[dk]!==prev)fresh[dk]=data[dk];writeRecords(fresh);return (state.settlement=result);};
 if(state.cheated) {
 if(!won)st.streak=0;
 const cheatInfo={cheated:true,undoUsed:state.undoUsed};
