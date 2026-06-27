@@ -1,172 +1,107 @@
-# Minesweeper 扫雷游戏
+# 芲林 · Minesweeper
 
-一个精美的单文件扫雷游戏，无需依赖，纯原生实现。
+<p align="center">
+  <img src="https://img.shields.io/badge/Project-Minesweeper-6750A4?style=for-the-badge&logo=github" alt="Project Badge" />
+  <img src="https://img.shields.io/badge/Style-Material%203-7D5260?style=for-the-badge&logo=materialdesign" alt="Style Badge" />
+  <img src="https://img.shields.io/badge/Status-Active-2E7D32?style=for-the-badge&logo=vercel" alt="Status Badge" />
+</p>
 
-## 项目简介
+<p align="center">
+  一个高完成度的单文件扫雷游戏主页，强调视觉质感、交互细节与移动端体验。
+</p>
 
-这是一个基于现代Web技术构建的经典扫雷游戏，采用Material Design 3设计语言，提供流畅的用户体验。游戏完全由单个HTML文件实现，包含所有样式、脚本和游戏逻辑，无需外部依赖。
-
-## ✨ 核心特性
-
-### 🎨 设计与界面
-- **Material Design 3风格** - 现代化的UI设计，支持动态主题
-- **深色/浅色模式** - 一键切换，适应不同环境
-- **完全响应式** - 在手机、平板、桌面设备上完美显示
-- **流畅动画** - 精心设计的交互反馈和过渡效果
-
-### 🎮 游戏玩法
-- **经典扫雷规则** - 熟悉的玩法，老少皆宜
-- **无猜测模式** - 所有谜题都可通过逻辑推理解决
-- **自定义难度** - 自由调整网格大小和雷的数量
-- **首击安全** - 第一次点击永远不会触雷
-- **撤销与重开** - 操作失误可随时撤销，支持快速重开
-
-### 🔧 功能特性
-- **键盘操作** - 支持完整的键盘导航和操作
-- **音效反馈** - 丰富的音效增强游戏体验
-- **游戏统计** - 记录游戏进度、胜率等数据
-- **本地存储** - 自动保存游戏设置和统计数据
-
-## 🚀 快速开始
-
-### 基本使用
-```bash
-# 直接打开游戏文件
-open index.html
-
-# 或部署到任何静态文件服务器
-cp index.html /your/server/path/
-```
-
-### 在线体验
-访问 GitHub Pages 在线演示：[https://cizuwuxin.github.io/minesweeper/](https://cizuwuxin.github.io/minesweeper/)
-
-## 🎯 操作指南
-
-### 鼠标操作
-| 操作 | 说明 |
-|------|------|
-| 左键单击 | 揭开格子 |
-| 右键单击 | 标记地雷 |
-| 双击 | 快速揭开周围格子 |
-
-### 键盘操作
-| 按键 | 功能 |
-|------|------|
-| `↑↓←→` | 移动光标 |
-| `Enter` | 揭开当前格子 |
-| `F` | 标记/取消标记地雷 |
-| `R` | 开始新游戏 |
-| `Ctrl+Z` | 撤销上一步操作 |
-
-### 触摸操作
-| 手势 | 功能 |
-|------|------|
-| 轻触 | 揭开格子 |
-| 长按 | 标记地雷 |
-| 工具栏按钮 | 游戏控制 |
-
-## 🛠️ 技术栈
-
-- **HTML5** - 语义化标记，无障碍支持
-- **CSS3** - 现代样式，CSS变量，媒体查询
-- **JavaScript ES6+** - 模块化设计，面向对象编程
-- **Material Design 3** - 设计规范，色彩系统
-- **Web Audio API** - 音效处理和播放
-- **LocalStorage** - 数据持久化存储
-
-## 📱 设备兼容性
-
-### 浏览器支持
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-### 设备支持
-- ✅ 桌面电脑
-- ✅ 平板电脑
-- ✅ 手机设备
-- ✅ 触摸屏设备
-
-## 📁 项目结构
-
-```
-minesweeper/
-├── index.html          # 游戏主文件（包含所有代码）
-├── README.md           # 项目说明文档
-├── screenshot.png      # 游戏截图
-└── LICENSE             # MIT 许可证文件
-```
-
-## 🎨 设计理念
-
-1. **极简主义** - 单个文件包含所有功能，零依赖
-2. **用户体验优先** - 注重交互细节和视觉反馈
-3. **无障碍设计** - 支持键盘导航和屏幕阅读器
-4. **性能优化** - 流畅的动画和快速的响应
-
-## 🔧 开发与定制
-
-### 本地开发
-```bash
-# 克隆仓库
-git clone https://github.com/cizuwuxin/minesweeper.git
-
-# 进入项目目录
-cd minesweeper
-
-# 直接在浏览器中打开
-open index.html
-```
-
-### 自定义配置
-游戏支持多种配置选项，可通过以下方式调整：
-
-1. **游戏设置** - 网格大小、雷的数量
-2. **界面设置** - 主题、音效、动画
-3. **数据管理** - 清除统计、重置设置
-
-## 🤝 贡献指南
-
-欢迎贡献代码、报告问题或提出建议！
-
-### 如何贡献
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建 Pull Request
-
-### 问题反馈
-- 使用 GitHub Issues 报告 Bug
-- 提供详细的重现步骤和环境信息
-- 包含截图或录屏（如果适用）
-
-## 📊 更新日志
-
-### 最新版本
-- ✅ 优化游戏性能
-- ✅ 改进移动端体验
-- ✅ 修复已知问题
-- ✅ 增强无障碍支持
-
-## 📄 许可证
-
-本项目基于 MIT 许可证开源 - 查看 [LICENSE](LICENSE) 文件了解详情。
-
-## 👨‍💻 作者
-
-**芲林** - [GitHub](https://github.com/cizuwuxin)
-
-## 🙏 致谢
-
-感谢所有为这个项目提供反馈和帮助的朋友！
+<p align="center">
+  <a href="https://cizuwuxin.github.io/minesweeper/">在线体验</a> ·
+  <a href="#项目亮点">项目亮点</a> ·
+  <a href="#技术栈">技术栈</a> ·
+  <a href="#快速开始">快速开始</a>
+</p>
 
 ---
 
-<div align="center">
+## 👋 你好，我是芲林
 
-**[⬆ 回到顶部](#minesweeper-扫雷游戏)**
+我更喜欢把一个项目打磨成“能用、好看、顺手”的状态。  
+这个仓库是我的扫雷作品：**单文件、零依赖、可直接部署到 GitHub Pages**，并尽量把经典玩法做得更现代、更流畅。
 
-</div>
+---
+
+## ✨ 项目亮点
+
+- **单文件部署**：所有 HTML / CSS / JS 集中在一个文件里，维护与发布都很轻量
+- **Material Design 3 风格**：整体视觉更统一，适配明暗主题
+- **移动端友好**：针对手机触控、视口变化做了细节优化
+- **无猜模式**：提供更偏逻辑推理的游玩体验
+- **自定义难度**：行、列、雷数都可调
+- **操作完整**：支持鼠标、键盘、触摸，多种交互方式
+- **本地记录**：保留设置和统计，打开即续
+
+---
+
+## 🧩 这个仓库里有什么
+
+- `index.html`：游戏本体，单文件实现
+- `README.md`：主页说明
+- `screenshot.png`：展示截图
+- `LICENSE`：开源许可
+
+---
+
+## 🚀 在线体验
+
+> GitHub Pages：**[https://cizuwuxin.github.io/minesweeper/](https://cizuwuxin.github.io/minesweeper/)**
+
+如果你只是想先看看效果，直接打开上面链接即可。
+
+---
+
+## 🛠️ 技术栈
+
+- HTML5
+- CSS3
+- JavaScript ES6+
+- Material Design 3
+- Web Audio API
+- LocalStorage
+
+---
+
+## 🎮 操作说明
+
+| 操作 | 功能 |
+|---|---|
+| 左键单击 | 揭开格子 |
+| 右键单击 | 插旗 |
+| 双击 | 快速展开 |
+| `R` | 重开 |
+| `Ctrl + Z` | 撤销 |
+| 方向键 / Enter | 键盘游玩 |
+
+---
+
+## 📱 兼容性
+
+- 桌面浏览器
+- 手机浏览器
+- 平板设备
+- 触控屏设备
+
+---
+
+## 🖼️ 预览
+
+> 你可以把仓库中的 `screenshot.png` 放在这里展示游戏界面。  
+> 如果你愿意，我也可以下一步帮你把这块做成更高级的卡片式展示。
+
+---
+
+## 🔗 联系方式
+
+- GitHub：`cizuwuxin`
+- 项目主页：`https://cizuwuxin.github.io/minesweeper/`
+
+---
+
+<p align="center">
+  <sub>Made with patience, precision, and a bit of Minesweeper logic.</sub>
+</p>
