@@ -9,8 +9,15 @@
 :root{--vvh:100dvh}
 #status-toast{top:calc(var(--vvh) - env(safe-area-inset-bottom,0px) - 64px)!important;bottom:auto!important}
 .overlay{top:0!important;bottom:auto!important;min-height:var(--vvh)!important;height:var(--vvh)!important;align-items:center!important}
+.stats-group{margin:0 16px 14px}
+.stats-group-title{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;color:var(--fg);margin:0 0 7px;padding:0 2px}
+.stats-group-title small{font-weight:500;color:var(--muted);font-size:11px}
+.stats-empty{margin:2px 16px 14px;padding:18px 10px;border-radius:16px;background:var(--md-sys-color-surface-container);color:var(--muted);font-size:13px;text-align:center}
+#btn-hint.hinting{color:var(--accent)}
+.cell.hint-flash{animation:hint-pulse 1s var(--md-ease)}
+@keyframes hint-pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}70%{box-shadow:0 0 0 8px color-mix(in srgb,var(--accent) 0%,transparent)}100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 0%,transparent)}}
 </style>
-</head><body class="style-md3"><div id="top-bar"><div id="top-bar-stats"><div class="stat-item" title="剩余雷数"><div class="stat-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:var(--boom)"><g stroke="currentColor" stroke-linecap="round" stroke-width="1.8"><line x1="12" y1="1.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22.5" y2="12"/><line x1="4.1" y1="4.1" x2="6.2" y2="6.2"/><line x1="17.8" y1="17.8" x2="19.9" y2="19.9"/><line x1="19.9" y1="4.1" x2="17.8" y2="6.2"/><line x1="6.2" y1="17.8" x2="4.1" y2="19.9"/></g><circle cx="12" cy="12" r="5.8" fill="currentColor"/><ellipse cx="9.8" cy="9.8" rx="1.6" ry="1" fill="#fff" opacity=".4" transform="rotate(-35 9.8 9.8)"/></svg><span class="stat-value" id="mine-count">10</span></div><div class="stat-label">雷</div></div><div class="stat-item" title="用时"><div class="stat-row"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span class="stat-value" id="timer"><span id="timer-s">0</span><span id="timer-cs" class="cs"></span></span></div><div class="stat-label">秒</div></div><div class="stat-item" title="已插旗"><div class="stat-row"><svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" aria-hidden="true"><path d="M5 21V4h9l.4 2H20v10h-7l-.4-2H7v7H5z"/></svg><span class="stat-value" id="flag-count">0</span></div><div class="stat-label">旗</div></div></div><div id="top-bar-actions"><button class="btn icon-btn" id="btn-undo-topbar" title="撤销 (Ctrl+Z)" disabled aria-label="撤销"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button><button class="btn btn-primary" id="btn-newgame" title="新游戏 (R)">重开</button><button class="btn icon-btn" id="btn-settings" title="设置" aria-label="设置"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.36.07-.73.07-1.08s-.03-.73-.07-1.08l2.32-1.81c.21-.16.27-.46.13-.7l-2.2-3.81c-.13-.24-.42-.32-.66-.24l-2.74 1.1c-.57-.44-1.18-.8-1.86-1.08L14.22 2.4c-.04-.26-.26-.4-.5-.4h-4.4c-.24 0-.46.14-.5.4l-.41 2.48c-.68.28-1.3.64-1.86 1.08l-2.74-1.1c-.24-.09-.53 0-.66.24L1.95 8.41c-.14.24-.08.54.13.7l2.32 1.81C4.36 11.27 4.33 11.64 4.33 12s.03.73.07 1.08L2.08 14.89c-.21.16-.27.46-.13.7l2.2 3.81c.13.24.42.32.66.24l2.74-1.1c.57.44 1.18.8 1.86 1.08l.41 2.48c.04.26.26.4.5.4h4.4c.24 0 .46-.14.5-.4l.41-2.48c.68-.28 1.3-.64 1.86-1.08l2.74 1.1c.24.09.53 0 .66-.24l2.2-3.81c.14-.24.08-.54-.13-.7l-2.32-1.81z"/></svg></button></div></div><div id="progress-container" role="progressbar" aria-label="游戏进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-bar"></div></div><div id="warning-bar" hidden><span>⚠ 无猜模式生成超时，已回退为传统随机布雷。</span><button id="btn-close-warning" title="关闭" aria-label="关闭">✕</button></div><div class="overlay" id="settings-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-title"><div class="settings-panel"><div class="settings-header"><div class="settings-title-wrap"><h3 id="settings-title">设置</h3><div class="settings-subtitle">只保留影响游戏体验的选项</div></div><button class="btn-close" id="btn-close-settings" aria-label="关闭设置">✕</button></div><div class="settings-content"><div class="settings-grid"><section class="settings-section"><div class="settings-label" data-icon="◈">难度</div><div class="settings-list difficulty-list"><button class="setting-option" data-set="difficulty" data-val="easy"><span>简单</span><small>9×9 · 10 雷</small></button><button class="setting-option" data-set="difficulty" data-val="medium"><span>中等</span><small>16×16 · 40 雷</small></button><button class="setting-option" data-set="difficulty" data-val="hard"><span>困难</span><small>16×30 · 99 雷</small></button><button class="setting-option" data-set="difficulty" data-val="custom"><span>自定义</span><small>手动设置</small></button><button class="setting-option" data-set="difficulty" data-val="random"><span>随机</span><small>中小盘随机</small></button></div><div class="custom-fields" id="custom-fields"><div class="custom-form"><div class="custom-row"><label>行</label><input id="c-rows" type="number" min="5" max="100" value="12"></div><div class="custom-row"><label>列</label><input id="c-cols" type="number" min="5" max="100" value="16"></div><div class="custom-row"><label>雷<span id="mines-max-hint"></span></label><input id="c-mines" type="number" min="1" value="20"></div></div><p class="density-hint" id="density-hint"></p><button id="btn-apply-custom">应用并重开</button></div></section><section class="settings-section"><div class="settings-label" data-icon="✓">规则</div><div class="settings-buttons segmented"><button class="btn" data-set="mode" data-val="traditional">传统</button><button class="btn" data-set="mode" data-val="noguess">无猜</button></div><div class="range-row" id="longpress-row"><div class="range-head"><label for="longpress-delay">长按触发时间</label><span id="longpress-delay-value">350 ms</span></div><input id="longpress-delay" class="range-input" type="range" min="100" max="1000" step="50" value="350"></div><div class="custom-row" id="noguess-time-row" hidden><label for="noguess-time-seconds">生成时限</label><input id="noguess-time-seconds" type="number" min="0.1" step="0.1" value="6"></div></section><section class="settings-section"><div class="settings-label" data-icon="☰">偏好</div><div class="setting-list"><div class="toggle-row"><label for="toggle-dark">深色模式</label><label class="toggle-switch"><input type="checkbox" id="toggle-dark"><span class="toggle-track"></span></label></div><div class="toggle-row"><label for="toggle-sound">音效反馈</label><label class="toggle-switch"><input type="checkbox" id="toggle-sound" checked><span class="toggle-track"></span></label></div><div class="toggle-row"><label for="toggle-question">问号标记</label><label class="toggle-switch"><input type="checkbox" id="toggle-question"><span class="toggle-track"></span></label></div></div></section><section class="settings-section"><div class="settings-label" data-icon="↔">操作</div><div class="settings-buttons segmented"><button class="btn" data-set="actionMode" data-val="normal">左开右标</button><button class="btn" data-set="actionMode" data-val="swap">右开左标</button></div></section><section class="settings-section"><div class="settings-label" data-icon="⟲">其他</div><div style="padding:0 16px 14px"><button class="btn" id="btn-reset-settings" style="width:100%;justify-content:center;color:var(--md-sys-color-error);border-color:var(--md-sys-color-error)">重置所有设置</button></div></section></div></div></div></div><div id="game-area"><div id="board-wrapper"><div id="board" role="grid" aria-label="扫雷棋盘"></div></div></div><div class="overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-content"><div class="modal-icon-wrap"><div id="modal-icon-circle" class="modal-icon-circle"><div id="modal-icon"></div></div></div><div class="modal-text-section"><div class="modal-badge-row" id="modal-badge"></div><h2 id="modal-title"></h2><p id="modal-message"></p></div><div class="modal-stats-section"><div id="modal-stats" class="modal-stats"></div></div><div class="modal-actions-section"><button class="btn btn-primary" id="btn-replay">再来一局</button><button class="btn" id="btn-undo-modal" disabled style="display:flex;justify-content:center;align-items:center;gap:6px">↶ 撤销最后一步</button><button class="btn btn-muted" id="btn-close-modal" aria-label="关闭">关闭</button></div></div></div><canvas id="confetti-canvas" aria-hidden="true"></canvas><div id="status-toast" aria-live="polite"></div>
+</head><body class="style-md3"><div id="top-bar"><div id="top-bar-stats"><div class="stat-item" title="剩余雷数"><div class="stat-row"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:var(--boom)"><g stroke="currentColor" stroke-linecap="round" stroke-width="1.8"><line x1="12" y1="1.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22.5" y2="12"/><line x1="4.1" y1="4.1" x2="6.2" y2="6.2"/><line x1="17.8" y1="17.8" x2="19.9" y2="19.9"/><line x1="19.9" y1="4.1" x2="17.8" y2="6.2"/><line x1="6.2" y1="17.8" x2="4.1" y2="19.9"/></g><circle cx="12" cy="12" r="5.8" fill="currentColor"/><ellipse cx="9.8" cy="9.8" rx="1.6" ry="1" fill="#fff" opacity=".4" transform="rotate(-35 9.8 9.8)"/></svg><span class="stat-value" id="mine-count">10</span></div><div class="stat-label">雷</div></div><div class="stat-item" title="用时"><div class="stat-row"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span class="stat-value" id="timer"><span id="timer-s">0</span><span id="timer-cs" class="cs"></span></span></div><div class="stat-label">秒</div></div><div class="stat-item" title="已插旗"><div class="stat-row"><svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" aria-hidden="true"><path d="M5 21V4h9l.4 2H20v10h-7l-.4-2H7v7H5z"/></svg><span class="stat-value" id="flag-count">0</span></div><div class="stat-label">旗</div></div></div><div id="top-bar-actions"><button class="btn icon-btn" id="btn-undo-topbar" title="撤销 (Ctrl+Z)" disabled aria-label="撤销"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button><button class="btn icon-btn" id="btn-hint" title="提示 (H)" aria-label="提示"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2.3h6c0-1.1.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg></button><button class="btn btn-primary" id="btn-newgame" title="新游戏 (R)">重开</button><button class="btn icon-btn" id="btn-settings" title="设置" aria-label="设置"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.36.07-.73.07-1.08s-.03-.73-.07-1.08l2.32-1.81c.21-.16.27-.46.13-.7l-2.2-3.81c-.13-.24-.42-.32-.66-.24l-2.74 1.1c-.57-.44-1.18-.8-1.86-1.08L14.22 2.4c-.04-.26-.26-.4-.5-.4h-4.4c-.24 0-.46.14-.5.4l-.41 2.48c-.68.28-1.3.64-1.86 1.08l-2.74-1.1c-.24-.09-.53 0-.66.24L1.95 8.41c-.14.24-.08.54.13.7l2.32 1.81C4.36 11.27 4.33 11.64 4.33 12s.03.73.07 1.08L2.08 14.89c-.21.16-.27.46-.13.7l2.2 3.81c.13.24.42.32.66.24l2.74-1.1c.57.44 1.18.8 1.86 1.08l.41 2.48c.04.26.26.4.5.4h4.4c.24 0 .46-.14.5-.4l.41-2.48c.68-.28 1.3-.64 1.86-1.08l2.74 1.1c.24.09.53 0 .66-.24l2.2-3.81c.14-.24.08-.54-.13-.7l-2.32-1.81z"/></svg></button></div></div><div id="progress-container" role="progressbar" aria-label="游戏进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-bar"></div></div><div id="warning-bar" hidden><span>⚠ 无猜模式生成超时，已回退为传统随机布雷。</span><button id="btn-close-warning" title="关闭" aria-label="关闭">✕</button></div><div class="overlay" id="settings-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-title"><div class="settings-panel"><div class="settings-header"><div class="settings-title-wrap"><h3 id="settings-title">设置</h3><div class="settings-subtitle">只保留影响游戏体验的选项</div></div><button class="btn-close" id="btn-close-settings" aria-label="关闭设置">✕</button></div><div class="settings-content"><div class="settings-grid"><section class="settings-section"><div class="settings-label" data-icon="◈">难度</div><div class="settings-list difficulty-list"><button class="setting-option" data-set="difficulty" data-val="easy"><span>简单</span><small>9×9 · 10 雷</small></button><button class="setting-option" data-set="difficulty" data-val="medium"><span>中等</span><small>16×16 · 40 雷</small></button><button class="setting-option" data-set="difficulty" data-val="hard"><span>困难</span><small>16×30 · 99 雷</small></button><button class="setting-option" data-set="difficulty" data-val="custom"><span>自定义</span><small>手动设置</small></button><button class="setting-option" data-set="difficulty" data-val="random"><span>随机</span><small>中小盘随机</small></button></div><div class="custom-fields" id="custom-fields"><div class="custom-form"><div class="custom-row"><label>行</label><input id="c-rows" type="number" min="5" max="100" value="12"></div><div class="custom-row"><label>列</label><input id="c-cols" type="number" min="5" max="100" value="16"></div><div class="custom-row"><label>雷<span id="mines-max-hint"></span></label><input id="c-mines" type="number" min="1" value="20"></div></div><p class="density-hint" id="density-hint"></p><button id="btn-apply-custom">应用并重开</button></div></section><section class="settings-section"><div class="settings-label" data-icon="✓">规则</div><div class="settings-buttons segmented"><button class="btn" data-set="mode" data-val="traditional">传统</button><button class="btn" data-set="mode" data-val="noguess">无猜</button></div><div class="range-row" id="longpress-row"><div class="range-head"><label for="longpress-delay">长按触发时间</label><span id="longpress-delay-value">350 ms</span></div><input id="longpress-delay" class="range-input" type="range" min="100" max="1000" step="50" value="350"></div><div class="custom-row" id="noguess-time-row" hidden><label for="noguess-time-seconds">生成时限</label><input id="noguess-time-seconds" type="number" min="0.1" step="0.1" value="6"></div></section><section class="settings-section"><div class="settings-label" data-icon="☰">偏好</div><div class="setting-list"><div class="toggle-row"><label for="toggle-dark">深色模式</label><label class="toggle-switch"><input type="checkbox" id="toggle-dark"><span class="toggle-track"></span></label></div><div class="toggle-row"><label for="toggle-sound">音效反馈</label><label class="toggle-switch"><input type="checkbox" id="toggle-sound" checked><span class="toggle-track"></span></label></div><div class="toggle-row"><label for="toggle-question">问号标记</label><label class="toggle-switch"><input type="checkbox" id="toggle-question"><span class="toggle-track"></span></label></div></div></section><section class="settings-section"><div class="settings-label" data-icon="↔">操作</div><div class="settings-buttons segmented"><button class="btn" data-set="actionMode" data-val="normal">左开右标</button><button class="btn" data-set="actionMode" data-val="swap">右开左标</button></div></section><section class="settings-section"><div class="settings-label" data-icon="⟲">其他</div><div style="padding:0 16px 14px"><button class="btn" id="btn-reset-settings" style="width:100%;justify-content:center;color:var(--md-sys-color-error);border-color:var(--md-sys-color-error)">重置所有设置</button></div></section></div></div></div></div><div id="game-area"><div id="board-wrapper"><div id="board" role="grid" aria-label="扫雷棋盘"></div></div></div><div class="overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-content"><div class="modal-icon-wrap"><div id="modal-icon-circle" class="modal-icon-circle"><div id="modal-icon"></div></div></div><div class="modal-text-section"><div class="modal-badge-row" id="modal-badge"></div><h2 id="modal-title"></h2><p id="modal-message"></p></div><div class="modal-stats-section"><div id="modal-stats" class="modal-stats"></div></div><div class="modal-actions-section"><button class="btn btn-primary" id="btn-replay">再来一局</button><button class="btn" id="btn-undo-modal" disabled style="display:flex;justify-content:center;align-items:center;gap:6px">↶ 撤销最后一步</button><button class="btn btn-muted" id="btn-close-modal" aria-label="关闭">关闭</button></div></div></div><canvas id="confetti-canvas" aria-hidden="true"></canvas><div id="status-toast" aria-live="polite"></div>
 <script>
 const CONFIG = {
 easy:   { rows: 9,  cols: 9,  mines: 10 },
@@ -45,7 +52,7 @@ check: `<svg class="win-icon-svg" viewBox="0 0 56 56" width="48" height="48" xml
 const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
 const ARROWS = {ArrowUp:[-1,0],ArrowDown:[1,0],ArrowLeft:[0,-1],ArrowRight:[0,1]};
 const MAX_UNDO = 50;
-const LS = { settings:'minesweeper_settings', records:'minesweeper_records' };
+const LS = { settings:'minesweeper_settings' };
 const DEFAULT_NOGUESS_TIME_SECONDS = 6;
 const DEFAULT_LONG_PRESS_DELAY = 350;
 const SVG = {
@@ -87,7 +94,7 @@ board:[], revealed:[], flagged:[], questioned:[],
 flagCount:0, revealedCount:0, nonMineCount:0,
 firstClick:true, placing:false, gameOver:false,
 timer:null, time:0, timeMs:0, timerStart:0, gameId:0,
-undo:[], hinted:[], settlement:null, cheated:false, undoUsed:false,
+undo:[], hinted:[], settlement:null, cheated:false, undoUsed:false, hintsUsed:0,
 bv3:0, usefulClicks:0,
 soundEnabled:true, questionMarkEnabled:false,
 noguessSpeed:100, noguessTimeSeconds:DEFAULT_NOGUESS_TIME_SECONDS, longPressDelay:DEFAULT_LONG_PRESS_DELAY,
@@ -373,45 +380,11 @@ ui.snap=null; saveSettings();
 if(diffModeChanged||customChanged)newGame();
 }
 
-let recordsCache=null;
-const rawRecords=()=>storageGet(LS.records);
-const toCount=v=>Math.max(0,parseInt(v,10)||0);
-function normalizeStats(v) {
-const s=isPlainObject(v)?v:{};
-return{wins:toCount(s.wins),total:toCount(s.total),streak:toCount(s.streak),bestStreak:toCount(s.bestStreak)};
-}
-const records=()=>recordsCache||(recordsCache=readJsonObject(rawRecords()));
-function writeRecords(data) {
-const customKeys=Object.keys(data).filter(x=>x.startsWith('custom_')&&!x.endsWith('_stats'));
-while(customKeys.length>30){const old=customKeys.shift();delete data[old];delete data[old+'_stats'];}
-try{ const raw=JSON.stringify(data); if(storageSet(LS.records,raw))recordsCache=data; }catch{}
-}
-const diffRecordKey=()=>state.difficulty!=='custom'?state.difficulty:`custom_${state.rows}x${state.cols}x${state.mines}`;
-function restoreRecords(raw) {
-try{ const ok=raw===null?storageRemove(LS.records):storageSet(LS.records,raw); if(ok)recordsCache=raw?readJsonObject(raw):null; }catch{}
-}
 function settleGame(won) {
-if(state.settlement)return state.settlement;
-const dk=diffRecordKey(), k=dk+'_stats', data=records(), st=normalizeStats(data[k]);
-const prev=isPlainObject(data[dk])?data[dk]:null;
-const beforeRaw=rawRecords();
-const commitSettlement=(result)=>{const fresh=readJsonObject(rawRecords());fresh[k]=st;if(data[dk]!==prev)fresh[dk]=data[dk];writeRecords(fresh);return (state.settlement=result);};
-if(state.cheated) {
-if(!won)st.streak=0;
-const cheatInfo={cheated:true,undoUsed:state.undoUsed};
-return commitSettlement(won?{won,beforeRaw:null,...cheatInfo,result:{isNew:false,best:prev,stats:st}}:{won,beforeRaw:null,...cheatInfo,result:st});
+  if (state.settlement) return state.settlement;
+  return (state.settlement = { won, cheated: state.cheated, undoUsed: state.undoUsed });
 }
-st.total++;
-if(won) {
-st.wins++;st.streak++;st.bestStreak=Math.max(st.bestStreak,st.streak);
-const pt=prev?parseInt(prev.time,10):NaN, isNew=!prev||!Number.isFinite(pt)||state.time<pt;
-if(isNew)data[dk]={time:state.time,date:new Date().toLocaleDateString('zh-CN')};
-return commitSettlement({won,beforeRaw,result:{isNew,best:data[dk],stats:st}});
-}
-st.streak=0;
-return commitSettlement({won,beforeRaw,result:st});
-}
-window.addEventListener('storage',e=>{if(e.key===LS.records)recordsCache=null;});
+
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
 const saved=readJsonObject(storageGet(LS.settings));
 if(saved.dark!==undefined)return;
@@ -488,7 +461,7 @@ questioned:make2d(cfg.rows,cfg.cols,false),
 flagCount:0, revealedCount:0, nonMineCount:0,
 firstClick:true, placing:false, gameOver:false,
 time:0, timeMs:0, timerStart:0,
-undo:[], hinted:[], settlement:null, cheated:false, undoUsed:false,
+undo:[], hinted:[], settlement:null, cheated:false, undoUsed:false, hintsUsed:0,
 bv3:0, usefulClicks:0,
 kbR:-1, kbC:-1, gameId:state.gameId+1, actualMode:state.mode,
 });
@@ -807,6 +780,128 @@ if(!visited[r][c]&&board[r][c]!==-1)bv3++;
 return bv3;
 }
 
+/* ===== 提示功能：基于约束传播 + 分量枚举的主线程求解器（计算量小，单次同步执行） ===== */
+function hintEnumerateComponent(globalVars,globalCons,constraints,maxSolutions){
+const localOf=new Map();
+globalVars.forEach((vi,i)=>localOf.set(vi,i));
+const cons=globalCons.map(ci=>({need:constraints[ci].need,vars:constraints[ci].vars.map(vi=>localOf.get(vi)).filter(v=>v!==undefined)}));
+const n=globalVars.length;
+const varToCons=Array.from({length:n},()=>[]);
+cons.forEach((con,ci)=>con.vars.forEach(vi=>varToCons[vi].push(ci)));
+const order=Array.from({length:n},(_,i)=>i).sort((a,b)=>varToCons[b].length-varToCons[a].length);
+const assignment=new Int8Array(n),placed=cons.map(()=>0),unknown=cons.map(con=>con.vars.length),mineCounts=new Int32Array(n);
+let solutions=0,incomplete=false;
+function assign(depth){
+if(incomplete)return;
+if(depth===order.length){solutions++;for(let i=0;i<n;i++)mineCounts[i]+=assignment[i];if(solutions>=maxSolutions)incomplete=true;return;}
+const vi=order[depth];
+for(let val=0;val<2;val++){
+assignment[vi]=val;let ok=true;
+for(const ci of varToCons[vi]){unknown[ci]--;placed[ci]+=val;const con=cons[ci];if(placed[ci]>con.need||placed[ci]+unknown[ci]<con.need)ok=false;}
+if(ok)assign(depth+1);
+for(const ci of varToCons[vi]){unknown[ci]++;placed[ci]-=val;}
+if(incomplete)return;
+}
+}
+assign(0);
+return{invalid:solutions===0,incomplete,solutions,mineCounts};
+}
+function hintFindCertainMoves(maxVars,maxSolutions){
+const varIndex=new Map(),vars=[],constraints=[];
+const addVar=k=>{if(!varIndex.has(k)){varIndex.set(k,vars.length);vars.push(k);}return varIndex.get(k);};
+for(let r=0;r<state.rows;r++) for(let c=0;c<state.cols;c++){
+if(!state.revealed[r][c]||state.board[r][c]<=0)continue;
+let flags=0;const unknown=[];
+eachNeighbor(r,c,(nr,nc)=>{if(state.flagged[nr][nc])flags++;else if(!state.revealed[nr][nc])unknown.push(nr*state.cols+nc);});
+const need=state.board[r][c]-flags;
+if(need<0||need>unknown.length)return{safe:[],mines:[],invalid:true,probs:new Map()};
+if(!unknown.length)continue;
+constraints.push({need,vars:unknown.map(addVar)});
+}
+if(!vars.length)return{safe:[],mines:[],invalid:false,probs:new Map()};
+const varToCons=Array.from({length:vars.length},()=>[]);
+constraints.forEach((con,ci)=>con.vars.forEach(vi=>varToCons[vi].push(ci)));
+const visitedVar=new Uint8Array(vars.length),visitedCon=new Uint8Array(constraints.length);
+const safeSet=new Set(),mineSet=new Set(),probs=new Map();
+for(let start=0;start<vars.length;start++){
+if(visitedVar[start])continue;
+const compVars=[],compCons=[],queueV=[start],queueC=[];
+visitedVar[start]=1;
+while(queueV.length||queueC.length){
+while(queueV.length){const vi=queueV.pop();compVars.push(vi);for(const ci of varToCons[vi])if(!visitedCon[ci]){visitedCon[ci]=1;queueC.push(ci);}}
+while(queueC.length){const ci=queueC.pop();compCons.push(ci);for(const vi of constraints[ci].vars)if(!visitedVar[vi]){visitedVar[vi]=1;queueV.push(vi);}}
+}
+if(compVars.length>maxVars)continue;
+const result=hintEnumerateComponent(compVars,compCons,constraints,maxSolutions);
+if(result.invalid)return{safe:[],mines:[],invalid:true,probs:new Map()};
+if(result.incomplete)continue;
+for(let i=0;i<compVars.length;i++){
+const k=vars[compVars[i]];
+if(result.mineCounts[i]===0)safeSet.add(k);
+else if(result.mineCounts[i]===result.solutions)mineSet.add(k);
+else probs.set(k,result.mineCounts[i]/result.solutions);
+}
+}
+return{
+safe:[...safeSet].filter(k=>!mineSet.has(k)).map(k=>[Math.floor(k/state.cols),k%state.cols]),
+mines:[...mineSet].map(k=>[Math.floor(k/state.cols),k%state.cols]),
+invalid:false, probs
+};
+}
+function bestGuessCell(probs){
+let remainingHidden=0;
+for(let r=0;r<state.rows;r++) for(let c=0;c<state.cols;c++) if(!state.revealed[r][c]&&!state.flagged[r][c])remainingHidden++;
+if(!remainingHidden)return null;
+const remainingMines=clamp(state.mines-state.flagCount,0,remainingHidden);
+const baseline=remainingHidden?remainingMines/remainingHidden:0;
+let best=null;
+probs.forEach((p,k)=>{ if(!best||p<best.prob)best={r:Math.floor(k/state.cols),c:k%state.cols,prob:p}; });
+if(!best||baseline<best.prob-1e-9){
+for(let r=0;r<state.rows;r++) for(let c=0;c<state.cols;c++){
+if(state.revealed[r][c]||state.flagged[r][c])continue;
+if(probs.has(r*state.cols+c))continue;
+return{r,c,prob:baseline};
+}
+}
+return best;
+}
+function flashHintCell(r,c){
+const el=cellEl(r,c); if(!el)return;
+el.classList.add('hint-flash');
+el.addEventListener('animationend',()=>el.classList.remove('hint-flash'),{once:true});
+}
+function requestHint(){
+if(state.firstClick){toast('先点开一个格子开局吧',1800);return;}
+if(state.placing){toast('棋盘生成中，请稍候',1500);return;}
+if(state.gameOver){toast('本局已经结束啦',1500);return;}
+const result=hintFindCertainMoves(SOLVER.maxComponentVars,SOLVER.maxComponentSolutions);
+if(result.invalid){toast('⚠ 当前局面存在矛盾标记，建议撤销重来',2400);return;}
+if(result.safe.length){
+const[r,c]=result.safe[Math.floor(Math.random()*result.safe.length)];
+state.cheated=true; state.hintsUsed++;
+pushUndo(); feedback('click'); state.usefulClicks++;
+revealCell(r,c); if(!state.gameOver)checkWin();
+flashHintCell(r,c); toast('💡 已为你翻开一个确定安全的格子',2200);
+return;
+}
+if(result.mines.length){
+const[r,c]=result.mines[Math.floor(Math.random()*result.mines.length)];
+state.cheated=true; state.hintsUsed++;
+pushUndo();
+state.flagged[r][c]=true; state.flagCount++; state.questioned[r][c]=false; feedback('flag');
+updateCell(r,c,'anim-flag'); updateStats();
+flashHintCell(r,c); toast('💡 没有安全格了，已为你标记一个确定的雷',2400);
+return;
+}
+const guess=bestGuessCell(result.probs);
+if(!guess){toast('当前没有可推导的格子',1800);return;}
+state.cheated=true; state.hintsUsed++;
+pushUndo(); feedback('click'); state.usefulClicks++;
+revealCell(guess.r,guess.c); if(!state.gameOver)checkWin();
+flashHintCell(guess.r,guess.c);
+toast(`💡 没有100%确定的格子，已为你翻开雷概率最低（约 ${Math.round(guess.prob*100)}%）的格子`,2800);
+}
+
 const SOLVER = { maxComponentVars:22, maxComponentSolutions:60000 };
 const _mkSolverWorker=(function(){
 function _scope(){    const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
@@ -1067,7 +1162,6 @@ return formatTime(s)+'<span class="cs">.'+String(Math.floor((ms%1000)/10)).padSt
 }
 function showModal(won){
 const settlement=state.settlement||settleGame(won);
-const st=settlement.result.stats||settlement.result;
 const circle=dom.modalIconCircle;
 circle.className='modal-icon-circle '+(won?'icon-win':'icon-loss');
 dom.modalIcon.innerHTML=won?RESULT_SVG.check:RESULT_SVG.bomb;
@@ -1078,33 +1172,16 @@ circle.addEventListener('animationend',()=>circle.classList.remove('animate'),{o
 }
 dom.modalTitle.className=won?'title-win':'title-loss';
 dom.modalTitle.textContent=won?'通关了':'踩雷了！';
-if(won){
-const{isNew,best,stats}=settlement.result;
+dom.modalBadge.innerHTML=settlement.cheated?`<span class="new-record-badge">本局使用了辅助</span>`:'';
 const timeMs=state.timeMs||state.time*1000;
-dom.modalBadge.innerHTML=(isNew?`<span class="new-record-badge">🏆 新纪录</span>`:'')
-+(stats.streak>1?`<span class="new-record-badge" style="background:linear-gradient(135deg,#10b981,#3b82f6)">🔥 ${stats.streak} 连胜</span>`:'');
 dom.modalStats.className='modal-stats cols-3';
 dom.modalStats.innerHTML=`<div class="modal-stat-card" style="grid-column:1/-1"><div class="modal-stat-label">用时</div><div class="modal-stat-value">${formatTimeMs(timeMs)}<small class="modal-stat-unit"> 秒</small></div></div>`
-+statCard('最佳',best?formatTime(best.time):'—',best?'秒':'')
-+statCard('胜率',stats.total?Math.round(stats.wins/stats.total*100):0,'%')
-+triCard([['3BV',state.bv3],['3BV/s',timeMs>0?(state.bv3/(timeMs/1000)).toFixed(2):'0.00'],['有效点击',state.usefulClicks+'次']]);
-dom.modalMsg.textContent=settlement.cheated
-?'使用了辅助，本局不计入战绩。'
-:isNew?'刷新了最佳记录'
-:'';
-} else {
-dom.modalBadge.innerHTML='';
-const timeStr=formatTime(state.time);
-dom.modalStats.className='modal-stats';
-dom.modalStats.innerHTML=statCard('用时',timeStr,'秒')
 +statCard('插旗',state.flagCount,'个')
-+statCard('胜率',st.total?Math.round(st.wins/st.total*100):0,'%')
-+triCard([['3BV',state.bv3],['有效点击',state.usefulClicks+'次']]);
++statCard('有效点击',state.usefulClicks,'次')
++triCard([['3BV',state.bv3],['3BV/s',timeMs>0?(state.bv3/(timeMs/1000)).toFixed(2):'0.00']]);
 dom.modalMsg.textContent=settlement.cheated
-?'使用了辅助，本局不计入战绩。'
-:'再接再厉！';
-}
-dom.modal.classList.add('show'); syncUndoButton();
+?'使用了辅助，本局不计入记录。'
+:(won?'通关成功！':'再接再厉！');
 }
 const closeModal=()=>{dom.modal.classList.remove('show');stopConfetti();};
 
@@ -1211,6 +1288,7 @@ const settingsOpen=dom.settings.classList.contains('show');
 if(e.key==='Escape')return settingsOpen?closeSettings():closeModal();
 if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!e.shiftKey&&!settingsOpen)return e.preventDefault(),doUndo();
 if(e.key.toLowerCase()==='r'&&!e.ctrlKey&&!e.metaKey&&!settingsOpen){closeModal();dom.settings.classList.remove('show');ui.snap=null;return newGame();}
+if(e.key.toLowerCase()==='h'&&!e.ctrlKey&&!e.metaKey&&!settingsOpen){if(!isBlocked())requestHint();return;}
 if(isBlocked())return;
 if(state.gameOver||state.placing)return;
 if(!(e.key in ARROWS)&&![' ','Enter','f','F'].includes(e.key))return;
@@ -1243,6 +1321,7 @@ const onClick=(id,fn)=>{const el=$(id); if(el)el.addEventListener('click',fn);};
 ['btn-close-warning',()=>dom.warning.hidden=true],
 ['btn-undo-modal',doUndo],
 ['btn-undo-topbar',doUndo],
+['btn-hint',requestHint],
 ['btn-apply-custom',()=>{applyCustomConfig({selectDifficulty:true});ui.snap=null;dom.settings.classList.remove('show');newGame();}],
 ['btn-reset-settings',function(){
 if(ui.confirmReset){clearTimeout(ui.confirmReset);ui.confirmReset=null;this.textContent='重置所有设置';resetAllSettings();return;}
