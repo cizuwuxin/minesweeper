@@ -92,7 +92,7 @@ difficulty:'medium', mode:'traditional', actionMode:'normal',
 rows:16, cols:16, mines:40,
 board:[], revealed:[], flagged:[], questioned:[],
 flagCount:0, revealedCount:0, nonMineCount:0,
-firstClick:true, placing:false, gameOver:false,
+firstClick:true, placing:false, gameOver:false, hintBusy:false,
 timer:null, time:0, timeMs:0, timerStart:0, gameId:0,
 undo:[], hinted:[], settlement:null, cheated:false, undoUsed:false, hintsUsed:0,
 bv3:0, usefulClicks:0,
@@ -647,7 +647,6 @@ if(!canUndo())return;
 stopTimerId('modal');
 const snap=state.undo.pop(), wasOver=state.gameOver;
 if(wasOver&&!snap.gameOver&&state.settlement) {
-if(!state.settlement.cheated)restoreRecords(state.settlement.beforeRaw);
 state.settlement=null;
 }
 state.cheated=true; state.undoUsed=true;
@@ -780,8 +779,13 @@ if(!visited[r][c]&&board[r][c]!==-1)bv3++;
 return bv3;
 }
 
-/* ===== 提示功能：基于约束传播 + 分量枚举的主线程求解器（计算量小，单次同步执行） ===== */
-function hintEnumerateComponent(globalVars,globalCons,constraints,maxSolutions){
+/* ===== 提示功能：约束传播 + 分量枚举求解器，放在独立 Worker 中执行，避免阻塞主线程 ===== */
+const _mkHintWorker=(function(){
+function _scope(){
+const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+const inBoard=(r,c,rows,cols)=>r>=0&&r<rows&&c>=0&&c<cols;
+const eachNeighbor=(r,c,rows,cols,fn)=>DIRS.forEach(([dr,dc])=>{const nr=r+dr,nc=c+dc;if(inBoard(nr,nc,rows,cols))fn(nr,nc);});
+function enumerateComponent(globalVars,globalCons,constraints,maxSolutions){
 const localOf=new Map();
 globalVars.forEach((vi,i)=>localOf.set(vi,i));
 const cons=globalCons.map(ci=>({need:constraints[ci].need,vars:constraints[ci].vars.map(vi=>localOf.get(vi)).filter(v=>v!==undefined)}));
@@ -806,19 +810,19 @@ if(incomplete)return;
 assign(0);
 return{invalid:solutions===0,incomplete,solutions,mineCounts};
 }
-function hintFindCertainMoves(maxVars,maxSolutions){
+function findFrontierMoves(board,revealed,flagged,rows,cols,maxVars,maxSolutions){
 const varIndex=new Map(),vars=[],constraints=[];
 const addVar=k=>{if(!varIndex.has(k)){varIndex.set(k,vars.length);vars.push(k);}return varIndex.get(k);};
-for(let r=0;r<state.rows;r++) for(let c=0;c<state.cols;c++){
-if(!state.revealed[r][c]||state.board[r][c]<=0)continue;
-let flags=0;const unknown=[];
-eachNeighbor(r,c,(nr,nc)=>{if(state.flagged[nr][nc])flags++;else if(!state.revealed[nr][nc])unknown.push(nr*state.cols+nc);});
-const need=state.board[r][c]-flags;
-if(need<0||need>unknown.length)return{safe:[],mines:[],invalid:true,probs:new Map()};
+for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+if(!revealed[r][c]||board[r][c]<=0)continue;
+let flagsN=0;const unknown=[];
+eachNeighbor(r,c,rows,cols,(nr,nc)=>{if(flagged[nr][nc])flagsN++;else if(!revealed[nr][nc])unknown.push(nr*cols+nc);});
+const need=board[r][c]-flagsN;
+if(need<0||need>unknown.length)return{safe:[],mines:[],invalid:true,probs:[],frontierKeys:[]};
 if(!unknown.length)continue;
 constraints.push({need,vars:unknown.map(addVar)});
 }
-if(!vars.length)return{safe:[],mines:[],invalid:false,probs:new Map()};
+if(!vars.length)return{safe:[],mines:[],invalid:false,probs:[],frontierKeys:[]};
 const varToCons=Array.from({length:vars.length},()=>[]);
 constraints.forEach((con,ci)=>con.vars.forEach(vi=>varToCons[vi].push(ci)));
 const visitedVar=new Uint8Array(vars.length),visitedCon=new Uint8Array(constraints.length);
@@ -831,9 +835,11 @@ while(queueV.length||queueC.length){
 while(queueV.length){const vi=queueV.pop();compVars.push(vi);for(const ci of varToCons[vi])if(!visitedCon[ci]){visitedCon[ci]=1;queueC.push(ci);}}
 while(queueC.length){const ci=queueC.pop();compCons.push(ci);for(const vi of constraints[ci].vars)if(!visitedVar[vi]){visitedVar[vi]=1;queueV.push(vi);}}
 }
+// 注意：超过 maxVars 或求解不完整而被跳过的分量，其变量依然是"贴着数字格"的真边界格，
+// 只是没能得出确定结论——必须记入 frontierKeys，绝不能被当成无约束的"自由格"。
 if(compVars.length>maxVars)continue;
-const result=hintEnumerateComponent(compVars,compCons,constraints,maxSolutions);
-if(result.invalid)return{safe:[],mines:[],invalid:true,probs:new Map()};
+const result=enumerateComponent(compVars,compCons,constraints,maxSolutions);
+if(result.invalid)return{safe:[],mines:[],invalid:true,probs:[],frontierKeys:[]};
 if(result.incomplete)continue;
 for(let i=0;i<compVars.length;i++){
 const k=vars[compVars[i]];
@@ -843,24 +849,58 @@ else probs.set(k,result.mineCounts[i]/result.solutions);
 }
 }
 return{
-safe:[...safeSet].filter(k=>!mineSet.has(k)).map(k=>[Math.floor(k/state.cols),k%state.cols]),
-mines:[...mineSet].map(k=>[Math.floor(k/state.cols),k%state.cols]),
-invalid:false, probs
+safe:[...safeSet].filter(k=>!mineSet.has(k)).map(k=>[Math.floor(k/cols),k%cols]),
+mines:[...mineSet].map(k=>[Math.floor(k/cols),k%cols]),
+invalid:false,
+probs:[...probs.entries()],
+frontierKeys:vars
 };
 }
-function bestGuessCell(probs){
+self.onmessage=function(e){
+const{id,board,revealed,flagged,rows,cols,maxVars,maxSolutions}=e.data;
+self.postMessage({id,result:findFrontierMoves(board,revealed,flagged,rows,cols,maxVars,maxSolutions)});
+};
+}
+const _hintWorkerUrl=(()=>{const b=new Blob(['('+_scope.toString()+')()'],{type:'application/javascript'});return URL.createObjectURL(b);})();
+addEventListener('pagehide',()=>URL.revokeObjectURL(_hintWorkerUrl),{once:true});
+return ()=>new Worker(_hintWorkerUrl);
+})();
+let _hintWorker=null,_hintTaskSeq=0,_hintPending=null;
+function _getHintWorker(){
+if(!_hintWorker)_hintWorker=_mkHintWorker();
+return _hintWorker;
+}
+function _runHintSolve(maxVars,maxSolutions){
+const worker=_getHintWorker();
+const id=++_hintTaskSeq;
+return new Promise((resolve,reject)=>{
+_hintPending={resolve,reject,id};
+worker.onmessage=e=>{if(e.data.id!==id)return;_hintPending=null;resolve(e.data.result);};
+worker.onerror=err=>{if(_hintPending?.id!==id)return;_hintPending=null;reject(err);};
+worker.postMessage({id,board:state.board,revealed:state.revealed,flagged:state.flagged,rows:state.rows,cols:state.cols,maxVars,maxSolutions});
+});
+}
+function bestGuessCell(probsMap,frontierKeys){
 let remainingHidden=0;
 for(let r=0;r<state.rows;r++) for(let c=0;c<state.cols;c++) if(!state.revealed[r][c]&&!state.flagged[r][c])remainingHidden++;
 if(!remainingHidden)return null;
 const remainingMines=clamp(state.mines-state.flagCount,0,remainingHidden);
-const baseline=remainingHidden?remainingMines/remainingHidden:0;
 let best=null;
-probs.forEach((p,k)=>{ if(!best||p<best.prob)best={r:Math.floor(k/state.cols),c:k%state.cols,prob:p}; });
+probsMap.forEach((p,k)=>{ if(!best||p<best.prob)best={r:Math.floor(k/state.cols),c:k%state.cols,prob:p}; });
+const frontierSet=frontierKeys instanceof Set?frontierKeys:new Set(frontierKeys||[]);
+// 非边界格数量必须扣掉"全部边界格"（含未求出确定结论、只是没进 probs 的那些），
+// 否则会把风险未知的边界格误当成低风险自由格推荐给玩家。
+const nonFrontierCount=remainingHidden-frontierSet.size;
+if(nonFrontierCount>0){
+let frontierExpected=0;
+probsMap.forEach(p=>frontierExpected+=p);
+const baseline=clamp((remainingMines-frontierExpected)/nonFrontierCount,0,1);
 if(!best||baseline<best.prob-1e-9){
 for(let r=0;r<state.rows;r++) for(let c=0;c<state.cols;c++){
 if(state.revealed[r][c]||state.flagged[r][c])continue;
-if(probs.has(r*state.cols+c))continue;
+if(frontierSet.has(r*state.cols+c))continue;
 return{r,c,prob:baseline};
+}
 }
 }
 return best;
@@ -870,11 +910,25 @@ const el=cellEl(r,c); if(!el)return;
 el.classList.add('hint-flash');
 el.addEventListener('animationend',()=>el.classList.remove('hint-flash'),{once:true});
 }
-function requestHint(){
+async function requestHint(){
 if(state.firstClick){toast('先点开一个格子开局吧',1800);return;}
 if(state.placing){toast('棋盘生成中，请稍候',1500);return;}
 if(state.gameOver){toast('本局已经结束啦',1500);return;}
-const result=hintFindCertainMoves(SOLVER.maxComponentVars,SOLVER.maxComponentSolutions);
+if(state.hintBusy)return;
+state.hintBusy=true;
+const hintGameId=state.gameId;
+const hintBtn=$('btn-hint'); if(hintBtn)hintBtn.disabled=true;
+let raw;
+try{
+raw=await _runHintSolve(SOLVER.maxComponentVars,SOLVER.maxComponentSolutions);
+}catch(err){
+state.hintBusy=false; if(hintBtn)hintBtn.disabled=false;
+if(state.gameId===hintGameId)toast('提示计算失败，请重试',1800);
+return;
+}
+state.hintBusy=false; if(hintBtn)hintBtn.disabled=false;
+if(state.gameId!==hintGameId||state.gameOver)return; // 计算期间局面已变化（新开局/结束等），结果作废
+const result={safe:raw.safe,mines:raw.mines,invalid:raw.invalid,probs:new Map(raw.probs),frontierKeys:raw.frontierKeys};
 if(result.invalid){toast('⚠ 当前局面存在矛盾标记，建议撤销重来',2400);return;}
 if(result.safe.length){
 const[r,c]=result.safe[Math.floor(Math.random()*result.safe.length)];
@@ -893,7 +947,7 @@ updateCell(r,c,'anim-flag'); updateStats();
 flashHintCell(r,c); toast('💡 没有安全格了，已为你标记一个确定的雷',2400);
 return;
 }
-const guess=bestGuessCell(result.probs);
+const guess=bestGuessCell(result.probs,result.frontierKeys);
 if(!guess){toast('当前没有可推导的格子',1800);return;}
 state.cheated=true; state.hintsUsed++;
 pushUndo(); feedback('click'); state.usefulClicks++;
@@ -1182,6 +1236,7 @@ dom.modalStats.innerHTML=`<div class="modal-stat-card" style="grid-column:1/-1">
 dom.modalMsg.textContent=settlement.cheated
 ?'使用了辅助，本局不计入记录。'
 :(won?'通关成功！':'再接再厉！');
+dom.modal.classList.add('show');
 }
 const closeModal=()=>{dom.modal.classList.remove('show');stopConfetti();};
 
