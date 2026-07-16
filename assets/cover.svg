@@ -1,52 +1,64 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="460" viewBox="0 0 1280 460" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="480" viewBox="0 0 1200 480" role="img" aria-labelledby="title desc">
   <title id="title">扫雷项目封面</title>
-  <desc id="desc">紫色渐变背景上的抽象扫雷棋盘与项目标题</desc>
+  <desc id="desc">包含两个雷的三行四列扫雷棋盘，所有数字均与相邻雷数一致</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#15121c"/>
-      <stop offset="0.55" stop-color="#272039"/>
-      <stop offset="1" stop-color="#3c2d5c"/>
+      <stop offset="0" stop-color="#121018"/>
+      <stop offset="0.58" stop-color="#241d34"/>
+      <stop offset="1" stop-color="#49366b"/>
     </linearGradient>
-    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#d0bcff"/>
-      <stop offset="1" stop-color="#9a82db"/>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#d0bcff"/><stop offset="1" stop-color="#9d84dc"/>
     </linearGradient>
-    <filter id="blur"><feGaussianBlur stdDeviation="48"/></filter>
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#08060c" flood-opacity=".42"/>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#08060c" flood-opacity=".5"/>
     </filter>
   </defs>
-  <rect width="1280" height="460" rx="28" fill="url(#bg)"/>
-  <circle cx="1110" cy="70" r="180" fill="#7f67be" opacity=".18" filter="url(#blur)"/>
-  <circle cx="190" cy="430" r="170" fill="#6750a4" opacity=".2" filter="url(#blur)"/>
-  <g opacity=".16" stroke="#eaddff">
-    <path d="M0 92H1280M0 184H1280M0 276H1280M0 368H1280"/>
-    <path d="M92 0V460M184 0V460M276 0V460M368 0V460M460 0V460M552 0V460M644 0V460M736 0V460M828 0V460M920 0V460M1012 0V460M1104 0V460M1196 0V460"/>
-  </g>
-  <g transform="translate(730 62) rotate(-4 200 170)" filter="url(#shadow)">
-    <rect width="400" height="336" rx="30" fill="#211f26" stroke="#6f6678"/>
-    <g font-family="Arial, sans-serif" font-size="38" font-weight="700" text-anchor="middle">
-      <g fill="#35313d">
-        <rect x="24" y="24" width="76" height="76" rx="17"/><rect x="116" y="24" width="76" height="76" rx="17"/><rect x="208" y="24" width="76" height="76" rx="17"/><rect x="300" y="24" width="76" height="76" rx="17"/>
-        <rect x="24" y="116" width="76" height="76" rx="17"/><rect x="116" y="116" width="76" height="76" rx="17"/><rect x="208" y="116" width="76" height="76" rx="17"/><rect x="300" y="116" width="76" height="76" rx="17"/>
-        <rect x="24" y="208" width="76" height="76" rx="17"/><rect x="116" y="208" width="76" height="76" rx="17"/><rect x="208" y="208" width="76" height="76" rx="17"/><rect x="300" y="208" width="76" height="76" rx="17"/>
-      </g>
-      <rect x="24" y="24" width="76" height="76" rx="17" fill="#eaddff"/><text x="62" y="75" fill="#4f378b">1</text>
-      <rect x="116" y="24" width="76" height="76" rx="17" fill="#eaddff"/><text x="154" y="75" fill="#6750a4">2</text>
-      <rect x="24" y="116" width="76" height="76" rx="17" fill="#eaddff"/><text x="62" y="167" fill="#4f378b">1</text>
-      <rect x="116" y="116" width="76" height="76" rx="17" fill="#4f378b"/>
-      <g transform="translate(154 154)" fill="none" stroke="#f9dedc" stroke-width="6" stroke-linecap="round">
-        <circle r="17" fill="#b3261e" stroke="none"/><path d="M0-31V-24M0 24V31M-31 0H-24M24 0H31M-22-22L-17-17M17 17L22 22M22-22L17-17M-17 17L-22 22"/>
-      </g>
-      <rect x="208" y="208" width="76" height="76" rx="17" fill="#eaddff"/><text x="246" y="259" fill="#7d5260">3</text>
-      <path d="M324 139h32v8h-32zM328 143v28" stroke="#ffb4ab" stroke-width="7" stroke-linecap="round"/><path d="M332 132h27l-5 22h-22z" fill="#ffb4ab"/>
+  <rect width="1200" height="480" rx="28" fill="url(#bg)"/>
+  <path d="M0 96H1200M0 192H1200M0 288H1200M0 384H1200M96 0V480M192 0V480M288 0V480M384 0V480M480 0V480M576 0V480M672 0V480M768 0V480M864 0V480M960 0V480M1056 0V480M1152 0V480" stroke="#eaddff" opacity=".07"/>
+
+  <g font-family="Arial, 'Microsoft YaHei', sans-serif">
+    <text x="76" y="118" fill="#bdb5c5" font-size="17" font-weight="700" letter-spacing="4">MINESWEEPER · ZERO DEPENDENCIES</text>
+    <text x="72" y="220" fill="#f5f0f7" font-size="84" font-weight="800">扫雷</text>
+    <rect x="76" y="250" width="86" height="6" rx="3" fill="url(#accent)"/>
+    <text x="76" y="315" fill="#ddd5e3" font-size="27">读懂数字，再走下一步。</text>
+    <g transform="translate(76 356)">
+      <rect width="142" height="42" rx="21" fill="#4f378b"/><text x="71" y="27" text-anchor="middle" fill="#f0e8ff" font-size="15" font-weight="700">经典 / 无猜</text>
+      <rect x="154" width="142" height="42" rx="21" fill="#30293a" stroke="#6f6678"/><text x="225" y="27" text-anchor="middle" fill="#d8d0de" font-size="15" font-weight="700">单文件 HTML</text>
     </g>
   </g>
-  <g font-family="Arial, 'Microsoft YaHei', sans-serif">
-    <text x="88" y="142" fill="#cac4d0" font-size="18" letter-spacing="5">LOGIC · FOCUS · ZERO GUESS</text>
-    <text x="84" y="232" fill="#f4eff7" font-size="78" font-weight="800">扫雷</text>
-    <rect x="88" y="268" width="74" height="5" rx="3" fill="url(#glow)"/>
-    <text x="88" y="324" fill="#d0c8d7" font-size="25">一张棋盘，一组规则，一条确定的路。</text>
-    <text x="88" y="372" fill="#9e94a7" font-size="17">SINGLE-FILE HTML · CLASSIC / NO-GUESS · MOBILE READY</text>
+
+  <g transform="translate(690 68) rotate(-3 190 155)" filter="url(#shadow)">
+    <rect width="408" height="332" rx="30" fill="#211e27" stroke="#71687a" stroke-width="2"/>
+    <g font-family="Arial, sans-serif" font-size="34" font-weight="800" text-anchor="middle">
+      <!-- 3×4 board. Mines: row 2 col 2 and row 2 col 4. -->
+      <g fill="#eee8f0">
+        <rect x="24" y="24" width="78" height="78" rx="17"/><rect x="118" y="24" width="78" height="78" rx="17"/><rect x="212" y="24" width="78" height="78" rx="17"/><rect x="306" y="24" width="78" height="78" rx="17"/>
+        <rect x="24" y="118" width="78" height="78" rx="17"/><rect x="212" y="118" width="78" height="78" rx="17"/>
+        <rect x="24" y="212" width="78" height="78" rx="17"/><rect x="118" y="212" width="78" height="78" rx="17"/><rect x="212" y="212" width="78" height="78" rx="17"/><rect x="306" y="212" width="78" height="78" rx="17"/>
+      </g>
+      <g fill="#4f378b">
+        <text x="63" y="75">1</text><text x="157" y="75">1</text><text x="345" y="75">1</text>
+        <text x="63" y="169">1</text>
+        <text x="63" y="263">1</text><text x="157" y="263">1</text><text x="345" y="263">1</text>
+      </g>
+      <g fill="#9b4058">
+        <text x="251" y="75">2</text><text x="251" y="169">2</text><text x="251" y="263">2</text>
+      </g>
+      <!-- Revealed mine at row 2 col 2 -->
+      <rect x="118" y="118" width="78" height="78" rx="17" fill="#5a2730"/>
+      <g transform="translate(157 157)" stroke="#ffb4ab" stroke-width="6" stroke-linecap="round">
+        <circle r="17" fill="#b3261e" stroke="none"/>
+        <path d="M0-31V-24M0 24V31M-31 0H-24M24 0H31M-22-22L-17-17M17 17L22 22M22-22L17-17M-17 17L-22 22"/>
+      </g>
+      <!-- Flagged mine at row 2 col 4 -->
+      <rect x="306" y="118" width="78" height="78" rx="17" fill="#3b3345"/>
+      <g transform="translate(345 157)">
+        <path d="M-13 25V-24" stroke="#ffb4ab" stroke-width="7" stroke-linecap="round"/>
+        <path d="M-10-25h31l-7 24h-24z" fill="#ffb4ab"/>
+        <path d="M-25 25h25" stroke="#ffb4ab" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    </g>
+    <text x="204" y="316" text-anchor="middle" fill="#958b9e" font-family="Arial, sans-serif" font-size="13" letter-spacing="2">2 MINES · COUNTS VERIFIED</text>
   </g>
 </svg>
