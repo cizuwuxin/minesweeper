@@ -1,4 +1,6 @@
-![扫雷](./assets/cover.svg)
+# Minesweeper扫雷
+
+![Minesweeper扫雷](./assets/cover.svg)
 
 <div align="center">
 
