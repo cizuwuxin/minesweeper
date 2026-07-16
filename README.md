@@ -1,34 +1,70 @@
+![扫雷 · 原创项目封面](./assets/cover.svg)
+
 <div align="center">
 
-# 扫雷
+### 不靠运气，也能走到最后。
 
-**一个纯原生、零依赖的单文件扫雷游戏**
+一个装进单个 HTML 文件里的现代扫雷。保留经典规则，也提供可推理完成的无猜棋盘。
 
-经典规则与无猜模式 · Material 3 界面 · 桌面端与移动端适配
-
-[在线游玩](https://cizuwuxin.github.io/minesweeper/) · [查看源码](./index.html) · [反馈问题](https://github.com/cizuwuxin/minesweeper/issues)
-
-![HTML5](https://img.shields.io/badge/HTML5-single--file-E34F26?style=flat-square&logo=html5&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-vanilla-F7DF1E?style=flat-square&logo=javascript&logoColor=111)
-![Dependencies](https://img.shields.io/badge/dependencies-0-2E7D32?style=flat-square)
-![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-online-6750A4?style=flat-square&logo=github)
+[**开始一局 →**](https://cizuwuxin.github.io/minesweeper/)　　[阅读源码](./index.html)
 
 </div>
 
-![游戏预览](./screenshot.png)
+---
 
-## 特性
+<table>
+<tr>
+<td width="33%" valign="top">
 
-- **两种规则**：传统随机布局与可逻辑推导的无猜模式
-- **多种难度**：简单、中等、困难、自定义及随机棋盘
-- **完整操作**：插旗、问号、提示、撤销、快捷键、缩放与拖拽
-- **移动端友好**：支持触控、长按时间调节和左右键行为切换
-- **舒适体验**：深色模式、声音反馈、进度显示与本地设置保存
-- **开箱即用**：HTML、CSS、JavaScript 全部封装在 `index.html`，无外部运行依赖
+### 01 · 两种解法
 
-## 快速开始
+想要原汁原味，就选经典模式；想让每一步都有依据，就进入无猜模式。
 
-直接打开 [在线版本](https://cizuwuxin.github.io/minesweeper/)，或下载 `index.html` 后使用现代浏览器打开。
+</td>
+<td width="33%" valign="top">
+
+### 02 · 一份文件
+
+界面、规则、求解与数据存储都位于 `index.html`，下载后无需安装即可运行。
+
+</td>
+<td width="33%" valign="top">
+
+### 03 · 多种输入
+
+鼠标、键盘与触控均可完整操作；棋盘支持缩放、拖动及长按标记。
+
+</td>
+</tr>
+</table>
+
+## 棋盘里有什么
+
+| 能力 | 说明 |
+| :-- | :-- |
+| **五种棋盘入口** | 简单、中等、困难、自定义、随机 |
+| **无猜生成** | 生成可通过逻辑继续推进的局面，超时后自动回退并明确提示 |
+| **辅助工具** | 提示、撤销、问号标记、进度条、键盘焦点 |
+| **个性设置** | 深色主题、声音反馈、左右键互换、长按延迟 |
+| **本地记忆** | 偏好保存在浏览器中，不上传游戏数据 |
+
+## 一眼看懂操作
+
+```text
+打开格子       左键 / 点击 / Enter / Space
+标记格子       右键 / 长按 / F
+移动焦点       方向键
+获得提示       H
+撤销一步       Ctrl + Z
+重新开局       R
+```
+
+<details>
+<summary><strong>在本地运行</strong></summary>
+
+<br>
+
+直接下载并打开 `index.html` 即可。若浏览器限制本地 Worker，可启动一个静态服务器：
 
 ```bash
 git clone https://github.com/cizuwuxin/minesweeper.git
@@ -36,26 +72,28 @@ cd minesweeper
 python3 -m http.server 8000
 ```
 
-然后访问 `http://localhost:8000`。
+访问 `http://localhost:8000`。
 
-## 操作
+</details>
 
-| 操作 | 鼠标 / 触控 | 键盘 |
-|---|---|---|
-| 打开格子 | 左键 / 点击 | `Enter` / `Space` |
-| 标记格子 | 右键 / 长按 | `F` |
-| 提示 | 顶栏提示按钮 | `H` |
-| 撤销 | 顶栏撤销按钮 | `Ctrl + Z` |
-| 重新开始 | 顶栏重新开始 | `R` |
-| 移动焦点 | — | 方向键 |
+<details>
+<summary><strong>技术说明</strong></summary>
 
-## 项目结构
+<br>
 
-```text
-.
-├── index.html      # 游戏全部源码
-├── screenshot.png  # 界面预览
-└── README.md       # 项目说明
-```
+- 原生 HTML / CSS / JavaScript，无框架和运行时依赖
+- Web Worker 执行无猜棋盘求解，避免阻塞主界面
+- `localStorage` 保存设置
+- GitHub Pages 提供静态部署
 
-> 游戏进度与偏好保存在浏览器本地存储中。不同浏览器、无痕模式或清理站点数据后不会共享。
+</details>
+
+---
+
+<div align="center">
+
+**打开棋盘。读懂数字。做出确定的一步。**
+
+[在线游玩](https://cizuwuxin.github.io/minesweeper/) · [提交反馈](https://github.com/cizuwuxin/minesweeper/issues)
+
+</div>
