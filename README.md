@@ -1,70 +1,51 @@
-![扫雷 · 原创项目封面](./assets/cover.svg)
+![扫雷](./assets/cover.svg)
 
 <div align="center">
 
-### 不靠运气，也能走到最后。
+### 读懂数字，再走下一步。
 
-一个装进单个 HTML 文件里的现代扫雷。保留经典规则，也提供可推理完成的无猜棋盘。
+一款纯原生、零依赖的单文件扫雷游戏。
 
-[**开始一局 →**](https://cizuwuxin.github.io/minesweeper/)　　[阅读源码](./index.html)
+[**在线开始 →**](https://cizuwuxin.github.io/minesweeper/) · [查看源码](./index.html)
 
 </div>
 
 ---
 
-<table>
-<tr>
-<td width="33%" valign="top">
+## 为什么是它
 
-### 01 · 两种解法
+**经典与无猜**  
+经典模式保留随机与风险；无猜模式会尝试生成能靠逻辑继续推进的棋盘。
 
-想要原汁原味，就选经典模式；想让每一步都有依据，就进入无猜模式。
+**下载即玩**  
+游戏完整封装在 `index.html`，没有框架、构建步骤或外部运行依赖。
 
-</td>
-<td width="33%" valign="top">
+**为触控而做**  
+点击、长按、缩放、拖动与键盘操作都能完成一局游戏。
 
-### 02 · 一份文件
+## 游戏能力
 
-界面、规则、求解与数据存储都位于 `index.html`，下载后无需安装即可运行。
+- 五种棋盘：简单、中等、困难、自定义、随机
+- 辅助操作：提示、撤销、问号标记、进度显示、键盘焦点
+- 个性设置：深色主题、声音、左右键互换、长按延迟
+- 本地保存：设置保留在当前浏览器，不上传游戏数据
 
-</td>
-<td width="33%" valign="top">
+## 快捷操作
 
-### 03 · 多种输入
-
-鼠标、键盘与触控均可完整操作；棋盘支持缩放、拖动及长按标记。
-
-</td>
-</tr>
-</table>
-
-## 棋盘里有什么
-
-| 能力 | 说明 |
+| 目标 | 操作 |
 | :-- | :-- |
-| **五种棋盘入口** | 简单、中等、困难、自定义、随机 |
-| **无猜生成** | 生成可通过逻辑继续推进的局面，超时后自动回退并明确提示 |
-| **辅助工具** | 提示、撤销、问号标记、进度条、键盘焦点 |
-| **个性设置** | 深色主题、声音反馈、左右键互换、长按延迟 |
-| **本地记忆** | 偏好保存在浏览器中，不上传游戏数据 |
-
-## 一眼看懂操作
-
-```text
-打开格子       左键 / 点击 / Enter / Space
-标记格子       右键 / 长按 / F
-移动焦点       方向键
-获得提示       H
-撤销一步       Ctrl + Z
-重新开局       R
-```
+| 打开格子 | 点击 / 左键 / `Enter` / `Space` |
+| 标记格子 | 长按 / 右键 / `F` |
+| 提示 | `H` |
+| 撤销 | `Ctrl + Z` |
+| 重开 | `R` |
 
 <details>
-<summary><strong>在本地运行</strong></summary>
+<summary><strong>本地打开</strong></summary>
 
 <br>
 
-直接下载并打开 `index.html` 即可。若浏览器限制本地 Worker，可启动一个静态服务器：
+下载 `index.html` 后直接用现代浏览器打开即可。若需要本地 HTTP 服务：
 
 ```bash
 git clone https://github.com/cizuwuxin/minesweeper.git
@@ -77,14 +58,11 @@ python3 -m http.server 8000
 </details>
 
 <details>
-<summary><strong>技术说明</strong></summary>
+<summary><strong>实现</strong></summary>
 
 <br>
 
-- 原生 HTML / CSS / JavaScript，无框架和运行时依赖
-- Web Worker 执行无猜棋盘求解，避免阻塞主界面
-- `localStorage` 保存设置
-- GitHub Pages 提供静态部署
+原生 HTML、CSS、JavaScript；无猜模式的求解在 Web Worker 中执行；设置由 `localStorage` 保存；页面通过 GitHub Pages 部署。
 
 </details>
 
@@ -92,8 +70,6 @@ python3 -m http.server 8000
 
 <div align="center">
 
-**打开棋盘。读懂数字。做出确定的一步。**
-
-[在线游玩](https://cizuwuxin.github.io/minesweeper/) · [提交反馈](https://github.com/cizuwuxin/minesweeper/issues)
+[在线游玩](https://cizuwuxin.github.io/minesweeper/) · [反馈问题](https://github.com/cizuwuxin/minesweeper/issues)
 
 </div>
