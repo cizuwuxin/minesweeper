@@ -68,6 +68,10 @@ python3 -m http.server 8000
 
 </details>
 
+## 更新日志
+
+- **2026-07-17** · 优化卡顿问题，改善操作与页面流畅度
+
 ---
 
 <div align="center">
