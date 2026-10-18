@@ -623,6 +623,16 @@
       animation: reveal-pop .26s var(--md-ease) both;
     }
 
+    /* Losing reveals many mines; fade only, avoiding hundreds of simultaneous transforms. */
+    .cell.anim-mine-reveal {
+      animation: mine-reveal-fade .12s linear both;
+    }
+
+    @keyframes mine-reveal-fade {
+      from { opacity: .45; }
+      to { opacity: 1; }
+    }
+
     @keyframes reveal-pop {
       0% {
         transform: scale(.62);
@@ -1474,7 +1484,7 @@
             <circle cx="12" cy="12" r="10"/>
             <path d="M12 6v6l4 2"/>
           </svg>
-          <span class="stat-value" id="timer"><span id="timer-s">0</span><span id="timer-cs" class="cs"></span></span>
+          <span class="stat-value"><span id="timer-s">0</span><span id="timer-cs" class="cs"></span></span>
         </div>
         <div class="stat-label">用时</div>
       </div>
@@ -1668,7 +1678,14 @@
       const bt = { maxVars: 22, maxSolutions: 60000 };
       const Ct = ["kb-focus", "hint-flash"];
       const en = [...Ct, "anim-flag", "anim-unflag", "anim-reveal"];
-      const tn = 400;
+      // Reveal-wave tuning
+      const WAVE_FRAME_BUDGET_MS = 7;   // max DOM work per frame, leaves headroom for style/paint at 60fps
+      const WAVE_MIN_PER_FRAME = 12;    // floor for per-frame progress, even on a slow frame
+      const WAVE_MAX_FRAMES = 90;       // a wave never takes much longer than ~1.5s, however slow the device
+      const WAVE_EDGE_MIN_PER_FRAME = 48;
+      const WAVE_POP_LIMIT = 450;       // above this many visible cells, none of the wave is animated (consistent look, no layer explosion)
+      const MINE_BATCH = 20;
+      const MINE_BATCH_REDUCED = 120;
       const we = Math.min(8, Math.max(2, (navigator.hardwareConcurrency || 4) - 1));
       const nn = [
         {
@@ -1878,10 +1895,12 @@
         const e = xt(t.time);
         const n = t.gameOver || t.firstClick ? "" : "." + We(Math.floor(t.timeMs % 1000 / 10));
         if (e !== he.s) {
-          be.s.nodeValue = he.s = e;
+          he.s = e;
+          be.s.nodeValue = e;
         }
         if (n !== he.cs) {
-          be.cs.nodeValue = he.cs = n;
+          he.cs = n;
+          be.cs.nodeValue = n;
         }
       }
 
@@ -1912,7 +1931,8 @@
       function Me() {
         cancelAnimationFrame(t.timer);
         t.timer = null;
-        be.cs.nodeValue = he.cs = "";
+        he.cs = "";
+        be.cs.nodeValue = "";
       }
 
       function oe() {
@@ -1956,7 +1976,8 @@
       function Ge(e = t.noguessTimeSeconds) {
         const n = v("noguess-time-seconds");
         const o = Ye(e, t.noguessTimeSeconds || 6);
-        t.noguessTimeSeconds = n.value = o;
+        n.value = o;
+        t.noguessTimeSeconds = o;
         At(n, false);
       }
 
@@ -2013,8 +2034,19 @@
         }
         const o = d.area.getBoundingClientRect();
         const s = e.getBoundingClientRect();
-        const a = s.left < o.left + n ? o.left + n - s.left : s.right > o.right - n ? o.right - n - s.right : 0;
-        const c = s.top < o.top + n ? o.top + n - s.top : s.bottom > o.bottom - n ? o.bottom - n - s.bottom : 0;
+        let a = 0;
+        if (s.left < o.left + n) {
+          a = o.left + n - s.left;
+        } else if (s.right > o.right - n) {
+          a = o.right - n - s.right;
+        }
+
+        let c = 0;
+        if (s.top < o.top + n) {
+          c = o.top + n - s.top;
+        } else if (s.bottom > o.bottom - n) {
+          c = o.bottom - n - s.bottom;
+        }
         if (a || c) {
           r.offset.x += a;
           r.offset.y += c;
@@ -2026,8 +2058,13 @@
         K("longPress");
         De();
         r.currentCell?.classList.remove("pressing");
-        r.touch = r.currentCell = r.mouseCell = r.chord = null;
-        r.longPress = r.dragging = r.pressCancelled = false;
+        r.chord = null;
+        r.mouseCell = null;
+        r.currentCell = null;
+        r.touch = null;
+        r.pressCancelled = false;
+        r.dragging = false;
+        r.longPress = false;
       }
 
       function Y(e, n = 0) {
@@ -2047,8 +2084,16 @@
 
       function Ze() {
         const e = window.AudioContext || window.webkitAudioContext;
-        return e ? ((!r.audio || r.audio.state === "closed") && (r.audio = new e()), r.audio.state === "suspended" && r.audio.resume().catch(() => {
-        }), r.audio) : null;
+        if (!e) {
+          return null;
+        }
+        if (!r.audio || r.audio.state === "closed") {
+          r.audio = new e();
+        }
+        if (r.audio.state === "suspended") {
+          r.audio.resume().catch(() => {});
+        }
+        return r.audio;
       }
 
       function re({
@@ -2370,7 +2415,13 @@
       }
 
       function Rt() {
-        return t.settlement || (t.settlement = { cheated: t.cheated, undoUsed: t.undoUsed });
+        if (!t.settlement) {
+          t.settlement = {
+            cheated: t.cheated,
+            undoUsed: t.undoUsed
+          };
+        }
+        return t.settlement;
       }
 
       function ie() {
@@ -2403,7 +2454,8 @@
       }
 
       function pe() {
-        r.pan = r.panArm = null;
+        r.panArm = null;
+        r.pan = null;
         r.moved = false;
       }
 
@@ -2443,7 +2495,8 @@
       function vn(e) {
         let n = Math.random() * e.reduce((o, s) => o + s.w, 0);
         for (const o of e) {
-          if ((n -= o.w) <= 0) {
+          n -= o.w;
+          if (n <= 0) {
             return o;
           }
         }
@@ -2462,7 +2515,7 @@
       function ue() {
         Lt();
         Tt();
-        $t();
+        cancelWave();
         ae();
         Yt();
         t.hintBusy = false;
@@ -2556,8 +2609,8 @@
       }
 
       function Cn(e, n) {
-        const o = t.revealed;
-        return (e > 0 && o[e - 1][n] ? " edge-t" : "") + (e < t.rows - 1 && o[e + 1][n] ? " edge-b" : "") + (n > 0 && o[e][n - 1] ? " edge-l" : "") + (n < t.cols - 1 && o[e][n + 1] ? " edge-r" : "");
+        const isRenderedRevealed = (row, col) => me(row, col) && ee(row, col)?.classList.contains("revealed");
+        return (isRenderedRevealed(e - 1, n) ? " edge-t" : "") + (isRenderedRevealed(e + 1, n) ? " edge-b" : "") + (isRenderedRevealed(e, n - 1) ? " edge-l" : "") + (isRenderedRevealed(e, n + 1) ? " edge-r" : "");
       }
 
       function j(e, n, o = "") {
@@ -2574,6 +2627,12 @@
         if (t.flagged[e][n]) {
           i += " flagged";
           f = "已插旗";
+          if (t.gameOver && a !== -1) {
+            i += " wrong-flag";
+            l = Ne.wrong;
+            f = "错误旗标";
+            u = true;
+          }
         } else if (t.questioned[e][n]) {
           i += " questioned";
           l = Ne.question;
@@ -2588,7 +2647,8 @@
             u = true;
           } else if (a > 0) {
             i += ` num-${ a }`;
-            l = f = String(a);
+            f = String(a);
+            l = f;
           } else {
             f = "0";
           }
@@ -2614,10 +2674,43 @@
         }
       }
 
+      function queueAdjacentEdges(w, e, n) {
+        const neighbors = [[e - 1, n], [e + 1, n], [e, n - 1], [e, n + 1]];
+        for (const [row, col] of neighbors) {
+          if (me(row, col) && !t.revealed[row][col]) {
+            w.edgeCells.add(de(row, col));
+          }
+        }
+      }
+
+      function flushWaveEdges(wave, limit = Infinity, deadline = Infinity, minCount = 0) {
+        let processed = 0;
+        for (const index of wave.edgeCells) {
+          if (processed >= limit || (processed >= minCount && performance.now() >= deadline)) {
+            break;
+          }
+          wave.edgeCells.delete(index);
+          const row = Math.floor(index / t.cols);
+          const col = index % t.cols;
+          if (me(row, col) && !t.revealed[row][col]) {
+            j(row, col);
+          }
+          processed++;
+        }
+      }
+
       function It() {
         for (let e = 0; e < t.rows; e++) {
           for (let n = 0; n < t.cols; n++) {
             j(e, n);
+          }
+        }
+        // All revealed cells are now present in the DOM; refresh hidden-cell edges afterward.
+        for (let e = 0; e < t.rows; e++) {
+          for (let n = 0; n < t.cols; n++) {
+            if (!t.revealed[e][n]) {
+              j(e, n);
+            }
           }
         }
       }
@@ -2642,14 +2735,6 @@
         }
       }
 
-      function Mn(e, n) {
-        j(e, n);
-        const o = ee(e, n);
-        o.classList.add("wrong-flag");
-        o.innerHTML = Ne.wrong;
-        o.setAttribute("aria-label", "错误旗标");
-        o._sig = null;
-      }
       d.board.addEventListener("animationend", e => {
         const n = e.target.classList;
         if (e.animationName === "flag-spring") {
@@ -2658,134 +2743,228 @@
           n.remove("anim-unflag");
         } else if (e.animationName === "reveal-pop") {
           n.remove("anim-reveal");
+        } else if (e.animationName === "mine-reveal-fade") {
+          n.remove("anim-mine-reveal");
         } else if (e.animationName === "ring") {
           n.remove("hint-flash");
         }
       });
 
-      function xn() {
-        const e = d.area.getBoundingClientRect();
-        const n = d.board.getBoundingClientRect();
-        const o = (r.cellSize + (parseFloat(d.board.style.gap) || 0)) * r.scale;
-        return (s, a) => {
-          const c = n.left + a * o;
-          const i = n.top + s * o;
-          return c + o >= e.left && c <= e.right && i + o >= e.top && i <= e.bottom;
+      // ---- Reveal wave: staged, frame-budgeted reveal of many cells ----------------
+      // The game state (t.revealed) is updated up front by st(); a wave only paints it.
+
+      function makeViewportTest() {
+        const area = d.area.getBoundingClientRect();
+        const board = d.board.getBoundingClientRect();
+        const step = (r.cellSize + (parseFloat(d.board.style.gap) || 0)) * r.scale;
+        return (row, col) => {
+          const left = board.left + col * step;
+          const top = board.top + row * step;
+          return left + step >= area.left && left <= area.right && top + step >= area.top && top <= area.bottom;
         };
       }
 
-      function Nt(e, n, o, s) {
-        if (s) {
-          j(n, o, "anim-reveal");
-          e.cells.push(ee(n, o));
-          e.animated++;
+      function paintWaveCell(wave, row, col, animate) {
+        if (animate) {
+          j(row, col, wave.animationClass);
+          wave.cells.push(ee(row, col));
         } else {
-          j(n, o);
+          j(row, col);
+        }
+        queueAdjacentEdges(wave, row, col);
+      }
+
+      function clearWaveClasses(wave) {
+        for (const cell of wave.cells) {
+          cell.classList.remove(wave.animationClass);
         }
       }
 
-      function $t() {
+      // Abort the running wave without painting the rest (new game, undo, ...). Pending callbacks are dropped.
+      function cancelWave() {
         r.waveToken++;
-        const e = r.wave;
+        const wave = r.wave;
         r.wave = null;
-        if (!!e) {
-          if (e.frame) {
-            cancelAnimationFrame(e.frame);
+        if (wave) {
+          if (wave.frame) {
+            cancelAnimationFrame(wave.frame);
           }
-          for (const n of e.cells) {
-            n.classList.remove("anim-reveal");
-          }
+          clearWaveClasses(wave);
         }
       }
 
-      function Vt() {
-        const e = r.wave;
-        if (e) {
-          for ($t(); e.index < e.items.length;) {
-            const { r: n, c: o } = e.items[e.index++];
-            Nt(e, n, o, false);
-          }
+      // Finish the running wave immediately (used before starting another one).
+      function flushWave() {
+        const wave = r.wave;
+        if (!wave) {
+          return;
+        }
+        cancelWave();
+        while (wave.index < wave.items.length) {
+          const { row, col } = wave.items[wave.index++];
+          paintWaveCell(wave, row, col, false);
+        }
+        flushWaveEdges(wave);
+      }
+
+      // Run callback once the current wave has fully settled (immediately if none is running).
+      function afterWave(callback) {
+        if (r.wave) {
+          r.wave.onDone.push(callback);
+        } else {
+          callback();
         }
       }
 
-      function Ut(e, n, o, s) {
-        Vt();
-        if (!e.length) {
-          s?.();
+      /**
+       * cells: [[row, col, depth?], ...]   originRow/originCol: click position (fallback for depth)
+       * onDone: called when the wave has settled
+       * options.mineReveal: losing reveal (batched fade); options.edgeSources: cells whose neighbours need edge refresh
+       */
+      function startWave(cells, originRow, originCol, onDone, options = {}) {
+        flushWave();
+        const mineReveal = options.mineReveal === true;
+        const edgeSources = options.edgeSources || [];
+
+        if (!cells.length) {
+          if (edgeSources.length) {
+            requestAnimationFrame(() => {
+              Se(edgeSources);
+              onDone?.();
+            });
+          } else {
+            onDone?.();
+          }
           return;
         }
-        if (on() || e.length > 600) {
-          const a = r.waveToken;
-          const w = r.wave = {
-            items: e.map(([g, k]) => ({ r: g, c: k })),
-            index: 0,
-            animated: 0,
-            cells: [],
-            frame: null
-          };
-          const h = () => {
-            if (a !== r.waveToken) {
-              return;
-            }
-            const q = performance.now();
-            for (; w.index < w.items.length && performance.now() - q < 8;) {
-              const { r: g, c: k } = w.items[w.index++];
-              j(g, k);
-            }
-            if (w.index < w.items.length) {
-              w.frame = requestAnimationFrame(h);
-            } else {
-              r.wave = null;
-              s?.();
-            }
-          };
-          h();
-          return;
+
+        const token = r.waveToken;
+        const reducedMotion = on();
+        const items = cells.map(([row, col, depth], order) => ({
+          row,
+          col,
+          depth: depth ?? Math.hypot(row - originRow, col - originCol),
+          angle: Math.atan2(row - originRow, col - originCol),
+          order,
+          visible: false
+        })).sort((a, b) => a.depth - b.depth || a.angle - b.angle || a.order - b.order);
+        const total = items.length;
+        const farthest = items[total - 1].depth;
+
+        // Animate all visible cells or none, decided up front, so a single reveal never mixes
+        // animated and instantly-appearing cells (every animated cell costs a compositor layer).
+        let animationClass = null;
+        if (!reducedMotion) {
+          const inView = makeViewportTest();
+          let visibleCount = 0;
+          for (const item of items) {
+            item.visible = inView(item.row, item.col);
+            visibleCount += item.visible ? 1 : 0;
+          }
+          if (mineReveal) {
+            animationClass = "anim-mine-reveal";
+          } else if (visibleCount <= WAVE_POP_LIMIT) {
+            animationClass = "anim-reveal";
+          }
         }
-        const a = r.waveToken;
-        const c = xn();
-        const i = e.map(([g, k, L]) => ({ r: g, c: k, d: L ?? Math.hypot(g - n, k - o) })).sort((g, k) => g.d - k.d);
-        const l = i[i.length - 1].d;
-        const f = Math.min(720, Math.max(280, 240 + 16 * l));
-        const u = g => 1 - (1 - g) ** 1.7;
-        const M = performance.now();
-        const w = r.wave = {
-          items: i,
-          index: 0,
-          animated: 0,
-          cells: [],
-          frame: null
+
+        const mineBatch = reducedMotion ? MINE_BATCH_REDUCED : MINE_BATCH;
+        const edgeLimit = mineReveal ? (reducedMotion ? 240 : 80) : Infinity;
+        const duration = reducedMotion ? 0 : mineReveal
+          ? Math.max(260, Math.ceil(total / MINE_BATCH) * (1000 / 60))
+          : Math.min(1600, Math.max(280, 240 + 16 * farthest, 240 + total * 0.11));
+        const startTime = performance.now();
+        const minPerFrame = Math.max(WAVE_MIN_PER_FRAME, Math.ceil(total / WAVE_MAX_FRAMES));
+        // Cap on cells painted per frame: ring sizes vary a lot in a flood fill, and style/layout/paint
+        // cost is proportional to cells changed per frame, so spread big rings over a few frames.
+        const frameCap = Math.max(minPerFrame, Math.ceil(total / Math.max(1, duration / (1000 / 60)) * 1.5));
+        let budget = WAVE_FRAME_BUDGET_MS;
+        let lastFrameTime = startTime;
+
+        const wave = { items, index: 0, cells: [], edgeCells: new Set(), frame: null, animationClass, onDone: [] };
+        r.wave = wave;
+
+        // Losing reveal: neighbours of the exploded cell are refreshed in step with the mines.
+        if (mineReveal) {
+          for (const [row, col] of edgeSources) {
+            queueAdjacentEdges(wave, row, col);
+          }
+        }
+
+        const settle = () => {
+          r.wave = null;
+          clearWaveClasses(wave);
+          onDone?.();
+          for (const callback of wave.onDone) {
+            callback();
+          }
         };
-        const p = () => {
-          w.frame = null;
-          setTimeout(() => {
-            if (a === r.waveToken) {
-              r.wave = null;
-              for (const g of w.cells) {
-                g.classList.remove("anim-reveal");
+
+        const finish = () => {
+          wave.frame = null;
+          if (animationClass) {
+            // let the last cells finish their CSS animation (.26s pop / .12s mine fade)
+            setTimeout(() => {
+              if (token === r.waveToken) {
+                settle();
               }
-              s?.();
-            }
-          }, 220);
+            }, mineReveal ? 140 : 270);
+          } else {
+            settle();
+          }
         };
-        const h = g => {
-          if (a !== r.waveToken) {
+
+        // How many items should be painted by now.
+        const targetIndex = now => {
+          if (reducedMotion) {
+            return total;
+          }
+          const progress = Math.min(1, Math.max(0, (now - startTime) / duration));
+          if (mineReveal) {
+            return Math.min(Math.ceil(progress * total), wave.index + mineBatch);
+          }
+          if (progress >= 1) {
+            return Math.min(total, wave.index + frameCap);
+          }
+          // Ripple front moves at constant speed through BFS depth, not through cell count,
+          // so wide rings don't make the wavefront speed up and slow down.
+          const front = progress * farthest;
+          let target = wave.index;
+          while (target < total && items[target].depth <= front) {
+            target++;
+          }
+          return Math.min(Math.max(target, wave.index === 0 ? 1 : 0), wave.index + frameCap);
+        };
+
+        const step = now => {
+          if (token !== r.waveToken) {
             return;
           }
-          const k = l * u(Math.min(1, Math.max(0, g - M) / f));
-          for (; w.index < i.length && i[w.index].d <= k;) {
-            const { r: L, c: P } = i[w.index++];
-            Nt(w, L, P, w.animated < tn && c(L, P));
+          // Adapt to the device: a long frame interval shrinks the budget, smooth frames restore it.
+          budget = now - lastFrameTime > 24 ? Math.max(3, budget * 0.7) : Math.min(WAVE_FRAME_BUDGET_MS, budget + 0.5);
+          lastFrameTime = now;
+          const deadline = performance.now() + budget;
+          const target = mineReveal && reducedMotion ? Math.min(total, wave.index + mineBatch) : targetIndex(now);
+
+          // Stop when the frame's time slice is used up; the time-based target lets the next
+          // frame catch up instead of producing one long frame.
+          let painted = 0;
+          while (wave.index < target && (painted < minPerFrame || performance.now() < deadline)) {
+            const item = items[wave.index++];
+            paintWaveCell(wave, item.row, item.col, animationClass !== null && item.visible);
+            painted++;
           }
-          if (w.index < i.length) {
-            w.frame = requestAnimationFrame(h);
+          flushWaveEdges(wave, edgeLimit, deadline, WAVE_EDGE_MIN_PER_FRAME);
+
+          if (wave.index < total || wave.edgeCells.size > 0) {
+            wave.frame = requestAnimationFrame(step);
           } else {
-            p();
+            finish();
           }
         };
-        w.frame = requestAnimationFrame(h);
-      }
 
+        wave.frame = requestAnimationFrame(step);
+      }
       function ht(e, n, o) {
         const s = t.gameId;
         r.longPress = false;
@@ -3026,7 +3205,7 @@
         if (!zt()) {
           return;
         }
-        Vt();
+        flushWave();
         K("modal");
         const e = t.undo.pop();
         const n = t.gameOver;
@@ -3207,7 +3386,7 @@
             });
           }
         }
-        Ut(s, n, o);
+        startWave(s, n, o);
         Se(s);
         le();
         return false;
@@ -3377,7 +3556,13 @@
           const P = new Map();
           const D = [];
           const B = [];
-          const S = b => (P.has(b) || (P.set(b, D.length), D.push(b)), P.get(b));
+          const S = b => {
+            if (!P.has(b)) {
+              P.set(b, D.length);
+              D.push(b);
+            }
+            return P.get(b);
+          };
           for (let b = 0; b < k; b++) {
             for (let x = 0; x < L; x++) {
               if (!h[b][x] || p[b][x] <= 0) {
@@ -3417,7 +3602,8 @@
             const b = [];
             const x = [B];
             const q = [];
-            for (L[B] = 1; x.length || q.length;) {
+            L[B] = 1;
+            for (; x.length || q.length;) {
               for (; x.length;) {
                 const E = x.pop();
                 S.push(E);
@@ -3778,7 +3964,16 @@
             }
             return true;
           };
-          const V = (F, y) => !n(F, y, h, g) || b[F][y] || x[F][y] ? false : (x[F][y] = true, E++, $(F, y), I.delete(F * g + y), true);
+          const V = (F, y) => {
+            if (!n(F, y, h, g) || b[F][y] || x[F][y]) {
+              return false;
+            }
+            x[F][y] = true;
+            E++;
+            $(F, y);
+            I.delete(F * g + y);
+            return true;
+          };
           for (let F = 0; F < 4 * S; F++) {
             if (q >= S - k) {
               return true;
@@ -4066,7 +4261,12 @@
         };
         return n;
       }
-      const Ln = () => se || (se = Array.from({ length: we }, (e, n) => rt(n)));
+      const Ln = () => {
+        if (!se) {
+          se = Array.from({ length: we }, (e, n) => rt(n));
+        }
+        return se;
+      };
 
       function jt(e) {
         if (ne[e] !== null) {
@@ -4154,7 +4354,10 @@
             if (l() <= 0) {
               throw new Error("超时");
             }
-            const M = Array.from({ length: we }, () => (_e(s, { skipBV3: true }), t.board.map(g => g.slice())));
+            const M = Array.from({ length: we }, () => {
+              _e(s, { skipBV3: true });
+              return t.board.map(g => g.slice());
+            });
             a++;
             f();
             if (t.gameId !== o) {
@@ -4211,21 +4414,25 @@
         Rt();
         Z(e ? "win" : "explode");
         if (e) {
-          for (let i = 0; i < t.rows; i++) {
-            for (let l = 0; l < t.cols; l++) {
-              if (t.board[i][l] === -1 && !t.flagged[i][l]) {
-                t.flagged[i][l] = true;
-                t.flagCount++;
-                t.questioned[i][l] = false;
-                j(i, l);
-                ee(i, l)?.classList.add("win-flag");
+          // Flags/modal wait for the running reveal wave; otherwise edge refreshes would
+          // overwrite the win-flag animation and the modal could pop up mid-ripple.
+          afterWave(() => {
+            for (let i = 0; i < t.rows; i++) {
+              for (let l = 0; l < t.cols; l++) {
+                if (t.board[i][l] === -1 && !t.flagged[i][l]) {
+                  t.flagged[i][l] = true;
+                  t.flagCount++;
+                  t.questioned[i][l] = false;
+                  j(i, l);
+                  ee(i, l)?.classList.add("win-flag");
+                }
               }
             }
-          }
-          oe();
-          le();
-          fn();
-          r.timers.modal = setTimeout(() => wt(true), 400);
+            oe();
+            le();
+            fn();
+            r.timers.modal = setTimeout(() => wt(true), 400);
+          });
           return;
         }
         const s = n >= 0 && o >= 0;
@@ -4246,19 +4453,18 @@
             }
           }
         }
-        Se(s ? a.concat([[n, o]]) : a);
-        c.forEach(([i, l]) => Mn(i, l));
+        c.forEach(([i, l]) => j(i, l));
         if (s) {
           j(n, o);
           ee(n, o)?.classList.add("exploded", "anim-explode");
         }
         oe();
         le();
-        Ut(a, n, o, () => {
+        startWave(a, n, o, () => {
           oe();
           le();
           r.timers.modal = setTimeout(() => wt(false), 120);
-        });
+        }, { mineReveal: true, edgeSources: s ? [[n, o]] : [] });
       }
       const yt = (e, n, o) => `<div class="modal-stat-card"><div class="modal-stat-label">${ e }</div><div class="modal-stat-value">${ n }<small class="modal-stat-unit"> ${ o }</small></div></div>`;
       const ke = (e, n) => `<div class="quick-stat"><span class="quick-stat-label">${ e }</span><span class="quick-stat-value">${ n }</span></div>`;
@@ -4277,7 +4483,13 @@
         d.modalQuickStats.innerHTML = ke("3BV", t.bv3) + ke("3BV/s", o > 0 ? (t.bv3 / (o / 1000)).toFixed(2) : "0.00") + ke("IOE", t.usefulClicks > 0 ? (t.bv3 / t.usefulClicks).toFixed(2) : "0.00") + ke("提示", t.hintsUsed + "次");
         d.modalStats.className = "modal-stats";
         d.modalStats.innerHTML = `<div class="modal-stat-card" style="grid-column:1/-1"><div class="modal-stat-label">用时</div><div class="modal-stat-value">${ qn(o) }<small class="modal-stat-unit">${ o < 60000 ? " 秒" : "" }</small></div></div>` + yt("插旗", t.flagCount, "个") + yt("有效点击", t.usefulClicks, "次");
-        d.modalMsg.textContent = n.cheated ? "使用了辅助。" : e ? "通关成功！" : "再接再厉！";
+        if (n.cheated) {
+          d.modalMsg.textContent = "使用了辅助。";
+        } else if (e) {
+          d.modalMsg.textContent = "通关成功！";
+        } else {
+          d.modalMsg.textContent = "再接再厉！";
+        }
         d.modal.classList.add("show");
       }
 
