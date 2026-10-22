@@ -1635,28 +1635,28 @@
   <script>
     "use strict";
     (() => {
-      const X = {
+      const DIFFICULTY_PRESETS = {
         easy: { rows: 9, cols: 9, mines: 10 },
         medium: { rows: 16, cols: 16, mines: 40 },
         hard: { rows: 16, cols: 30, mines: 99 },
         custom: { rows: 12, cols: 16, mines: 20 },
         random: { rows: 9, cols: 9, mines: 10 }
       };
-      const it = {
+      const ALLOWED_VALUES = {
         difficulty: ["easy", "medium", "hard", "custom", "random"],
         mode: ["traditional", "noguess"],
         actionMode: ["normal", "swap"]
       };
-      const lt = {
+      const MODAL_ICONS = {
         bomb: `<svg viewBox="0 0 56 56" width="52" height="52" xmlns="http://www.w3.org/2000/svg"><g stroke="currentColor" stroke-linecap="round" stroke-width="2.5" opacity=".7"><line x1="28" y1="6" x2="28" y2="10"/><line x1="28" y1="46" x2="28" y2="50"/><line x1="6" y1="28" x2="10" y2="28"/><line x1="46" y1="28" x2="50" y2="28"/><line x1="11.5" y1="11.5" x2="14.4" y2="14.4"/><line x1="44.5" y1="44.5" x2="41.6" y2="41.6"/><line x1="44.5" y1="11.5" x2="41.6" y2="14.4"/><line x1="11.5" y1="44.5" x2="14.4" y2="41.6"/></g><circle cx="28" cy="28" r="16" fill="currentColor"/><ellipse cx="22" cy="22" rx="4.5" ry="2.8" fill="white" opacity=".28" transform="rotate(-38 22 22)"/><circle cx="35" cy="21" r="1.8" fill="white" opacity=".18"/></svg>`,
         check: `<svg viewBox="0 0 56 56" width="48" height="48" xmlns="http://www.w3.org/2000/svg"><polyline points="13,28 23,38 43,18" stroke="currentColor" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
       };
-      const Ne = {
+      const CELL_ICONS = {
         mine: "<svg width=\"63%\" height=\"63%\" viewBox=\"0 0 24 24\" fill=\"none\"><g stroke=\"currentColor\" stroke-linecap=\"round\" stroke-width=\"1.9\"><line x1=\"12\" y1=\"1.5\" x2=\"12\" y2=\"4.5\"/><line x1=\"12\" y1=\"19.5\" x2=\"12\" y2=\"22.5\"/><line x1=\"1.5\" y1=\"12\" x2=\"4.5\" y2=\"12\"/><line x1=\"19.5\" y1=\"12\" x2=\"22.5\" y2=\"12\"/><line x1=\"4.1\" y1=\"4.1\" x2=\"6.2\" y2=\"6.2\"/><line x1=\"17.8\" y1=\"17.8\" x2=\"19.9\" y2=\"19.9\"/><line x1=\"19.9\" y1=\"4.1\" x2=\"17.8\" y2=\"6.2\"/><line x1=\"6.2\" y1=\"17.8\" x2=\"4.1\" y2=\"19.9\"/></g><circle cx=\"12\" cy=\"12\" r=\"5.8\" fill=\"currentColor\"/><ellipse cx=\"9.8\" cy=\"9.8\" rx=\"1.6\" ry=\"1\" fill=\"white\" opacity=\".35\" transform=\"rotate(-35 9.8 9.8)\"/></svg>",
         wrong: "<svg width=\"60%\" height=\"60%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#ef4444\" stroke-width=\"2.5\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"/><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"/></svg>",
         question: "<svg width=\"60%\" height=\"60%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#6366f1\" stroke-width=\"2.2\" stroke-linecap=\"round\"><path d=\"M9 9a3 3 0 1 1 5.12 2.13C13.38 12 12 13 12 14\"/><circle cx=\"12\" cy=\"18\" r=\"1\" fill=\"#6366f1\" stroke=\"none\"/></svg>"
       };
-      const Qt = [
+      const NEIGHBOR_OFFSETS = [
         [-1, -1],
         [-1, 0],
         [-1, 1],
@@ -1666,18 +1666,18 @@
         [1, 0],
         [1, 1]
       ];
-      const Oe = {
+      const ARROW_KEY_DELTAS = {
         ArrowUp: [-1, 0],
         ArrowDown: [1, 0],
         ArrowLeft: [0, -1],
         ArrowRight: [0, 1]
       };
-      const Zt = 50;
-      const Be = "minesweeper_settings";
-      const Xe = 350;
-      const bt = { maxVars: 22, maxSolutions: 60000 };
-      const Ct = ["kb-focus", "hint-flash"];
-      const en = [...Ct, "anim-flag", "anim-unflag", "anim-reveal"];
+      const MAX_UNDO_STEPS = 50;
+      const SETTINGS_STORAGE_KEY = "minesweeper_settings";
+      const DEFAULT_LONG_PRESS_MS = 350;
+      const SOLVER_LIMITS = { maxVars: 22, maxSolutions: 60000 };
+      const TRANSIENT_CELL_CLASSES = ["kb-focus", "hint-flash"];
+      const CELL_ANIMATION_CLASSES = [...TRANSIENT_CELL_CLASSES, "anim-flag", "anim-unflag", "anim-reveal"];
       // Reveal-wave tuning
       const WAVE_FRAME_BUDGET_MS = 7;   // max DOM work per frame, leaves headroom for style/paint at 60fps
       const WAVE_MIN_PER_FRAME = 12;    // floor for per-frame progress, even on a slow frame
@@ -1686,114 +1686,114 @@
       const WAVE_POP_LIMIT = 450;       // above this many visible cells, none of the wave is animated (consistent look, no layer explosion)
       const MINE_BATCH = 20;
       const MINE_BATCH_REDUCED = 120;
-      const we = Math.min(8, Math.max(2, (navigator.hardwareConcurrency || 4) - 1));
-      const nn = [
+      const WORKER_COUNT = Math.min(8, Math.max(2, (navigator.hardwareConcurrency || 4) - 1));
+      const RANDOM_SIZE_TIERS = [
         {
-          w: 36,
+          weight: 36,
           rows: [8, 10],
           cols: [8, 12],
           density: [0.1, 0.14]
         },
         {
-          w: 34,
+          weight: 34,
           rows: [10, 14],
           cols: [10, 16],
           density: [0.11, 0.16]
         },
         {
-          w: 22,
+          weight: 22,
           rows: [13, 16],
           cols: [16, 22],
           density: [0.13, 0.18]
         },
         {
-          w: 8,
+          weight: 8,
           rows: [16, 20],
           cols: [22, 28],
           density: [0.14, 0.2]
         }
       ];
-      const v = e => document.getElementById(e);
-      const ge = (e, n, o) => Array.from({ length: e }, () => Array(n).fill(o));
-      const G = (e, n, o) => Math.min(o, Math.max(n, e));
-      const Mt = e => e && typeof e == "object" && !Array.isArray(e);
-      const We = e => String(e).padStart(2, "0");
-      const xt = e => e < 60 ? String(e) : `${ Math.floor(e / 60) }:${ We(e % 60) }`;
-      const Ie = (e, n, o, s) => {
-        const a = parseInt(e, 10);
-        return G(Number.isFinite(a) ? a : n, o, s);
+      const byId = elementId => document.getElementById(elementId);
+      const makeGrid = (rows, cols, fill) => Array.from({ length: rows }, () => Array(cols).fill(fill));
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      const isPlainObject = value => value && typeof value == "object" && !Array.isArray(value);
+      const padTwoDigits = value => String(value).padStart(2, "0");
+      const formatSeconds = seconds => seconds < 60 ? String(seconds) : `${ Math.floor(seconds / 60) }:${ padTwoDigits(seconds % 60) }`;
+      const clampInt = (value, fallback, min, max) => {
+        const parsed = parseInt(value, 10);
+        return clamp(Number.isFinite(parsed) ? parsed : fallback, min, max);
       };
-      const Et = (e, n) => !!it[e] && it[e].includes(n);
-      const Ft = (e, n = Xe) => {
-        const o = Math.round(Number(e));
-        return Number.isFinite(o) ? G(o, 100, 1000) : n;
+      const isAllowedValue = (key, value) => !!ALLOWED_VALUES[key] && ALLOWED_VALUES[key].includes(value);
+      const normalizeLongPressDelay = (value, fallback = DEFAULT_LONG_PRESS_MS) => {
+        const rounded = Math.round(Number(value));
+        return Number.isFinite(rounded) ? clamp(rounded, 100, 1000) : fallback;
       };
-      const Ye = (e, n = 6) => {
-        const o = Number(String(e ?? "").trim());
-        return Number.isFinite(o) && o > 0 ? o : n;
+      const normalizePositiveNumber = (value, fallback = 6) => {
+        const number = Number(String(value ?? "").trim());
+        return Number.isFinite(number) && number > 0 ? number : fallback;
       };
-      const kt = e => {
+      const parseJsonObject = text => {
         try {
-          const n = JSON.parse(e || "{}");
-          return Mt(n) ? n : {};
+          const parsed = JSON.parse(text || "{}");
+          return isPlainObject(parsed) ? parsed : {};
         } catch {
           return {};
         }
       };
-      const Le = {
-        get(e) {
+      const storage = {
+        get(key) {
           try {
-            return localStorage.getItem(e);
+            return localStorage.getItem(key);
           } catch {
             return null;
           }
         },
-        set(e, n) {
+        set(key, value) {
           try {
-            localStorage.setItem(e, n);
+            localStorage.setItem(key, value);
             return true;
           } catch {
             return false;
           }
         },
-        remove(e) {
+        remove(key) {
           try {
-            localStorage.removeItem(e);
+            localStorage.removeItem(key);
             return true;
           } catch {
             return false;
           }
         }
       };
-      const on = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const d = {
-        board: v("board"),
-        area: v("game-area"),
-        wrapper: v("board-wrapper"),
-        mines: v("mine-count"),
-        timerS: v("timer-s"),
-        timerCs: v("timer-cs"),
-        flags: v("flag-count"),
-        modal: v("modal"),
-        settings: v("settings-overlay"),
-        toast: v("status-toast"),
-        warning: v("warning-bar"),
-        density: v("density-hint"),
-        minesHint: v("mines-max-hint"),
-        undoTop: v("btn-undo-topbar"),
-        undoModal: v("btn-undo-modal"),
-        modalIcon: v("modal-icon"),
-        modalIconCircle: v("modal-icon-circle"),
-        modalTitle: v("modal-title"),
-        modalBadge: v("modal-badge"),
-        modalStats: v("modal-stats"),
-        modalMsg: v("modal-message"),
-        modalQuickStats: v("modal-quick-stats"),
-        progressBar: v("progress-bar"),
-        progressContainer: v("progress-container"),
-        confetti: v("confetti-canvas")
+      const prefersReducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const dom = {
+        board: byId("board"),
+        area: byId("game-area"),
+        wrapper: byId("board-wrapper"),
+        mines: byId("mine-count"),
+        timerSeconds: byId("timer-s"),
+        timerCentis: byId("timer-cs"),
+        flags: byId("flag-count"),
+        modal: byId("modal"),
+        settings: byId("settings-overlay"),
+        toast: byId("status-toast"),
+        warning: byId("warning-bar"),
+        density: byId("density-hint"),
+        maxMinesHint: byId("mines-max-hint"),
+        undoTop: byId("btn-undo-topbar"),
+        undoModal: byId("btn-undo-modal"),
+        modalIcon: byId("modal-icon"),
+        modalIconCircle: byId("modal-icon-circle"),
+        modalTitle: byId("modal-title"),
+        modalBadge: byId("modal-badge"),
+        modalStats: byId("modal-stats"),
+        modalMessage: byId("modal-message"),
+        modalQuickStats: byId("modal-quick-stats"),
+        progressBar: byId("progress-bar"),
+        progressContainer: byId("progress-container"),
+        confetti: byId("confetti-canvas")
       };
-      const t = {
+      const state = {
         difficulty: "medium",
         mode: "traditional",
         actionMode: "normal",
@@ -1828,11 +1828,11 @@
         soundEnabled: true,
         questionMarkEnabled: false,
         noguessTimeSeconds: 6,
-        longPressDelay: Xe,
-        kbR: -1,
-        kbC: -1
+        longPressDelay: DEFAULT_LONG_PRESS_MS,
+        keyboardRow: -1,
+        keyboardCol: -1
       };
-      const r = {
+      const runtime = {
         scale: 1,
         minScale: 0.5,
         maxScale: 4,
@@ -1856,6 +1856,9 @@
         audio: null,
         confirmReset: null,
         settingsPaused: false,
+        hiddenPaused: false,
+        panFrame: 0,
+        darkManual: false,
         confettiFrame: null,
         wave: null,
         waveToken: 0,
@@ -1868,314 +1871,319 @@
           ignoreMouse: null
         }
       };
-      const sn = [d.modal, d.settings, d.toast];
-      let ct = "";
+      const viewportSizedElements = [dom.modal, dom.settings, dom.toast];
+      let lastViewportHeight = "";
 
-      function Ee() {
-        const e = (window.visualViewport?.height || innerHeight) + "px";
-        if (e !== ct) {
-          ct = e;
-          for (const n of sn) {
-            n.style.setProperty("--vvh", e);
+      function syncViewportHeight() {
+        const height = (window.visualViewport?.height || innerHeight) + "px";
+        if (height !== lastViewportHeight) {
+          lastViewportHeight = height;
+          for (const element of viewportSizedElements) {
+            element.style.setProperty("--vvh", height);
           }
         }
       }
-      Ee();
-      window.visualViewport?.addEventListener("resize", Ee);
-      window.visualViewport?.addEventListener("scroll", Ee);
-      addEventListener("resize", Ee);
-      const be = { s: document.createTextNode("0"), cs: document.createTextNode("") };
-      const he = { s: "0", cs: "" };
-      d.timerS.textContent = "";
-      d.timerCs.textContent = "";
-      d.timerS.append(be.s);
-      d.timerCs.append(be.cs);
+      syncViewportHeight();
+      window.visualViewport?.addEventListener("resize", syncViewportHeight);
+      window.visualViewport?.addEventListener("scroll", syncViewportHeight);
+      addEventListener("resize", syncViewportHeight);
+      const timerTextNodes = { seconds: document.createTextNode("0"), centis: document.createTextNode("") };
+      const timerTextCache = { seconds: "0", centis: "" };
+      dom.timerSeconds.textContent = "";
+      dom.timerCentis.textContent = "";
+      dom.timerSeconds.append(timerTextNodes.seconds);
+      dom.timerCentis.append(timerTextNodes.centis);
 
-      function $e() {
-        const e = xt(t.time);
-        const n = t.gameOver || t.firstClick ? "" : "." + We(Math.floor(t.timeMs % 1000 / 10));
-        if (e !== he.s) {
-          he.s = e;
-          be.s.nodeValue = e;
+      function renderTimer() {
+        const secondsText = formatSeconds(state.time);
+        const centisText = state.gameOver || state.firstClick ? "" : "." + padTwoDigits(Math.floor(state.timeMs % 1000 / 10));
+        if (secondsText !== timerTextCache.seconds) {
+          timerTextCache.seconds = secondsText;
+          timerTextNodes.seconds.nodeValue = secondsText;
         }
-        if (n !== he.cs) {
-          he.cs = n;
-          be.cs.nodeValue = n;
+        if (centisText !== timerTextCache.centis) {
+          timerTextCache.centis = centisText;
+          timerTextNodes.centis.nodeValue = centisText;
         }
       }
 
-      function Ke() {
-        if (t.timer) {
+      function syncTime(milliseconds) {
+        state.timeMs = Math.min(milliseconds, 9999000);
+        state.time = Math.min(9999, Math.floor(state.timeMs / 1000));
+      }
+
+      function clearPressing() {
+        runtime.currentCell?.classList.remove("pressing");
+      }
+
+      function startTimer() {
+        if (state.timer) {
           return;
         }
-        const e = 9999000;
-        const n = Math.min(t.timeMs > 0 ? t.timeMs : t.time * 1000, e);
-        t.timeMs = n;
-        t.time = Math.min(9999, Math.floor(n / 1000));
-        t.timerStart = Date.now() - n;
-        const o = () => {
-          t.timeMs = Math.min(Date.now() - t.timerStart, e);
-          t.time = Math.min(9999, Math.floor(t.timeMs / 1000));
-          if (t.time >= 9999) {
-            Me();
+        syncTime(state.timeMs > 0 ? state.timeMs : state.time * 1000);
+        state.timerStart = Date.now() - state.timeMs;
+        const tick = () => {
+          syncTime(Date.now() - state.timerStart);
+          if (state.time >= 9999) {
+            stopTimer();
           }
-          $e();
-          if (t.timer) {
-            t.timer = requestAnimationFrame(o);
+          renderTimer();
+          if (state.timer) {
+            state.timer = requestAnimationFrame(tick);
           }
         };
-        t.timer = requestAnimationFrame(o);
-        $e();
+        state.timer = requestAnimationFrame(tick);
+        renderTimer();
       }
 
-      function Me() {
-        cancelAnimationFrame(t.timer);
-        t.timer = null;
-        he.cs = "";
-        be.cs.nodeValue = "";
+      function stopTimer() {
+        cancelAnimationFrame(state.timer);
+        state.timer = null;
+        timerTextCache.centis = "";
+        timerTextNodes.centis.nodeValue = "";
       }
 
-      function oe() {
-        d.mines.textContent = Math.max(0, t.mines - t.flagCount);
-        d.flags.textContent = t.flagCount;
-        $e();
+      function renderCounters() {
+        dom.mines.textContent = Math.max(0, state.mines - state.flagCount);
+        dom.flags.textContent = state.flagCount;
+        renderTimer();
       }
 
-      function le() {
-        const e = t.nonMineCount || t.rows * t.cols - t.mines;
-        const n = e > 0 ? Math.min(100, Math.round(t.revealedCount / e * 100)) : 0;
-        d.progressBar.style.transform = `scaleX(${ n / 100 })`;
-        d.progressBar.classList.toggle("full", n >= 100);
-        d.progressContainer.setAttribute("aria-valuenow", n);
+      function renderProgress() {
+        const total = state.nonMineCount || state.rows * state.cols - state.mines;
+        const percent = total > 0 ? Math.min(100, Math.round(state.revealedCount / total * 100)) : 0;
+        dom.progressBar.style.transform = `scaleX(${ percent / 100 })`;
+        dom.progressBar.classList.toggle("full", percent >= 100);
+        dom.progressContainer.setAttribute("aria-valuenow", percent);
       }
 
-      function je(e = t.longPressDelay) {
-        const n = Ft(e);
-        t.longPressDelay = n;
-        const o = v("longpress-delay");
-        const s = v("longpress-delay-value");
-        if (o) {
-          o.value = n;
-          const a = Number(o.min) || 100;
-          const c = (n - a) / ((Number(o.max) || 1000) - a) * 100;
-          o.style.setProperty("--range-fill", `${ G(c, 0, 100) }%`);
+      function syncLongPressUI(value = state.longPressDelay) {
+        const delay = normalizeLongPressDelay(value);
+        state.longPressDelay = delay;
+        const slider = byId("longpress-delay");
+        const label = byId("longpress-delay-value");
+        if (slider) {
+          slider.value = delay;
+          const min = Number(slider.min) || 100;
+          const fillPercent = (delay - min) / ((Number(slider.max) || 1000) - min) * 100;
+          slider.style.setProperty("--range-fill", `${ clamp(fillPercent, 0, 100) }%`);
         }
-        if (s) {
-          s.textContent = `${ n } ms`;
-        }
-      }
-
-      function At(e, n) {
-        if (e) {
-          e.classList.toggle("invalid", n);
-          e.setAttribute("aria-invalid", n ? "true" : "false");
-          e.setCustomValidity(n ? "请输入大于 0 的数字" : "");
+        if (label) {
+          label.textContent = `${ delay } ms`;
         }
       }
 
-      function Ge(e = t.noguessTimeSeconds) {
-        const n = v("noguess-time-seconds");
-        const o = Ye(e, t.noguessTimeSeconds || 6);
-        n.value = o;
-        t.noguessTimeSeconds = o;
-        At(n, false);
-      }
-
-      function ut(e, n = false) {
-        const o = Number(e.value.trim());
-        const s = Number.isFinite(o) && o > 0;
-        t.noguessTimeSeconds = s ? o : 6;
-        At(e, !s);
-        if (!s && n) {
-          e.value = t.noguessTimeSeconds;
+      function setInvalidState(element, invalid) {
+        if (element) {
+          element.classList.toggle("invalid", invalid);
+          element.setAttribute("aria-invalid", invalid ? "true" : "false");
+          element.setCustomValidity(invalid ? "请输入大于 0 的数字" : "");
         }
-        te();
       }
 
-      function Je(e, n = X.medium) {
-        e = Mt(e) ? e : n;
-        const o = Ie(e.rows, n.rows, 5, 100);
-        const s = Ie(e.cols, n.cols, 5, 100);
+      function syncNoguessTimeInput(value = state.noguessTimeSeconds) {
+        const input = byId("noguess-time-seconds");
+        const seconds = normalizePositiveNumber(value, state.noguessTimeSeconds || 6);
+        input.value = seconds;
+        state.noguessTimeSeconds = seconds;
+        setInvalidState(input, false);
+      }
+
+      function handleNoguessTimeInput(input, revert = false) {
+        const number = Number(input.value.trim());
+        const valid = Number.isFinite(number) && number > 0;
+        state.noguessTimeSeconds = valid ? number : 6;
+        setInvalidState(input, !valid);
+        if (!valid && revert) {
+          input.value = state.noguessTimeSeconds;
+        }
+        scheduleSaveSettings();
+      }
+
+      function normalizeCustomParams(params, defaults = DIFFICULTY_PRESETS.medium) {
+        params = isPlainObject(params) ? params : defaults;
+        const rows = clampInt(params.rows, defaults.rows, 5, 100);
+        const cols = clampInt(params.cols, defaults.cols, 5, 100);
         return {
-          rows: o,
-          cols: s,
-          mines: Ie(e.mines, n.mines, 1, Math.max(1, o * s - 9))
+          rows,
+          cols,
+          mines: clampInt(params.mines, defaults.mines, 1, Math.max(1, rows * cols - 9))
         };
       }
-      const de = (e, n) => e * t.cols + n;
-      const ee = (e, n) => r.cells[de(e, n)];
-      const dt = e => [+e.dataset.row, +e.dataset.col];
-      const me = (e, n) => e >= 0 && e < t.rows && n >= 0 && n < t.cols;
-      const Qe = (e, n) => t.revealed[e] && t.revealed[e][n] && t.board[e][n] > 0;
-      const rn = () => t.actionMode === "normal" ? qe : ot;
-      const St = () => t.actionMode === "normal" ? ot : qe;
-      const xe = (e, n, o) => {
-        for (const [s, a] of Qt) {
-          const c = e + s;
-          const i = n + a;
-          if (me(c, i)) {
-            o(c, i);
+      const cellIndex = (row, col) => row * state.cols + col;
+      const cellAt = (row, col) => runtime.cells[cellIndex(row, col)];
+      const cellCoords = cell => [+cell.dataset.row, +cell.dataset.col];
+      const inBounds = (row, col) => row >= 0 && row < state.rows && col >= 0 && col < state.cols;
+      const isRevealedNumber = (row, col) => state.revealed[row] && state.revealed[row][col] && state.board[row][col] > 0;
+      const getPrimaryAction = () => state.actionMode === "normal" ? revealCell : toggleFlag;
+      const getSecondaryAction = () => state.actionMode === "normal" ? toggleFlag : revealCell;
+      const forEachNeighbor = (row, col, callback) => {
+        for (const [deltaRow, deltaCol] of NEIGHBOR_OFFSETS) {
+          const nextRow = row + deltaRow;
+          const nextCol = col + deltaCol;
+          if (inBounds(nextRow, nextCol)) {
+            callback(nextRow, nextCol);
           }
         }
       };
-      const Bt = (e, n) => {
-        const o = [];
-        xe(e, n, (s, a) => o.push({ r: s, c: a }));
-        return o;
+      const neighborList = (row, col) => {
+        const result = [];
+        forEachNeighbor(row, col, (neighborRow, neighborCol) => result.push({ row: neighborRow, col: neighborCol }));
+        return result;
       };
-      const K = e => {
-        clearTimeout(r.timers[e]);
-        r.timers[e] = null;
+      const clearTimer = name => {
+        clearTimeout(runtime.timers[name]);
+        runtime.timers[name] = null;
       };
 
-      function an(e, n = 40) {
-        if (!e) {
+      function scrollCellIntoView(cell, margin = 40) {
+        if (!cell) {
           return;
         }
-        const o = d.area.getBoundingClientRect();
-        const s = e.getBoundingClientRect();
-        let a = 0;
-        if (s.left < o.left + n) {
-          a = o.left + n - s.left;
-        } else if (s.right > o.right - n) {
-          a = o.right - n - s.right;
+        const areaRect = dom.area.getBoundingClientRect();
+        const cellRect = cell.getBoundingClientRect();
+        let deltaX = 0;
+        if (cellRect.left < areaRect.left + margin) {
+          deltaX = areaRect.left + margin - cellRect.left;
+        } else if (cellRect.right > areaRect.right - margin) {
+          deltaX = areaRect.right - margin - cellRect.right;
         }
 
-        let c = 0;
-        if (s.top < o.top + n) {
-          c = o.top + n - s.top;
-        } else if (s.bottom > o.bottom - n) {
-          c = o.bottom - n - s.bottom;
+        let deltaY = 0;
+        if (cellRect.top < areaRect.top + margin) {
+          deltaY = areaRect.top + margin - cellRect.top;
+        } else if (cellRect.bottom > areaRect.bottom - margin) {
+          deltaY = areaRect.bottom - margin - cellRect.bottom;
         }
-        if (a || c) {
-          r.offset.x += a;
-          r.offset.y += c;
-          ie();
-        }
-      }
-
-      function ln() {
-        K("longPress");
-        De();
-        r.currentCell?.classList.remove("pressing");
-        r.chord = null;
-        r.mouseCell = null;
-        r.currentCell = null;
-        r.touch = null;
-        r.pressCancelled = false;
-        r.dragging = false;
-        r.longPress = false;
-      }
-
-      function Y(e, n = 0) {
-        K("toast");
-        d.toast.textContent = e;
-        d.toast.classList.add("show");
-        if (n) {
-          r.timers.toast = setTimeout(() => d.toast.classList.remove("show"), n);
+        if (deltaX || deltaY) {
+          runtime.offset.x += deltaX;
+          runtime.offset.y += deltaY;
+          applyTransform();
         }
       }
 
-      function Lt() {
-        K("toast");
-        d.toast.classList.remove("show");
+      function resetPointerState() {
+        clearTimer("longPress");
+        clearHints();
+        clearPressing();
+        runtime.chord = null;
+        runtime.mouseCell = null;
+        runtime.currentCell = null;
+        runtime.touch = null;
+        runtime.pressCancelled = false;
+        runtime.dragging = false;
+        runtime.longPress = false;
       }
-      const ft = () => ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName) || d.settings.classList.contains("show") || d.modal.classList.contains("show");
 
-      function Ze() {
-        const e = window.AudioContext || window.webkitAudioContext;
-        if (!e) {
+      function showToast(message, duration = 0) {
+        clearTimer("toast");
+        dom.toast.textContent = message;
+        dom.toast.classList.add("show");
+        if (duration) {
+          runtime.timers.toast = setTimeout(() => dom.toast.classList.remove("show"), duration);
+        }
+      }
+
+      function hideToast() {
+        clearTimer("toast");
+        dom.toast.classList.remove("show");
+      }
+      const isInteractionBlocked = () => ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName) || dom.settings.classList.contains("show") || dom.modal.classList.contains("show");
+
+      function getAudioContext() {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
           return null;
         }
-        if (!r.audio || r.audio.state === "closed") {
-          r.audio = new e();
+        if (!runtime.audio || runtime.audio.state === "closed") {
+          runtime.audio = new AudioContextClass();
         }
-        if (r.audio.state === "suspended") {
-          r.audio.resume().catch(() => {});
+        if (runtime.audio.state === "suspended") {
+          runtime.audio.resume().catch(() => {});
         }
-        return r.audio;
+        return runtime.audio;
       }
 
-      function re({
-        type: e = "sine",
-        freq: n = 440,
-        end: o = n,
-        dur: s = 0.08,
-        vol: a = 0.2,
-        delay: c = 0
+      function playTone({
+        type: waveType = "sine",
+        frequency = 440,
+        endFrequency = frequency,
+        duration = 0.08,
+        volume = 0.2,
+        delay = 0
       }) {
-        if (t.soundEnabled) {
+        if (state.soundEnabled) {
           try {
-            const i = Ze();
-            if (!i) {
+            const audioContext = getAudioContext();
+            if (!audioContext) {
               return;
             }
-            const l = i.currentTime + c;
-            const f = i.createOscillator();
-            const u = i.createGain();
-            f.type = e;
-            f.connect(u);
-            u.connect(i.destination);
-            f.frequency.setValueAtTime(n, l);
-            if (o !== n) {
-              f.frequency.exponentialRampToValueAtTime(o, l + s);
+            const startTime = audioContext.currentTime + delay;
+            const oscillator = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            oscillator.type = waveType;
+            oscillator.connect(gain);
+            gain.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(frequency, startTime);
+            if (endFrequency !== frequency) {
+              oscillator.frequency.exponentialRampToValueAtTime(endFrequency, startTime + duration);
             }
-            u.gain.setValueAtTime(a, l);
-            u.gain.exponentialRampToValueAtTime(0.001, l + s);
-            f.start(l);
-            f.stop(l + s + 0.02);
+            gain.gain.setValueAtTime(volume, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            oscillator.start(startTime);
+            oscillator.stop(startTime + duration + 0.02);
           } catch {
           }
         }
       }
 
-      function cn(e, n = 0.3, o = 400) {
-        if (t.soundEnabled) {
+      function playNoise(duration, gain = 0.3, cutoff = 400) {
+        if (state.soundEnabled) {
           try {
-            const s = Ze();
-            if (!s) {
+            const audioContext = getAudioContext();
+            if (!audioContext) {
               return;
             }
-            const a = Math.ceil(s.sampleRate * e);
-            const c = s.createBuffer(1, a, s.sampleRate);
-            const i = c.getChannelData(0);
-            for (let M = 0; M < a; M++) {
-              i[M] = 2 * Math.random() - 1;
+            const frameCount = Math.ceil(audioContext.sampleRate * duration);
+            const buffer = audioContext.createBuffer(1, frameCount, audioContext.sampleRate);
+            const samples = buffer.getChannelData(0);
+            for (let index = 0; index < frameCount; index++) {
+              samples[index] = 2 * Math.random() - 1;
             }
-            const l = s.createBufferSource();
-            const f = s.createGain();
-            const u = s.createBiquadFilter();
-            l.buffer = c;
-            u.type = "lowpass";
-            u.frequency.value = o;
-            l.connect(u);
-            u.connect(f);
-            f.connect(s.destination);
-            f.gain.setValueAtTime(n, s.currentTime);
-            f.gain.exponentialRampToValueAtTime(0.001, s.currentTime + e);
-            l.start();
-            l.stop(s.currentTime + e + 0.02);
+            const source = audioContext.createBufferSource();
+            const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
+            source.buffer = buffer;
+            filter.type = "lowpass";
+            filter.frequency.value = cutoff;
+            source.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            gainNode.gain.setValueAtTime(gain, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+            source.start();
+            source.stop(audioContext.currentTime + duration + 0.02);
           } catch {
           }
         }
       }
-      const un = {
-        click: () => re({ freq: 523, end: 440, dur: 0.05, vol: 0.12 }),
-        flag: () => re({ freq: 660, end: 523, dur: 0.08, vol: 0.13 }),
-        undo: () => re({ freq: 440, end: 330, dur: 0.09, vol: 0.12 }),
-        question: () => re({ freq: 784, end: 988, dur: 0.07, vol: 0.11 }),
+      const SOUND_EFFECTS = {
+        click: () => playTone({ frequency: 523, endFrequency: 440, duration: 0.05, volume: 0.12 }),
+        flag: () => playTone({ frequency: 660, endFrequency: 523, duration: 0.08, volume: 0.13 }),
+        undo: () => playTone({ frequency: 440, endFrequency: 330, duration: 0.09, volume: 0.12 }),
+        question: () => playTone({ frequency: 784, endFrequency: 988, duration: 0.07, volume: 0.11 }),
         explode: () => {
-          cn(0.15, 0.2, 100);
-          re({ freq: 90, end: 30, dur: 0.25, vol: 0.18 });
+          playNoise(0.15, 0.2, 100);
+          playTone({ frequency: 90, endFrequency: 30, duration: 0.25, volume: 0.18 });
         },
-        win: () => [523, 659, 784, 1047].forEach((e, n) => re({
-          freq: e,
-          dur: 0.14,
-          vol: 0.17,
-          delay: [0, 0.09, 0.18, 0.3][n]
+        win: () => [523, 659, 784, 1047].forEach((frequency, index) => playTone({
+          frequency,
+          duration: 0.14,
+          volume: 0.17,
+          delay: [0, 0.09, 0.18, 0.3][index]
         }))
       };
-      const dn = {
+      const VIBRATION_PATTERNS = {
         click: 10,
         flag: 25,
         undo: 15,
@@ -2183,33 +2191,33 @@
         win: [30, 50, 30, 50, 100]
       };
 
-      function Z(e) {
+      function playFeedback(name) {
         try {
-          navigator.vibrate?.(dn[e] || 10);
+          navigator.vibrate?.(VIBRATION_PATTERNS[name] || 10);
         } catch {
         }
-        un[e]?.();
+        SOUND_EFFECTS[name]?.();
       }
 
-      function fn() {
-        const e = d.confetti;
-        if (!e || on()) {
+      function launchConfetti() {
+        const canvas = dom.confetti;
+        if (!canvas || prefersReducedMotion()) {
           return;
         }
-        if (r.confettiFrame) {
-          cancelAnimationFrame(r.confettiFrame);
+        if (runtime.confettiFrame) {
+          cancelAnimationFrame(runtime.confettiFrame);
         }
-        const n = innerWidth;
-        const o = innerHeight;
-        const s = Math.min(2, window.devicePixelRatio || 1);
-        e.width = n * s;
-        e.height = o * s;
-        e.style.width = n + "px";
-        e.style.height = o + "px";
-        e.style.display = "block";
-        const a = e.getContext("2d");
-        a.scale(s, s);
-        const c = [
+        const width = innerWidth;
+        const height = innerHeight;
+        const pixelRatio = Math.min(2, window.devicePixelRatio || 1);
+        canvas.width = width * pixelRatio;
+        canvas.height = height * pixelRatio;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        canvas.style.display = "block";
+        const canvasContext = canvas.getContext("2d");
+        canvasContext.scale(pixelRatio, pixelRatio);
+        const colors = [
           "#f59e0b",
           "#22c55e",
           "#3b82f6",
@@ -2219,321 +2227,333 @@
           "#06b6d4",
           "#f97316"
         ];
-        const i = Array.from({ length: 160 }, () => ({
-          x: Math.random() * n,
+        const particles = Array.from({ length: 160 }, () => ({
+          x: Math.random() * width,
           y: -20 - 100 * Math.random(),
-          r: 3 + 8 * Math.random(),
-          color: c[Math.floor(Math.random() * c.length)],
-          vx: 6 * (Math.random() - 0.5),
-          vy: 1.5 + 4 * Math.random(),
+          radius: 3 + 8 * Math.random(),
+          color: colors[Math.floor(Math.random() * colors.length)],
+          velocityX: 6 * (Math.random() - 0.5),
+          velocityY: 1.5 + 4 * Math.random(),
           angle: Math.random() * Math.PI * 2,
-          va: 0.3 * (Math.random() - 0.5),
+          spin: 0.3 * (Math.random() - 0.5),
           life: 1,
           decay: 0.004 + 0.007 * Math.random(),
           round: Math.random() > 0.5
         }));
-        (function l() {
-          a.clearRect(0, 0, n, o);
-          let f = false;
-          for (const u of i) {
-            u.x += u.vx;
-            u.y += u.vy;
-            u.vy += 0.08;
-            u.angle += u.va;
-            u.life -= u.decay;
-            if (u.y < o + 20 && u.life > 0) {
-              f = true;
-              a.save();
-              a.globalAlpha = Math.min(1, 1.5 * u.life);
-              a.translate(u.x, u.y);
-              a.rotate(u.angle);
-              a.fillStyle = u.color;
-              if (u.round) {
-                a.beginPath();
-                a.arc(0, 0, 0.5 * u.r, 0, 2 * Math.PI);
-                a.fill();
+        (function step() {
+          canvasContext.clearRect(0, 0, width, height);
+          let alive = false;
+          for (const particle of particles) {
+            particle.x += particle.velocityX;
+            particle.y += particle.velocityY;
+            particle.velocityY += 0.08;
+            particle.angle += particle.spin;
+            particle.life -= particle.decay;
+            if (particle.y < height + 20 && particle.life > 0) {
+              alive = true;
+              canvasContext.save();
+              canvasContext.globalAlpha = Math.min(1, 1.5 * particle.life);
+              canvasContext.translate(particle.x, particle.y);
+              canvasContext.rotate(particle.angle);
+              canvasContext.fillStyle = particle.color;
+              if (particle.round) {
+                canvasContext.beginPath();
+                canvasContext.arc(0, 0, 0.5 * particle.radius, 0, 2 * Math.PI);
+                canvasContext.fill();
               } else {
-                a.fillRect(-u.r / 2, 0.3 * -u.r, u.r, 0.6 * u.r);
+                canvasContext.fillRect(-particle.radius / 2, 0.3 * -particle.radius, particle.radius, 0.6 * particle.radius);
               }
-              a.restore();
+              canvasContext.restore();
             }
           }
-          r.confettiFrame = f ? requestAnimationFrame(l) : null;
-          if (!f) {
-            e.style.display = "none";
+          runtime.confettiFrame = alive ? requestAnimationFrame(step) : null;
+          if (!alive) {
+            canvas.style.display = "none";
           }
         }());
       }
 
-      function Tt() {
-        if (r.confettiFrame) {
-          cancelAnimationFrame(r.confettiFrame);
-          r.confettiFrame = null;
+      function stopConfetti() {
+        if (runtime.confettiFrame) {
+          cancelAnimationFrame(runtime.confettiFrame);
+          runtime.confettiFrame = null;
         }
-        if (d.confetti) {
-          d.confetti.style.display = "none";
+        if (dom.confetti) {
+          dom.confetti.style.display = "none";
         }
       }
 
-      function Dt() {
-        if (!Le.set(Be, JSON.stringify({
-            difficulty: t.difficulty,
-            mode: t.mode,
-            actionMode: t.actionMode,
-            dark: document.body.classList.contains("dark"),
-            soundEnabled: t.soundEnabled,
-            questionMarkEnabled: t.questionMarkEnabled,
-            customRows: X.custom.rows,
-            customCols: X.custom.cols,
-            customMines: X.custom.mines,
-            noguessTimeSeconds: t.noguessTimeSeconds,
-            longPressDelay: t.longPressDelay
+      function saveSettingsNow() {
+        if (!storage.set(SETTINGS_STORAGE_KEY, JSON.stringify({
+            difficulty: state.difficulty,
+            mode: state.mode,
+            actionMode: state.actionMode,
+            dark: runtime.darkManual ? document.body.classList.contains("dark") : undefined,
+            soundEnabled: state.soundEnabled,
+            questionMarkEnabled: state.questionMarkEnabled,
+            customRows: DIFFICULTY_PRESETS.custom.rows,
+            customCols: DIFFICULTY_PRESETS.custom.cols,
+            customMines: DIFFICULTY_PRESETS.custom.mines,
+            noguessTimeSeconds: state.noguessTimeSeconds,
+            longPressDelay: state.longPressDelay
           }))) {
-          Y("设置保存失败，可能是浏览器存储不可用", 2500);
+          showToast("设置保存失败，可能是浏览器存储不可用", 2500);
         }
       }
 
-      function te() {
-        K("save");
-        r.timers.save = setTimeout(Dt, 250);
+      function scheduleSaveSettings() {
+        clearTimer("save");
+        runtime.timers.save = setTimeout(saveSettingsNow, 250);
       }
 
-      function et(e) {
-        v("c-rows").value = e.rows;
-        v("c-cols").value = e.cols;
-        v("c-mines").value = e.mines;
-        Jt();
+      function fillCustomInputs(params) {
+        byId("c-rows").value = params.rows;
+        byId("c-cols").value = params.cols;
+        byId("c-mines").value = params.mines;
+        updateCustomHints();
       }
 
-      function qt({ selectDifficulty: e = false, shouldSave: n = true } = {}) {
-        const o = Je({
-          rows: v("c-rows").value,
-          cols: v("c-cols").value,
-          mines: v("c-mines").value
+      function readCustomInputs({ selectDifficulty: selectCustom = false, shouldSave: persist = true } = {}) {
+        const params = normalizeCustomParams({
+          rows: byId("c-rows").value,
+          cols: byId("c-cols").value,
+          mines: byId("c-mines").value
         });
-        Object.assign(X.custom, o);
-        et(o);
-        if (e) {
-          ce("difficulty", "custom", false);
+        Object.assign(DIFFICULTY_PRESETS.custom, params);
+        fillCustomInputs(params);
+        if (selectCustom) {
+          setOption("difficulty", "custom", false);
         }
-        if (n) {
-          te();
+        if (persist) {
+          scheduleSaveSettings();
         }
-        return o;
+        return params;
       }
 
-      function Te(e) {
-        document.body.classList.toggle("dark", e);
-        v("toggle-dark").checked = e;
-        document.querySelector("meta[name=theme-color]").content = e ? "#141218" : "#F2E7F0";
+      function setDarkMode(enabled) {
+        document.body.classList.toggle("dark", enabled);
+        byId("toggle-dark").checked = enabled;
+        document.querySelector("meta[name=theme-color]").content = enabled ? "#141218" : "#F2E7F0";
       }
 
-      function mn() {
-        const e = kt(Le.get(Be));
-        Te(e.dark !== undefined ? !!e.dark : matchMedia("(prefers-color-scheme: dark)").matches);
-        t.soundEnabled = e.soundEnabled !== false;
-        v("toggle-sound").checked = t.soundEnabled;
-        t.questionMarkEnabled = !!e.questionMarkEnabled;
-        v("toggle-question").checked = t.questionMarkEnabled;
-        je(Ft(e.longPressDelay));
-        Ge(Ye(e.noguessTimeSeconds ?? e.noguessSeconds, 6));
-        et(Object.assign(X.custom, Je({ rows: e.customRows, cols: e.customCols, mines: e.customMines }, X.custom)));
-        ["difficulty", "mode", "actionMode"].forEach(n => ce(n, Et(n, e[n]) ? e[n] : t[n], false));
+      function loadSettings() {
+        const saved = parseJsonObject(storage.get(SETTINGS_STORAGE_KEY));
+        runtime.darkManual = saved.dark !== undefined;
+        setDarkMode(saved.dark !== undefined ? !!saved.dark : matchMedia("(prefers-color-scheme: dark)").matches);
+        state.soundEnabled = saved.soundEnabled !== false;
+        byId("toggle-sound").checked = state.soundEnabled;
+        state.questionMarkEnabled = !!saved.questionMarkEnabled;
+        byId("toggle-question").checked = state.questionMarkEnabled;
+        syncLongPressUI(normalizeLongPressDelay(saved.longPressDelay));
+        syncNoguessTimeInput(normalizePositiveNumber(saved.noguessTimeSeconds ?? saved.noguessSeconds, 6));
+        fillCustomInputs(Object.assign(DIFFICULTY_PRESETS.custom, normalizeCustomParams({ rows: saved.customRows, cols: saved.customCols, mines: saved.customMines }, DIFFICULTY_PRESETS.custom)));
+        ["difficulty", "mode", "actionMode"].forEach(key => setOption(key, isAllowedValue(key, saved[key]) ? saved[key] : state[key], false));
       }
 
-      function gn() {
-        Le.remove(Be);
-        Object.assign(X.custom, { rows: 12, cols: 16, mines: 20 });
-        Te(matchMedia("(prefers-color-scheme: dark)").matches);
-        t.soundEnabled = true;
-        v("toggle-sound").checked = true;
-        t.questionMarkEnabled = false;
-        v("toggle-question").checked = false;
-        je(Xe);
-        Ge(6);
-        et(X.custom);
-        ce("difficulty", "medium", false);
-        ce("mode", "traditional", false);
-        ce("actionMode", "normal", false);
-        te();
-        Y("已重置所有设置", 1800);
-        Ae();
+      function resetAllSettings() {
+        storage.remove(SETTINGS_STORAGE_KEY);
+        runtime.darkManual = false;
+        Object.assign(DIFFICULTY_PRESETS.custom, { rows: 12, cols: 16, mines: 20 });
+        setDarkMode(matchMedia("(prefers-color-scheme: dark)").matches);
+        state.soundEnabled = true;
+        byId("toggle-sound").checked = true;
+        state.questionMarkEnabled = false;
+        byId("toggle-question").checked = false;
+        syncLongPressUI(DEFAULT_LONG_PRESS_MS);
+        syncNoguessTimeInput(6);
+        fillCustomInputs(DIFFICULTY_PRESETS.custom);
+        setOption("difficulty", "medium", false);
+        setOption("mode", "traditional", false);
+        setOption("actionMode", "normal", false);
+        scheduleSaveSettings();
+        showToast("已重置所有设置", 1800);
+        closeSettings();
       }
 
-      function ce(e, n, o = true) {
-        if (Et(e, n)) {
-          t[e] = n;
-          document.querySelectorAll(`[data-set="${ e }"]`).forEach(s => s.classList.toggle("active", s.dataset.val === n));
-          if (e === "difficulty") {
-            v("custom-fields").classList.toggle("show", n === "custom");
+      function setOption(key, value, persist = true) {
+        if (isAllowedValue(key, value)) {
+          state[key] = value;
+          document.querySelectorAll(`[data-set="${ key }"]`).forEach(button => button.classList.toggle("active", button.dataset.val === value));
+          if (key === "difficulty") {
+            byId("custom-fields").classList.toggle("show", value === "custom");
           }
-          if (e === "mode") {
-            const s = n === "noguess";
-            v("noguess-time-row").hidden = !s;
-            if (s) {
-              Ge(t.noguessTimeSeconds);
+          if (key === "mode") {
+            const isNoguess = value === "noguess";
+            byId("noguess-time-row").hidden = !isNoguess;
+            if (isNoguess) {
+              syncNoguessTimeInput(state.noguessTimeSeconds);
             }
           }
-          if (o) {
-            te();
+          if (persist) {
+            scheduleSaveSettings();
           }
         }
       }
 
-      function hn() {
-        r.snap = {
-          difficulty: t.difficulty,
-          mode: t.mode,
-          customParams: t.difficulty === "custom" ? `${ X.custom.rows },${ X.custom.cols },${ X.custom.mines }` : ""
+      function openSettings() {
+        runtime.snap = {
+          difficulty: state.difficulty,
+          mode: state.mode,
+          customParams: state.difficulty === "custom" ? `${ DIFFICULTY_PRESETS.custom.rows },${ DIFFICULTY_PRESETS.custom.cols },${ DIFFICULTY_PRESETS.custom.mines }` : ""
         };
-        d.settings.classList.add("show");
-        r.settingsPaused = !!t.timer && !t.gameOver;
-        if (r.settingsPaused) {
-          Me();
+        dom.settings.classList.add("show");
+        runtime.settingsPaused = !!state.timer && !state.gameOver;
+        if (runtime.settingsPaused) {
+          stopTimer();
         }
       }
 
-      function Ae() {
-        d.settings.classList.remove("show");
-        let e = false;
-        if (t.difficulty === "custom") {
-          const o = qt({ shouldSave: false });
-          e = r.snap?.difficulty === "custom" && r.snap?.customParams !== `${ o.rows },${ o.cols },${ o.mines }`;
+      function closeSettings() {
+        dom.settings.classList.remove("show");
+        let customChanged = false;
+        if (state.difficulty === "custom") {
+          const params = readCustomInputs({ shouldSave: false });
+          customChanged = runtime.snap?.difficulty === "custom" && runtime.snap?.customParams !== `${ params.rows },${ params.cols },${ params.mines }`;
         }
-        const n = !!r.snap && (r.snap.difficulty !== t.difficulty || r.snap.mode !== t.mode);
-        r.snap = null;
-        te();
-        if (n || e) {
-          ue();
+        const optionsChanged = !!runtime.snap && (runtime.snap.difficulty !== state.difficulty || runtime.snap.mode !== state.mode);
+        runtime.snap = null;
+        scheduleSaveSettings();
+        if (optionsChanged || customChanged) {
+          resetGame();
         }
-        if (r.settingsPaused) {
-          r.settingsPaused = false;
-          if (!(t.timer || t.gameOver || t.firstClick || t.placing)) {
-            Ke();
+        if (runtime.settingsPaused) {
+          runtime.settingsPaused = false;
+          if (!(state.timer || state.gameOver || state.firstClick || state.placing)) {
+            startTimer();
           }
         }
       }
 
-      function Rt() {
-        if (!t.settlement) {
-          t.settlement = {
-            cheated: t.cheated,
-            undoUsed: t.undoUsed
+      function getSettlement() {
+        if (!state.settlement) {
+          state.settlement = {
+            cheated: state.cheated,
+            undoUsed: state.undoUsed
           };
         }
-        return t.settlement;
+        return state.settlement;
       }
 
-      function ie() {
-        const e = d.area.clientWidth;
-        const n = d.area.clientHeight;
-        const o = d.wrapper.offsetWidth * r.scale;
-        const s = d.wrapper.offsetHeight * r.scale;
-        const a = Math.max(0, (e + o) / 2 - Math.min(64, o / 2, e / 2));
-        const c = Math.max(0, (n + s) / 2 - Math.min(64, s / 2, n / 2));
-        r.offset = { x: G(r.offset.x, -a, a), y: G(r.offset.y, -c, c) };
-        d.wrapper.style.transform = `translate3d(${ r.offset.x }px,${ r.offset.y }px,0) scale(${ r.scale })`;
+      function applyTransform() {
+        const areaWidth = dom.area.clientWidth;
+        const areaHeight = dom.area.clientHeight;
+        const wrapperWidth = dom.wrapper.offsetWidth * runtime.scale;
+        const wrapperHeight = dom.wrapper.offsetHeight * runtime.scale;
+        const maxPanX = Math.max(0, (areaWidth + wrapperWidth) / 2 - Math.min(64, wrapperWidth / 2, areaWidth / 2));
+        const maxPanY = Math.max(0, (areaHeight + wrapperHeight) / 2 - Math.min(64, wrapperHeight / 2, areaHeight / 2));
+        runtime.offset = { x: clamp(runtime.offset.x, -maxPanX, maxPanX), y: clamp(runtime.offset.y, -maxPanY, maxPanY) };
+        dom.wrapper.style.transform = `translate3d(${ runtime.offset.x }px,${ runtime.offset.y }px,0) scale(${ runtime.scale })`;
       }
-      let mt = null;
+      let willChangeTimer = null;
 
-      function Ve() {
-        clearTimeout(mt);
-        mt = setTimeout(() => {
-          d.wrapper.style.willChange = "auto";
+      function releaseWillChange() {
+        clearTimeout(willChangeTimer);
+        willChangeTimer = setTimeout(() => {
+          dom.wrapper.style.willChange = "auto";
           requestAnimationFrame(() => requestAnimationFrame(() => {
-            d.wrapper.style.willChange = "";
+            dom.wrapper.style.willChange = "";
           }));
         }, 180);
       }
 
-      function Pt() {
-        r.scale = 1;
-        r.offset = { x: 0, y: 0 };
-        ie();
-        Ve();
+      function resetView() {
+        runtime.scale = 1;
+        runtime.offset = { x: 0, y: 0 };
+        applyTransform();
+        releaseWillChange();
       }
 
-      function pe() {
-        r.panArm = null;
-        r.pan = null;
-        r.moved = false;
+      function schedulePan() {
+        if (runtime.panFrame) {
+          return;
+        }
+        runtime.panFrame = requestAnimationFrame(() => {
+          runtime.panFrame = 0;
+          applyTransform();
+        });
       }
 
-      function Ue(e, n) {
-        r.pan = { x: e, y: n, ox: r.offset.x, oy: r.offset.y };
-        r.moved = false;
+      function clearPanState() {
+        runtime.panArm = null;
+        runtime.pan = null;
+        runtime.moved = false;
       }
 
-      function Ot(h) {
-        const e = G(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--board-gap")) || 2, 0, 8);
-        const n = getComputedStyle(d.area);
-        const o = getComputedStyle(d.wrapper);
-        const s = parseFloat(n.paddingLeft) + parseFloat(n.paddingRight) + parseFloat(o.paddingLeft) + parseFloat(o.paddingRight);
-        const a = parseFloat(n.paddingTop) + parseFloat(n.paddingBottom) + parseFloat(o.paddingTop) + parseFloat(o.paddingBottom);
-        const c = Math.max(240, d.area.clientWidth - s);
-        const i = Math.max(240, d.area.clientHeight - a);
-        const l = Math.floor(Math.min((c - (t.cols - 1) * e) / t.cols, (i - (t.rows - 1) * e) / t.rows));
-        const f = innerWidth < 640;
-        r.cellSize = G(Number.isFinite(l) ? l : 30, f ? 24 : 28, f ? 46 : 56);
-        const u = d.board.style;
-        u.setProperty("--cell-size", `${ r.cellSize }px`);
-        u.setProperty("--cell-font", `${ Math.max(11, Math.round(0.56 * r.cellSize)) }px`);
-        u.setProperty("--radius-cell", `${ G(Math.round(0.22 * r.cellSize), 4, 10) }px`);
-        d.board.classList.toggle("big", t.rows * t.cols > 2500);
-        u.gridTemplateColumns = `repeat(${ t.cols },${ r.cellSize }px)`;
-        u.gap = `${ e }px`;
-        if (h) {
-          ie();
-          Ve();
+      function beginPan(startX, startY) {
+        runtime.pan = { x: startX, y: startY, startOffsetX: runtime.offset.x, startOffsetY: runtime.offset.y };
+        runtime.moved = false;
+      }
+
+      function layoutBoard(keepView) {
+        const gap = clamp(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--board-gap")) || 2, 0, 8);
+        const areaStyle = getComputedStyle(dom.area);
+        const wrapStyle = getComputedStyle(dom.wrapper);
+        const paddingX = parseFloat(areaStyle.paddingLeft) + parseFloat(areaStyle.paddingRight) + parseFloat(wrapStyle.paddingLeft) + parseFloat(wrapStyle.paddingRight);
+        const paddingY = parseFloat(areaStyle.paddingTop) + parseFloat(areaStyle.paddingBottom) + parseFloat(wrapStyle.paddingTop) + parseFloat(wrapStyle.paddingBottom);
+        const availableWidth = Math.max(240, dom.area.clientWidth - paddingX);
+        const availableHeight = Math.max(240, dom.area.clientHeight - paddingY);
+        const cellFit = Math.floor(Math.min((availableWidth - (state.cols - 1) * gap) / state.cols, (availableHeight - (state.rows - 1) * gap) / state.rows));
+        const isNarrow = innerWidth < 640;
+        runtime.cellSize = clamp(Number.isFinite(cellFit) ? cellFit : 30, isNarrow ? 24 : 28, isNarrow ? 46 : 56);
+        const boardStyle = dom.board.style;
+        boardStyle.setProperty("--cell-size", `${ runtime.cellSize }px`);
+        boardStyle.setProperty("--cell-font", `${ Math.max(11, Math.round(0.56 * runtime.cellSize)) }px`);
+        boardStyle.setProperty("--radius-cell", `${ clamp(Math.round(0.22 * runtime.cellSize), 4, 10) }px`);
+        dom.board.classList.toggle("big", state.rows * state.cols > 2500);
+        boardStyle.gridTemplateColumns = `repeat(${ state.cols },${ runtime.cellSize }px)`;
+        boardStyle.gap = `${ gap }px`;
+        if (keepView) {
+          applyTransform();
+          releaseWillChange();
         } else {
-          Pt();
+          resetView();
         }
       }
-      const gt = (e, n) => e + Math.floor(Math.random() * (n - e + 1));
-      const pn = (e, n) => e + Math.random() * (n - e);
+      const randomInt = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+      const randomFloat = (min, max) => min + Math.random() * (max - min);
 
-      function vn(e) {
-        let n = Math.random() * e.reduce((o, s) => o + s.w, 0);
-        for (const o of e) {
-          n -= o.w;
-          if (n <= 0) {
-            return o;
+      function pickWeighted(tiers) {
+        let roll = Math.random() * tiers.reduce((sum, tier) => sum + tier.weight, 0);
+        for (const tier of tiers) {
+          roll -= tier.weight;
+          if (roll <= 0) {
+            return tier;
           }
         }
-        return e[e.length - 1];
+        return tiers[tiers.length - 1];
       }
 
-      function yn() {
-        const e = vn(nn);
-        const n = gt(...e.rows);
-        const o = gt(...e.cols);
-        const s = n * o;
-        const a = G(Math.round(s * pn(...e.density)), Math.max(1, Math.round(0.09 * s)), Math.min(s - 9, 99));
-        X.random = { rows: n, cols: o, mines: a };
+      function randomizeRandomPreset() {
+        const tier = pickWeighted(RANDOM_SIZE_TIERS);
+        const rows = randomInt(...tier.rows);
+        const cols = randomInt(...tier.cols);
+        const cellCount = rows * cols;
+        const mines = clamp(Math.round(cellCount * randomFloat(...tier.density)), Math.max(1, Math.round(0.09 * cellCount)), Math.min(cellCount - 9, 99));
+        DIFFICULTY_PRESETS.random = { rows, cols, mines };
       }
 
-      function ue() {
-        Lt();
-        Tt();
+      function resetGame() {
+        hideToast();
+        stopConfetti();
         cancelWave();
-        ae();
-        Yt();
-        t.hintBusy = false;
-        d.warning.hidden = true;
-        K("modal");
-        if (t.difficulty === "random") {
-          yn();
+        cancelAllWorkerChecks();
+        abortHint();
+        state.hintBusy = false;
+        dom.warning.hidden = true;
+        clearTimer("modal");
+        if (state.difficulty === "random") {
+          randomizeRandomPreset();
         }
-        d.board.querySelectorAll(".kb-focus").forEach(l => l.classList.remove("kb-focus"));
-        const e = Je(X[t.difficulty] || X.medium);
-        Object.assign(t, {
-          rows: e.rows,
-          cols: e.cols,
-          mines: e.mines,
-          board: ge(e.rows, e.cols, 0),
-          revealed: ge(e.rows, e.cols, false),
-          flagged: ge(e.rows, e.cols, false),
-          questioned: ge(e.rows, e.cols, false),
+        dom.board.querySelectorAll(".kb-focus").forEach(cell => cell.classList.remove("kb-focus"));
+        const params = normalizeCustomParams(DIFFICULTY_PRESETS[state.difficulty] || DIFFICULTY_PRESETS.medium);
+        Object.assign(state, {
+          rows: params.rows,
+          cols: params.cols,
+          mines: params.mines,
+          board: makeGrid(params.rows, params.cols, 0),
+          revealed: makeGrid(params.rows, params.cols, false),
+          flagged: makeGrid(params.rows, params.cols, false),
+          questioned: makeGrid(params.rows, params.cols, false),
           flagCount: 0,
           revealedCount: 0,
           nonMineCount: 0,
@@ -2551,134 +2571,135 @@
           hintsUsed: 0,
           bv3: 0,
           usefulClicks: 0,
-          kbR: -1,
-          kbC: -1,
-          gameId: t.gameId + 1
+          keyboardRow: -1,
+          keyboardCol: -1,
+          gameId: state.gameId + 1
         });
-        Me();
-        pe();
-        ln();
-        Ot();
-        bn();
-        oe();
-        nt();
-        le();
+        runtime.settingsPaused = false;
+        stopTimer();
+        clearPanState();
+        resetPointerState();
+        layoutBoard();
+        buildBoardDom();
+        renderCounters();
+        updateUndoButtons();
+        renderProgress();
       }
 
-      function wn(e, n, o) {
-        e._sig = "";
-        e.dataset.row = n;
-        e.dataset.col = o;
-        e.setAttribute("role", "gridcell");
-        e.setAttribute("aria-rowindex", n + 1);
-        e.setAttribute("aria-colindex", o + 1);
+      function initCell(cell, row, col) {
+        cell._renderSignature = "";
+        cell.dataset.row = row;
+        cell.dataset.col = col;
+        cell.setAttribute("role", "gridcell");
+        cell.setAttribute("aria-rowindex", row + 1);
+        cell.setAttribute("aria-colindex", col + 1);
       }
 
-      function bn() {
-        const { rows: e, cols: n } = t;
-        const o = e * n;
-        const s = r.cells?.length !== o || d.board.dataset.rows != e || d.board.dataset.cols != n;
-        d.board.setAttribute("aria-rowcount", e);
-        d.board.setAttribute("aria-colcount", n);
-        d.board.setAttribute("aria-label", `${ e }×${ n } ${ t.mines }雷`);
-        if (s) {
-          const a = document.createDocumentFragment();
-          r.cells = [];
-          for (let c = 0; c < e; c++) {
-            const i = document.createElement("div");
-            i.className = "board-row";
-            i.setAttribute("role", "row");
-            i.setAttribute("aria-rowindex", c + 1);
-            for (let l = 0; l < n; l++) {
-              const f = document.createElement("div");
-              i.appendChild(f);
-              r.cells.push(f);
-              wn(f, c, l);
+      function buildBoardDom() {
+        const { rows, cols } = state;
+        const total = rows * cols;
+        const needsRebuild = runtime.cells?.length !== total || dom.board.dataset.rows != rows || dom.board.dataset.cols != cols;
+        dom.board.setAttribute("aria-rowcount", rows);
+        dom.board.setAttribute("aria-colcount", cols);
+        dom.board.setAttribute("aria-label", `${ rows }×${ cols } ${ state.mines }雷`);
+        if (needsRebuild) {
+          const fragment = document.createDocumentFragment();
+          runtime.cells = [];
+          for (let row = 0; row < rows; row++) {
+            const rowElement = document.createElement("div");
+            rowElement.className = "board-row";
+            rowElement.setAttribute("role", "row");
+            rowElement.setAttribute("aria-rowindex", row + 1);
+            for (let col = 0; col < cols; col++) {
+              const cell = document.createElement("div");
+              rowElement.appendChild(cell);
+              runtime.cells.push(cell);
+              initCell(cell, row, col);
             }
-            a.appendChild(i);
+            fragment.appendChild(rowElement);
           }
-          d.board.replaceChildren(a);
-          d.board.dataset.rows = e;
-          d.board.dataset.cols = n;
+          dom.board.replaceChildren(fragment);
+          dom.board.dataset.rows = rows;
+          dom.board.dataset.cols = cols;
         }
-        It();
-        d.wrapper.style.animation = "none";
+        renderAllCells();
+        dom.wrapper.style.animation = "none";
         requestAnimationFrame(() => {
-          d.wrapper.style.animation = "board-in .18s var(--md-ease)";
+          dom.wrapper.style.animation = "board-in .18s var(--md-ease)";
         });
       }
 
-      function Cn(e, n) {
-        const isRenderedRevealed = (row, col) => me(row, col) && ee(row, col)?.classList.contains("revealed");
-        return (isRenderedRevealed(e - 1, n) ? " edge-t" : "") + (isRenderedRevealed(e + 1, n) ? " edge-b" : "") + (isRenderedRevealed(e, n - 1) ? " edge-l" : "") + (isRenderedRevealed(e, n + 1) ? " edge-r" : "");
+      function edgeClasses(row, col) {
+        const isRenderedRevealed = (row, col) => inBounds(row, col) && cellAt(row, col)?.classList.contains("revealed");
+        return (isRenderedRevealed(row - 1, col) ? " edge-t" : "") + (isRenderedRevealed(row + 1, col) ? " edge-b" : "") + (isRenderedRevealed(row, col - 1) ? " edge-l" : "") + (isRenderedRevealed(row, col + 1) ? " edge-r" : "");
       }
 
-      function j(e, n, o = "") {
-        const s = r.cells[de(e, n)];
-        if (!s) {
+      function renderCell(row, col, extraClass = "") {
+        const cellElement = runtime.cells[cellIndex(row, col)];
+        if (!cellElement) {
           return;
         }
-        const a = t.board[e][n];
-        const c = t.revealed[e][n];
-        let i = "cell";
-        let l = "";
-        let f = "未翻开";
-        let u = false;
-        if (t.flagged[e][n]) {
-          i += " flagged";
-          f = "已插旗";
-          if (t.gameOver && a !== -1) {
-            i += " wrong-flag";
-            l = Ne.wrong;
-            f = "错误旗标";
-            u = true;
+        const value = state.board[row][col];
+        const isRevealed = state.revealed[row][col];
+        let className = "cell";
+        let html = "";
+        let label = "未翻开";
+        let useHtml = false;
+        if (state.flagged[row][col]) {
+          className += " flagged";
+          label = "已插旗";
+          if (state.gameOver && value !== -1) {
+            className += " wrong-flag";
+            html = CELL_ICONS.wrong;
+            label = "错误旗标";
+            useHtml = true;
           }
-        } else if (t.questioned[e][n]) {
-          i += " questioned";
-          l = Ne.question;
-          f = "问号标记";
-          u = true;
-        } else if (c) {
-          i += " revealed";
-          if (a === -1) {
-            i += " mine-show";
-            l = Ne.mine;
-            f = "雷";
-            u = true;
-          } else if (a > 0) {
-            i += ` num-${ a }`;
-            f = String(a);
-            l = f;
+        } else if (state.questioned[row][col]) {
+          className += " questioned";
+          html = CELL_ICONS.question;
+          label = "问号标记";
+          useHtml = true;
+        } else if (isRevealed) {
+          className += " revealed";
+          if (value === -1) {
+            className += " mine-show";
+            html = CELL_ICONS.mine;
+            label = "雷";
+            useHtml = true;
+          } else if (value > 0) {
+            className += ` num-${ value }`;
+            label = String(value);
+            html = label;
           } else {
-            f = "0";
+            label = "0";
           }
         }
-        if (!c) {
-          i += Cn(e, n);
+        if (!isRevealed) {
+          className += edgeClasses(row, col);
         }
-        for (const w of o ? Ct : en) {
-          if (s.classList.contains(w)) {
-            i += " " + w;
+        for (const transientClass of extraClass ? TRANSIENT_CELL_CLASSES : CELL_ANIMATION_CLASSES) {
+          if (cellElement.classList.contains(transientClass)) {
+            className += " " + transientClass;
           }
         }
-        const M = f + "|" + l + "|" + i;
-        if (!(!o && s._sig === M)) {
-          s._sig = M;
-          s.className = o ? i + " " + o : i;
-          if (u) {
-            s.innerHTML = l;
+        const signature = label + "|" + html + "|" + className;
+        if (!(!extraClass && cellElement._renderSignature === signature)) {
+          cellElement._renderSignature = signature;
+          cellElement.className = extraClass ? className + " " + extraClass : className;
+          if (useHtml) {
+            cellElement.innerHTML = html;
           } else {
-            s.textContent = l;
+            cellElement.textContent = html;
           }
-          s.setAttribute("aria-label", f);
+          cellElement.setAttribute("aria-label", label);
         }
       }
 
-      function queueAdjacentEdges(w, e, n) {
-        const neighbors = [[e - 1, n], [e + 1, n], [e, n - 1], [e, n + 1]];
+      function queueAdjacentEdges(wave, originRow, originCol) {
+        const neighbors = [[originRow - 1, originCol], [originRow + 1, originCol], [originRow, originCol - 1], [originRow, originCol + 1]];
         for (const [row, col] of neighbors) {
-          if (me(row, col) && !t.revealed[row][col]) {
-            w.edgeCells.add(de(row, col));
+          if (inBounds(row, col) && !state.revealed[row][col]) {
+            wave.edgeCells.add(cellIndex(row, col));
           }
         }
       }
@@ -2690,86 +2711,86 @@
             break;
           }
           wave.edgeCells.delete(index);
-          const row = Math.floor(index / t.cols);
-          const col = index % t.cols;
-          if (me(row, col) && !t.revealed[row][col]) {
-            j(row, col);
+          const row = Math.floor(index / state.cols);
+          const col = index % state.cols;
+          if (inBounds(row, col) && !state.revealed[row][col]) {
+            renderCell(row, col);
           }
           processed++;
         }
       }
 
-      function It() {
-        for (let e = 0; e < t.rows; e++) {
-          for (let n = 0; n < t.cols; n++) {
-            j(e, n);
+      function renderAllCells() {
+        for (let row = 0; row < state.rows; row++) {
+          for (let col = 0; col < state.cols; col++) {
+            renderCell(row, col);
           }
         }
         // All revealed cells are now present in the DOM; refresh hidden-cell edges afterward.
-        for (let e = 0; e < t.rows; e++) {
-          for (let n = 0; n < t.cols; n++) {
-            if (!t.revealed[e][n]) {
-              j(e, n);
+        for (let row = 0; row < state.rows; row++) {
+          for (let col = 0; col < state.cols; col++) {
+            if (!state.revealed[row][col]) {
+              renderCell(row, col);
             }
           }
         }
       }
 
-      function Se(e) {
-        const n = new Set();
-        const o = (s, a) => {
-          if (!me(s, a) || t.revealed[s][a]) {
+      function refreshEdgesAround(cells) {
+        const seen = new Set();
+        const refreshCell = (row, col) => {
+          if (!inBounds(row, col) || state.revealed[row][col]) {
             return;
           }
-          const c = de(s, a);
-          if (!n.has(c)) {
-            n.add(c);
-            j(s, a);
+          const index = cellIndex(row, col);
+          if (!seen.has(index)) {
+            seen.add(index);
+            renderCell(row, col);
           }
         };
-        for (const [s, a] of e) {
-          o(s - 1, a);
-          o(s + 1, a);
-          o(s, a - 1);
-          o(s, a + 1);
+        for (const [row, col] of cells) {
+          refreshCell(row - 1, col);
+          refreshCell(row + 1, col);
+          refreshCell(row, col - 1);
+          refreshCell(row, col + 1);
         }
       }
 
-      d.board.addEventListener("animationend", e => {
-        const n = e.target.classList;
-        if (e.animationName === "flag-spring") {
-          n.remove("anim-flag");
-        } else if (e.animationName === "cell-pop") {
-          n.remove("anim-unflag");
-        } else if (e.animationName === "reveal-pop") {
-          n.remove("anim-reveal");
-        } else if (e.animationName === "mine-reveal-fade") {
-          n.remove("anim-mine-reveal");
-        } else if (e.animationName === "ring") {
-          n.remove("hint-flash");
+      dom.board.addEventListener("animationend", event => {
+        const classList = event.target.classList;
+        if (event.animationName === "flag-spring") {
+          classList.remove("anim-flag");
+        } else if (event.animationName === "cell-pop") {
+          classList.remove("anim-unflag");
+        } else if (event.animationName === "reveal-pop") {
+          classList.remove("anim-reveal");
+        } else if (event.animationName === "mine-reveal-fade") {
+          classList.remove("anim-mine-reveal");
+        } else if (event.animationName === "ring") {
+          classList.remove("hint-flash");
         }
       });
 
       // ---- Reveal wave: staged, frame-budgeted reveal of many cells ----------------
-      // The game state (t.revealed) is updated up front by st(); a wave only paints it.
+      // The game state (state.revealed) is updated up front by revealCells(); a wave only paints it.
 
       function makeViewportTest() {
-        const area = d.area.getBoundingClientRect();
-        const board = d.board.getBoundingClientRect();
-        const step = (r.cellSize + (parseFloat(d.board.style.gap) || 0)) * r.scale;
+        const area = dom.area.getBoundingClientRect();
+        const board = dom.board.getBoundingClientRect();
+        const step = (runtime.cellSize + (parseFloat(dom.board.style.gap) || 0)) * runtime.scale;
         return (row, col) => {
-          const left = board.left + col * step;
-          const top = board.top + row * step;
-          return left + step >= area.left && left <= area.right && top + step >= area.top && top <= area.bottom;
+          const cellLeft = board.left + col * step;
+          const cellTop = board.top + row * step;
+          return cellLeft + step >= area.left && cellLeft <= area.right && cellTop + step >= area.top && cellTop <= area.bottom;
         };
       }
 
       function paintWaveCell(wave, row, col, animate) {
         if (animate) {
-          j(row, col, wave.animationClass);
-          wave.cells.push(ee(row, col));
+          renderCell(row, col, wave.animationClass);
+          wave.cells.push(cellAt(row, col));
         } else {
-          j(row, col);
+          renderCell(row, col);
         }
         queueAdjacentEdges(wave, row, col);
       }
@@ -2782,9 +2803,9 @@
 
       // Abort the running wave without painting the rest (new game, undo, ...). Pending callbacks are dropped.
       function cancelWave() {
-        r.waveToken++;
-        const wave = r.wave;
-        r.wave = null;
+        runtime.waveToken++;
+        const wave = runtime.wave;
+        runtime.wave = null;
         if (wave) {
           if (wave.frame) {
             cancelAnimationFrame(wave.frame);
@@ -2795,7 +2816,7 @@
 
       // Finish the running wave immediately (used before starting another one).
       function flushWave() {
-        const wave = r.wave;
+        const wave = runtime.wave;
         if (!wave) {
           return;
         }
@@ -2809,8 +2830,8 @@
 
       // Run callback once the current wave has fully settled (immediately if none is running).
       function afterWave(callback) {
-        if (r.wave) {
-          r.wave.onDone.push(callback);
+        if (runtime.wave) {
+          runtime.wave.onDone.push(callback);
         } else {
           callback();
         }
@@ -2829,7 +2850,7 @@
         if (!cells.length) {
           if (edgeSources.length) {
             requestAnimationFrame(() => {
-              Se(edgeSources);
+              refreshEdgesAround(edgeSources);
               onDone?.();
             });
           } else {
@@ -2838,8 +2859,8 @@
           return;
         }
 
-        const token = r.waveToken;
-        const reducedMotion = on();
+        const token = runtime.waveToken;
+        const reducedMotion = prefersReducedMotion();
         const items = cells.map(([row, col, depth], order) => ({
           row,
           col,
@@ -2847,7 +2868,7 @@
           angle: Math.atan2(row - originRow, col - originCol),
           order,
           visible: false
-        })).sort((a, b) => a.depth - b.depth || a.angle - b.angle || a.order - b.order);
+        })).sort((first, second) => first.depth - second.depth || first.angle - second.angle || first.order - second.order);
         const total = items.length;
         const farthest = items[total - 1].depth;
 
@@ -2882,7 +2903,7 @@
         let lastFrameTime = startTime;
 
         const wave = { items, index: 0, cells: [], edgeCells: new Set(), frame: null, animationClass, onDone: [] };
-        r.wave = wave;
+        runtime.wave = wave;
 
         // Losing reveal: neighbours of the exploded cell are refreshed in step with the mines.
         if (mineReveal) {
@@ -2892,7 +2913,7 @@
         }
 
         const settle = () => {
-          r.wave = null;
+          runtime.wave = null;
           clearWaveClasses(wave);
           onDone?.();
           for (const callback of wave.onDone) {
@@ -2905,7 +2926,7 @@
           if (animationClass) {
             // let the last cells finish their CSS animation (.26s pop / .12s mine fade)
             setTimeout(() => {
-              if (token === r.waveToken) {
+              if (token === runtime.waveToken) {
                 settle();
               }
             }, mineReveal ? 140 : 270);
@@ -2937,7 +2958,7 @@
         };
 
         const step = now => {
-          if (token !== r.waveToken) {
+          if (token !== runtime.waveToken) {
             return;
           }
           // Adapt to the device: a long frame interval shrinks the budget, smooth frames restore it.
@@ -2965,513 +2986,514 @@
 
         wave.frame = requestAnimationFrame(step);
       }
-      function ht(e, n, o) {
-        const s = t.gameId;
-        r.longPress = false;
-        r.dragging = false;
-        r.pressCancelled = false;
-        r.chord = null;
-        if (Qe(e, n)) {
-          En(e, n);
-          r.chord = [e, n];
+      function pressStart(row, col, isMouse) {
+        const gameId = state.gameId;
+        runtime.longPress = false;
+        runtime.dragging = false;
+        runtime.pressCancelled = false;
+        runtime.chord = null;
+        if (isRevealedNumber(row, col)) {
+          highlightChordNeighbors(row, col);
+          runtime.chord = [row, col];
           return;
         }
-        K("longPress");
-        if (!o) {
-          r.timers.longPress = setTimeout(() => {
-            if (!(t.gameId !== s || t.gameOver || t.placing || r.dragging || r.moved)) {
-              r.longPress = true;
-              St()(e, n);
+        clearTimer("longPress");
+        if (!isMouse) {
+          runtime.timers.longPress = setTimeout(() => {
+            if (!(state.gameId !== gameId || state.gameOver || state.placing || runtime.dragging || runtime.moved)) {
+              runtime.longPress = true;
+              getSecondaryAction()(row, col);
             }
-          }, t.longPressDelay);
+          }, state.longPressDelay);
         }
       }
 
-      function Fe(e = false) {
-        K("longPress");
-        if (e) {
-          r.pressCancelled = true;
+      function cancelPress(markCancelled = false) {
+        clearTimer("longPress");
+        if (markCancelled) {
+          runtime.pressCancelled = true;
         }
-        r.chord = null;
-        De();
+        runtime.chord = null;
+        clearHints();
       }
 
-      function pt(e, n) {
-        K("longPress");
-        De();
-        if (r.pressCancelled) {
-          r.pressCancelled = false;
+      function pressEnd(row, col) {
+        clearTimer("longPress");
+        clearHints();
+        if (runtime.pressCancelled) {
+          runtime.pressCancelled = false;
           return;
         }
-        if (me(e, n)) {
-          (t.kbR !== e || t.kbC !== n) && me(t.kbR, t.kbC) && ee(t.kbR, t.kbC)?.classList.remove("kb-focus");
-          t.kbR = e;
-          t.kbC = n;
+        if (inBounds(row, col)) {
+          (state.keyboardRow !== row || state.keyboardCol !== col) && inBounds(state.keyboardRow, state.keyboardCol) && cellAt(state.keyboardRow, state.keyboardCol)?.classList.remove("kb-focus");
+          state.keyboardRow = row;
+          state.keyboardCol = col;
         }
-        if (r.chord) {
-          r.chord = null;
-          if (!r.moved) {
-            tt(e, n);
+        if (runtime.chord) {
+          runtime.chord = null;
+          if (!runtime.moved) {
+            chordReveal(row, col);
           }
-        } else if (!(r.longPress || r.dragging || r.moved)) {
-          (t.firstClick ? qe : rn())(e, n);
+        } else if (!(runtime.longPress || runtime.dragging || runtime.moved)) {
+          (state.firstClick ? revealCell : getPrimaryAction())(row, col);
         }
       }
 
-      function En(e, n) {
-        const o = Bt(e, n);
-        const s = o.filter(a => t.flagged[a.r][a.c]).length === t.board[e][n] ? "hint" : "hint-dim";
-        for (const a of o) {
-          if (t.revealed[a.r][a.c] || t.flagged[a.r][a.c]) {
+      function highlightChordNeighbors(row, col) {
+        const neighbors = neighborList(row, col);
+        const hintClass = neighbors.filter(neighbor => state.flagged[neighbor.row][neighbor.col]).length === state.board[row][col] ? "hint" : "hint-dim";
+        for (const neighbor of neighbors) {
+          if (state.revealed[neighbor.row][neighbor.col] || state.flagged[neighbor.row][neighbor.col]) {
             continue;
           }
-          const c = ee(a.r, a.c);
-          if (c) {
-            c.classList.add(s);
-            t.hinted.push(c);
+          const cell = cellAt(neighbor.row, neighbor.col);
+          if (cell) {
+            cell.classList.add(hintClass);
+            state.hinted.push(cell);
           }
         }
       }
 
-      function De() {
-        t.hinted.forEach(e => e.classList.remove("hint", "hint-dim"));
-        t.hinted = [];
+      function clearHints() {
+        state.hinted.forEach(cell => cell.classList.remove("hint", "hint-dim"));
+        state.hinted = [];
       }
 
-      function tt(e, n) {
-        if (!Qe(e, n)) {
+      function chordReveal(row, col) {
+        if (!isRevealedNumber(row, col)) {
           return;
         }
-        const o = Bt(e, n);
-        if (o.filter(a => t.flagged[a.r][a.c]).length !== t.board[e][n]) {
+        const neighbors = neighborList(row, col);
+        if (neighbors.filter(neighbor => state.flagged[neighbor.row][neighbor.col]).length !== state.board[row][col]) {
           return;
         }
-        const s = o.filter(a => !t.revealed[a.r][a.c] && !t.flagged[a.r][a.c]);
-        if (s.length) {
-          Z("click");
-          fe();
-          t.usefulClicks++;
-          st(s.map(a => [a.r, a.c]), e, n);
-          if (!t.gameOver) {
-            at();
+        const targets = neighbors.filter(neighbor => !state.revealed[neighbor.row][neighbor.col] && !state.flagged[neighbor.row][neighbor.col]);
+        if (targets.length) {
+          playFeedback("click");
+          pushUndoSnapshot();
+          state.usefulClicks++;
+          revealCells(targets.map(neighbor => [neighbor.row, neighbor.col]), row, col);
+          if (!state.gameOver) {
+            checkWin();
           }
         }
       }
-      d.board.addEventListener("mousedown", e => {
-        const n = e.target.closest(".cell");
-        if (!n || t.gameOver || t.placing || r.ignoreMouse) {
+      dom.board.addEventListener("mousedown", event => {
+        const cellElement = event.target.closest(".cell");
+        if (!cellElement || state.gameOver || state.placing || runtime.ignoreMouse) {
           return;
         }
-        const [o, s] = dt(n);
-        r.mouseCell = [o, s];
-        if (e.button === 1) {
-          e.preventDefault();
-          tt(o, s);
+        const [row, col] = cellCoords(cellElement);
+        runtime.mouseCell = [row, col];
+        if (event.button === 1) {
+          event.preventDefault();
+          chordReveal(row, col);
           return;
         }
-        if (e.button === 2) {
-          St()(o, s);
+        if (event.button === 2) {
+          getSecondaryAction()(row, col);
         }
-        if (e.button === 0) {
-          ht(o, s, true);
+        if (event.button === 0) {
+          pressStart(row, col, true);
         }
       });
-      d.board.addEventListener("mouseup", e => {
-        if (e.button !== 0) {
-          r.mouseCell = null;
+      dom.board.addEventListener("mouseup", event => {
+        if (event.button !== 0) {
+          runtime.mouseCell = null;
           return;
         }
-        if (!r.mouseCell || t.gameOver || r.ignoreMouse) {
+        if (!runtime.mouseCell || state.gameOver || runtime.ignoreMouse) {
           return;
         }
-        const [n, o] = r.mouseCell;
-        r.mouseCell = null;
-        pt(n, o);
+        const [row, col] = runtime.mouseCell;
+        runtime.mouseCell = null;
+        pressEnd(row, col);
       });
-      d.board.addEventListener("mouseout", e => {
-        const n = e.target.closest(".cell");
-        if (n && n !== e.relatedTarget?.closest?.(".cell")) {
-          r.mouseCell = null;
-          Fe(true);
+      dom.board.addEventListener("mouseout", event => {
+        const cellElement = event.target.closest(".cell");
+        if (cellElement && cellElement !== event.relatedTarget?.closest?.(".cell")) {
+          runtime.mouseCell = null;
+          cancelPress(true);
         }
       });
-      d.board.addEventListener("contextmenu", e => e.preventDefault());
-      d.board.addEventListener("touchstart", e => {
-        r.touch = null;
-        if (t.gameOver || t.placing || r.pan) {
+      dom.board.addEventListener("contextmenu", event => event.preventDefault());
+      dom.board.addEventListener("touchstart", event => {
+        runtime.touch = null;
+        if (state.gameOver || state.placing || runtime.pan) {
           return;
         }
-        if (e.touches.length !== 1) {
-          r.wasPinching = true;
-          r.currentCell?.classList.remove("pressing");
-          Fe(true);
+        if (event.touches.length !== 1) {
+          runtime.wasPinching = true;
+          clearPressing();
+          cancelPress(true);
           return;
         }
-        r.wasPinching = false;
-        const n = e.touches[0];
-        const o = n.target.closest(".cell");
-        if (!o) {
+        runtime.wasPinching = false;
+        const touch = event.touches[0];
+        const cellElement = touch.target.closest(".cell");
+        if (!cellElement) {
           return;
         }
-        const [s, a] = dt(o);
-        r.touch = { x: n.clientX, y: n.clientY, r: s, c: a };
-        r.currentCell = o;
-        o.classList.add("pressing");
-        ht(s, a);
-        if (r.chord) {
-          o.classList.remove("pressing");
+        const [row, col] = cellCoords(cellElement);
+        runtime.touch = { x: touch.clientX, y: touch.clientY, row, col };
+        runtime.currentCell = cellElement;
+        cellElement.classList.add("pressing");
+        pressStart(row, col);
+        if (runtime.chord) {
+          cellElement.classList.remove("pressing");
         }
       }, { passive: true });
-      d.board.addEventListener("touchmove", e => {
-        if (!r.touch || t.gameOver || t.placing || r.longPress || r.pan || r.moved) {
-          K("longPress");
-          r.currentCell?.classList.remove("pressing");
+      dom.board.addEventListener("touchmove", event => {
+        if (!runtime.touch || state.gameOver || state.placing || runtime.longPress || runtime.pan || runtime.moved) {
+          clearTimer("longPress");
+          clearPressing();
           return;
         }
-        const n = e.touches[0];
-        if (!(!n || Math.abs(n.clientX - r.touch.x) <= 15 && Math.abs(n.clientY - r.touch.y) <= 15)) {
-          r.dragging = true;
-          r.currentCell?.classList.remove("pressing");
-          r.currentCell = null;
-          K("longPress");
-          Ue(n.clientX, n.clientY);
-          r.moved = true;
+        const touch = event.touches[0];
+        if (!(!touch || Math.abs(touch.clientX - runtime.touch.x) <= 15 && Math.abs(touch.clientY - runtime.touch.y) <= 15)) {
+          runtime.dragging = true;
+          clearPressing();
+          runtime.currentCell = null;
+          clearTimer("longPress");
+          beginPan(touch.clientX, touch.clientY);
+          runtime.moved = true;
         }
       }, { passive: true });
-      d.board.addEventListener("touchend", () => {
-        r.currentCell?.classList.remove("pressing");
-        r.ignoreMouse = true;
-        K("ignoreMouse");
-        r.timers.ignoreMouse = setTimeout(() => {
-          r.ignoreMouse = false;
+      dom.board.addEventListener("touchend", () => {
+        clearPressing();
+        runtime.ignoreMouse = true;
+        clearTimer("ignoreMouse");
+        runtime.timers.ignoreMouse = setTimeout(() => {
+          runtime.ignoreMouse = false;
         }, 500);
-        if (!r.touch || r.dragging || r.moved || r.wasPinching) {
-          Fe();
+        if (!runtime.touch || runtime.dragging || runtime.moved || runtime.wasPinching) {
+          cancelPress();
         } else {
-          pt(r.touch.r, r.touch.c);
+          pressEnd(runtime.touch.row, runtime.touch.col);
         }
-        r.touch = null;
+        runtime.touch = null;
       });
-      d.board.addEventListener("touchcancel", () => {
-        r.currentCell?.classList.remove("pressing");
-        r.touch = null;
-        Fe(true);
+      dom.board.addEventListener("touchcancel", () => {
+        clearPressing();
+        runtime.touch = null;
+        cancelPress(true);
       });
-      const zt = () => !t.firstClick && !t.placing && t.undo.length > 0;
+      const canUndo = () => !state.firstClick && !state.placing && state.undo.length > 0;
 
-      function _t() {
-        const { rows: e, cols: n } = t;
-        const o = e * n;
-        const s = new Uint8Array(o);
-        const a = new Uint8Array(o);
-        const c = new Uint8Array(o);
-        for (let i = 0; i < e; i++) {
-          for (let l = 0; l < n; l++) {
-            const f = i * n + l;
-            s[f] = t.revealed[i][l] ? 1 : 0;
-            a[f] = t.flagged[i][l] ? 1 : 0;
-            c[f] = t.questioned[i][l] ? 1 : 0;
+      function snapshotBoard() {
+        const { rows, cols } = state;
+        const total = rows * cols;
+        const revealed = new Uint8Array(total);
+        const flagged = new Uint8Array(total);
+        const questioned = new Uint8Array(total);
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const index = row * cols + col;
+            revealed[index] = state.revealed[row][col] ? 1 : 0;
+            flagged[index] = state.flagged[row][col] ? 1 : 0;
+            questioned[index] = state.questioned[row][col] ? 1 : 0;
           }
         }
-        return { rev: s, fl: a, qu: c };
+        return { revealed, flagged, questioned };
       }
 
-      function fe() {
-        if (t.firstClick) {
+      function pushUndoSnapshot() {
+        if (state.firstClick) {
           return;
         }
-        t.boardVersion++;
-        const { rev: e, fl: n, qu: o } = _t();
-        t.undo.push({
-          revealed: e,
-          flagged: n,
-          questioned: o,
-          flagCount: t.flagCount,
-          revealedCount: t.revealedCount,
-          mines: t.mines,
-          usefulClicks: t.usefulClicks,
-          time: t.time,
-          timeMs: t.timeMs,
-          timerStart: t.timerStart,
-          gameOver: t.gameOver
+        state.boardVersion++;
+        const { revealed, flagged, questioned } = snapshotBoard();
+        state.undo.push({
+          revealed,
+          flagged,
+          questioned,
+          flagCount: state.flagCount,
+          revealedCount: state.revealedCount,
+          mines: state.mines,
+          usefulClicks: state.usefulClicks,
+          time: state.time,
+          timeMs: state.timeMs,
+          timerStart: state.timerStart,
+          gameOver: state.gameOver
         });
-        if (t.undo.length > Zt) {
-          t.undo.shift();
+        if (state.undo.length > MAX_UNDO_STEPS) {
+          state.undo.shift();
         }
-        nt();
+        updateUndoButtons();
       }
 
-      function ze() {
-        if (!zt()) {
+      function undoMove() {
+        if (!canUndo()) {
           return;
         }
         flushWave();
-        K("modal");
-        const e = t.undo.pop();
-        const n = t.gameOver;
-        if (n && !e.gameOver && t.settlement) {
-          t.settlement = null;
+        clearTimer("modal");
+        const snapshot = state.undo.pop();
+        const wasGameOver = state.gameOver;
+        if (wasGameOver && !snapshot.gameOver && state.settlement) {
+          state.settlement = null;
         }
-        t.cheated = true;
-        t.undoUsed = true;
-        const o = !n;
-        const s = o ? _t() : null;
-        t.flagCount = e.flagCount;
-        t.revealedCount = e.revealedCount;
-        t.mines = e.mines;
-        t.usefulClicks = e.usefulClicks ?? t.usefulClicks;
-        t.time = e.time;
-        t.timeMs = e.timeMs;
-        t.timerStart = e.timerStart;
-        t.gameOver = e.gameOver;
-        t.boardVersion++;
-        const { rows: a, cols: c } = t;
-        for (let i = 0; i < a; i++) {
-          for (let l = 0; l < c; l++) {
-            const f = i * c + l;
-            t.revealed[i][l] = e.revealed[f] === 1;
-            t.flagged[i][l] = e.flagged[f] === 1;
-            t.questioned[i][l] = e.questioned[f] === 1;
+        state.cheated = true;
+        state.undoUsed = true;
+        const wasLive = !wasGameOver;
+        const before = wasLive ? snapshotBoard() : null;
+        state.flagCount = snapshot.flagCount;
+        state.revealedCount = snapshot.revealedCount;
+        state.mines = snapshot.mines;
+        state.usefulClicks = snapshot.usefulClicks ?? state.usefulClicks;
+        state.time = snapshot.time;
+        state.timeMs = snapshot.timeMs;
+        state.timerStart = snapshot.timerStart;
+        state.gameOver = snapshot.gameOver;
+        state.boardVersion++;
+        const { rows, cols } = state;
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const index = row * cols + col;
+            state.revealed[row][col] = snapshot.revealed[index] === 1;
+            state.flagged[row][col] = snapshot.flagged[index] === 1;
+            state.questioned[row][col] = snapshot.questioned[index] === 1;
           }
         }
-        if (n && !e.gameOver) {
-          Ce();
+        if (wasGameOver && !snapshot.gameOver) {
+          closeModal();
         }
-        if (n && !e.gameOver) {
-          Me();
-          Ke();
-        } else if (t.timer) {
-          t.timerStart = Date.now() - (e.timeMs || e.time * 1000);
+        if (wasGameOver && !snapshot.gameOver) {
+          stopTimer();
+          startTimer();
+        } else if (state.timer) {
+          state.timerStart = Date.now() - (snapshot.timeMs || snapshot.time * 1000);
         }
-        De();
-        if (o) {
-          const i = [];
-          for (let l = 0; l < a; l++) {
-            for (let f = 0; f < c; f++) {
-              const u = l * c + f;
-              if (s.rev[u] !== e.revealed[u] || s.fl[u] !== e.flagged[u] || s.qu[u] !== e.questioned[u]) {
-                j(l, f);
-                i.push([l, f]);
+        clearHints();
+        if (wasLive) {
+          const changedCells = [];
+          for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+              const index = row * cols + col;
+              if (before.revealed[index] !== snapshot.revealed[index] || before.flagged[index] !== snapshot.flagged[index] || before.questioned[index] !== snapshot.questioned[index]) {
+                renderCell(row, col);
+                changedCells.push([row, col]);
               }
             }
           }
-          Se(i);
+          refreshEdgesAround(changedCells);
         } else {
-          It();
+          renderAllCells();
         }
-        oe();
-        nt();
-        le();
-        Z("undo");
+        renderCounters();
+        updateUndoButtons();
+        renderProgress();
+        playFeedback("undo");
       }
 
-      function nt() {
-        const e = zt();
-        d.undoTop.disabled = !e;
-        d.undoModal.disabled = !e;
+      function updateUndoButtons() {
+        const enabled = canUndo();
+        dom.undoTop.disabled = !enabled;
+        dom.undoModal.disabled = !enabled;
       }
 
-      function ot(e, n) {
-        if (!(t.firstClick || t.revealed[e][n] || t.placing)) {
-          if (t.flagged[e][n] || t.questioned[e][n]) {
-            fe();
-            if (t.flagged[e][n]) {
-              t.flagged[e][n] = false;
-              t.flagCount = Math.max(0, t.flagCount - 1);
-              if (t.questionMarkEnabled) {
-                t.questioned[e][n] = true;
-                Z("question");
+      function toggleFlag(row, col) {
+        if (!(state.firstClick || state.revealed[row][col] || state.placing)) {
+          if (state.flagged[row][col] || state.questioned[row][col]) {
+            pushUndoSnapshot();
+            if (state.flagged[row][col]) {
+              state.flagged[row][col] = false;
+              state.flagCount = Math.max(0, state.flagCount - 1);
+              if (state.questionMarkEnabled) {
+                state.questioned[row][col] = true;
+                playFeedback("question");
               } else {
-                Z("undo");
+                playFeedback("undo");
               }
-              j(e, n, "anim-unflag");
+              renderCell(row, col, "anim-unflag");
             } else {
-              t.questioned[e][n] = false;
-              Z("undo");
-              j(e, n);
+              state.questioned[row][col] = false;
+              playFeedback("undo");
+              renderCell(row, col);
             }
-          } else if (t.flagCount < t.mines) {
-            fe();
-            t.flagged[e][n] = true;
-            t.flagCount++;
-            Z("flag");
-            j(e, n, "anim-flag");
+          } else if (state.flagCount < state.mines) {
+            pushUndoSnapshot();
+            state.flagged[row][col] = true;
+            state.flagCount++;
+            playFeedback("flag");
+            renderCell(row, col, "anim-flag");
           } else {
-            Y("旗子数已达雷数", 1200);
+            showToast("旗子数已达雷数", 1200);
           }
-          oe();
+          renderCounters();
         }
       }
 
-      async function qe(e, n) {
-        if (t.flagged[e][n] || t.revealed[e][n] || t.placing) {
+      async function revealCell(row, col) {
+        if (state.flagged[row][col] || state.revealed[row][col] || state.placing) {
           return;
         }
-        const o = t.firstClick;
-        if (o) {
-          const s = t.gameId;
-          t.firstClick = false;
-          t.placing = true;
-          Ze();
+        const isFirstClick = state.firstClick;
+        if (isFirstClick) {
+          const gameId = state.gameId;
+          state.firstClick = false;
+          state.placing = true;
+          getAudioContext();
           try {
-            await Dn(e, n, s);
-          } catch {
-            if (t.gameId !== s) {
+            await generateMines(row, col, gameId);
+          } catch (error) {
+            if (state.gameId !== gameId) {
               return;
             }
-            Lt();
-            d.warning.hidden = false;
-            _e(Ht(e, n));
+            hideToast();
+            dom.warning.querySelector("span").textContent = `⚠ 无猜模式生成${ error?.message === "超时" ? "超时" : "失败或被中断" }，已回退为传统随机布雷。`;
+            dom.warning.hidden = false;
+            placeMines(safeZoneIndices(row, col));
           } finally {
-            if (t.gameId === s) {
-              t.placing = false;
+            if (state.gameId === gameId) {
+              state.placing = false;
             }
           }
-          if (t.gameId !== s) {
+          if (state.gameId !== gameId) {
             return;
           }
-          if (d.settings.classList.contains("show")) {
-            r.settingsPaused = true;
+          if (dom.settings.classList.contains("show")) {
+            runtime.settingsPaused = true;
           } else {
-            Ke();
+            startTimer();
           }
-          oe();
+          renderCounters();
         }
-        Z("click");
-        if (!o) {
-          fe();
+        playFeedback("click");
+        if (!isFirstClick) {
+          pushUndoSnapshot();
         }
-        t.usefulClicks++;
-        st([[e, n]], e, n);
-        if (!t.gameOver) {
-          at();
+        state.usefulClicks++;
+        revealCells([[row, col]], row, col);
+        if (!state.gameOver) {
+          checkWin();
         }
       }
 
-      function st(e, n, o) {
-        const s = [];
-        const a = new Set();
-        const c = (i, l, f) => {
-          const u = de(i, l);
-          if (!a.has(u)) {
-            a.add(u);
-            t.revealed[i][l] = true;
-            t.questioned[i][l] = false;
-            s.push([i, l, f]);
+      function revealCells(cells, originRow, originCol) {
+        const revealed = [];
+        const seen = new Set();
+        const addCell = (row, col, depth) => {
+          const index = cellIndex(row, col);
+          if (!seen.has(index)) {
+            seen.add(index);
+            state.revealed[row][col] = true;
+            state.questioned[row][col] = false;
+            revealed.push([row, col, depth]);
           }
         };
-        for (const [i, l] of e) {
-          if (!(!me(i, l) || t.revealed[i][l] || t.flagged[i][l])) {
-            c(i, l, 0);
+        for (const [row, col] of cells) {
+          if (!(!inBounds(row, col) || state.revealed[row][col] || state.flagged[row][col])) {
+            addCell(row, col, 0);
           }
         }
-        for (let i = 0; i < s.length; i++) {
-          const [l, f, u] = s[i];
-          if (t.board[l][f] === -1) {
-            for (const [M, w] of s) {
-              if (t.board[M][w] !== -1) {
-                j(M, w);
+        for (let queueIndex = 0; queueIndex < revealed.length; queueIndex++) {
+          const [row, col, depth] = revealed[queueIndex];
+          if (state.board[row][col] === -1) {
+            for (const [mineRow, mineCol] of revealed) {
+              if (state.board[mineRow][mineCol] !== -1) {
+                renderCell(mineRow, mineCol);
               }
             }
-            Se(s);
-            Gt(false, l, f);
+            refreshEdgesAround(revealed);
+            endGame(false, row, col);
             return true;
           }
-          t.revealedCount++;
-          if (t.board[l][f] === 0) {
-            xe(l, f, (M, w) => {
-              if (!t.revealed[M][w] && !t.flagged[M][w]) {
-                c(M, w, u + 1);
+          state.revealedCount++;
+          if (state.board[row][col] === 0) {
+            forEachNeighbor(row, col, (neighborRow, neighborCol) => {
+              if (!state.revealed[neighborRow][neighborCol] && !state.flagged[neighborRow][neighborCol]) {
+                addCell(neighborRow, neighborCol, depth + 1);
               }
             });
           }
         }
-        startWave(s, n, o);
-        Se(s);
-        le();
+        startWave(revealed, originRow, originCol);
+        refreshEdgesAround(revealed);
+        renderProgress();
         return false;
       }
-      const Ht = (e, n) => {
-        const o = new Set([de(e, n)]);
-        xe(e, n, (s, a) => o.add(de(s, a)));
-        return o;
+      const safeZoneIndices = (row, col) => {
+        const zone = new Set([cellIndex(row, col)]);
+        forEachNeighbor(row, col, (neighborRow, neighborCol) => zone.add(cellIndex(neighborRow, neighborCol)));
+        return zone;
       };
 
-      function _e(e, { skipBV3: n = false } = {}) {
-        const { rows: o, cols: s, board: a } = t;
-        const c = o * s;
-        for (let u = 0; u < o; u++) {
-          a[u].fill(0);
+      function placeMines(safeSet, { skipBV3: skipBv3 = false } = {}) {
+        const { rows, cols, board } = state;
+        const total = rows * cols;
+        for (let row = 0; row < rows; row++) {
+          board[row].fill(0);
         }
-        const i = new Int32Array(c - e.size);
-        let l = 0;
-        for (let u = 0; u < c; u++) {
-          if (!e.has(u)) {
-            i[l++] = u;
+        const candidates = new Int32Array(total - safeSet.size);
+        let candidateCount = 0;
+        for (let index = 0; index < total; index++) {
+          if (!safeSet.has(index)) {
+            candidates[candidateCount++] = index;
           }
         }
-        const f = Math.min(t.mines, l);
-        if (f !== t.mines) {
-          t.mines = f;
+        const mineCount = Math.min(state.mines, candidateCount);
+        if (mineCount !== state.mines) {
+          state.mines = mineCount;
         }
-        for (let u = 0; u < f; u++) {
-          const M = u + Math.floor(Math.random() * (l - u));
-          const w = i[M];
-          i[M] = i[u];
-          i[u] = w;
-          const p = Math.floor(w / s);
-          const h = w % s;
-          a[p][h] = -1;
-          xe(p, h, (g, k) => {
-            if (a[g][k] !== -1) {
-              a[g][k]++;
+        for (let mineNumber = 0; mineNumber < mineCount; mineNumber++) {
+          const pickIndex = mineNumber + Math.floor(Math.random() * (candidateCount - mineNumber));
+          const cellIndex = candidates[pickIndex];
+          candidates[pickIndex] = candidates[mineNumber];
+          candidates[mineNumber] = cellIndex;
+          const mineRow = Math.floor(cellIndex / cols);
+          const mineCol = cellIndex % cols;
+          board[mineRow][mineCol] = -1;
+          forEachNeighbor(mineRow, mineCol, (neighborRow, neighborCol) => {
+            if (board[neighborRow][neighborCol] !== -1) {
+              board[neighborRow][neighborCol]++;
             }
           });
         }
-        t.nonMineCount = c - f;
-        if (!n) {
-          t.bv3 = Xt();
+        state.nonMineCount = total - mineCount;
+        if (!skipBv3) {
+          state.bv3 = countBv3();
         }
       }
 
-      function Xt() {
-        const { rows: e, cols: n, board: o } = t;
-        const s = ge(e, n, false);
-        let a = 0;
-        for (let c = 0; c < e; c++) {
-          for (let i = 0; i < n; i++) {
-            if (o[c][i] !== 0 || s[c][i]) {
+      function countBv3() {
+        const { rows, cols, board } = state;
+        const visited = makeGrid(rows, cols, false);
+        let count = 0;
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            if (board[row][col] !== 0 || visited[row][col]) {
               continue;
             }
-            a++;
-            const l = [[c, i]];
-            s[c][i] = true;
-            for (let f = 0; f < l.length; f++) {
-              const [u, M] = l[f];
-              xe(u, M, (w, p) => {
-                if (!(s[w][p] || o[w][p] === -1)) {
-                  s[w][p] = true;
-                  if (o[w][p] === 0) {
-                    l.push([w, p]);
+            count++;
+            const queue = [[row, col]];
+            visited[row][col] = true;
+            for (let head = 0; head < queue.length; head++) {
+              const [currentRow, currentCol] = queue[head];
+              forEachNeighbor(currentRow, currentCol, (neighborRow, neighborCol) => {
+                if (!(visited[neighborRow][neighborCol] || board[neighborRow][neighborCol] === -1)) {
+                  visited[neighborRow][neighborCol] = true;
+                  if (board[neighborRow][neighborCol] === 0) {
+                    queue.push([neighborRow, neighborCol]);
                   }
                 }
               });
             }
           }
         }
-        for (let c = 0; c < e; c++) {
-          for (let i = 0; i < n; i++) {
-            if (!s[c][i] && o[c][i] !== -1) {
-              a++;
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            if (!visited[row][col] && board[row][col] !== -1) {
+              count++;
             }
           }
         }
-        return a;
+        return count;
       }
 
-      function Fn() {
-        let K = 1 / 0;
-        const e = [
+      function solverWorkerMain() {
+        let deadline = 1 / 0;
+        const NEIGHBOR_DELTAS = [
           [-1, -1],
           [-1, 0],
           [-1, 1],
@@ -3481,306 +3503,306 @@
           [1, 0],
           [1, 1]
         ];
-        const n = (p, h, g, k) => p >= 0 && p < g && h >= 0 && h < k;
-        const o = (p, h, g, k, L) => {
-          for (const [P, D] of e) {
-            const B = p + P;
-            const S = h + D;
-            if (n(B, S, g, k)) {
-              L(B, S);
+        const inBounds = (row, col, rows, cols) => row >= 0 && row < rows && col >= 0 && col < cols;
+        const forEachNeighbor = (row, col, rows, cols, callback) => {
+          for (const [deltaRow, deltaCol] of NEIGHBOR_DELTAS) {
+            const neighborRow = row + deltaRow;
+            const neighborCol = col + deltaCol;
+            if (inBounds(neighborRow, neighborCol, rows, cols)) {
+              callback(neighborRow, neighborCol);
             }
           }
         };
-        function s(p, h, g, k) {
-          const L = new Map();
-          p.forEach((m, C) => L.set(m, C));
-          const P = h.map(m => ({
-            need: g[m].need,
-            vars: g[m].vars.map(C => L.get(C)).filter(C => C !== undefined)
+        function enumerateSolutions(variableIds, constraintIndex, constraints, maxSolutions) {
+          const localIndex = new Map();
+          variableIds.forEach((variableId, index) => localIndex.set(variableId, index));
+          const localConstraints = constraintIndex.map(localConstraint => ({
+            need: constraints[localConstraint].need,
+            variables: constraints[localConstraint].variables.map(variableId => localIndex.get(variableId)).filter(variableId => variableId !== undefined)
           }));
-          const D = p.length;
-          const B = Array.from({ length: D }, () => []);
-          P.forEach((m, C) => m.vars.forEach(R => B[R].push(C)));
-          const S = Array.from({ length: D }, (m, C) => C).sort((m, C) => B[C].length - B[m].length);
-          const b = new Int8Array(D);
-          const x = P.map(() => 0);
-          const q = P.map(m => m.vars.length);
-          const E = new Int32Array(D);
-          let A = 0;
-          let $ = false;
-          let Z = 0;
-          (function m(C) {
-            if ($) {
+          const variableCount = variableIds.length;
+          const variableConstraints = Array.from({ length: variableCount }, () => []);
+          localConstraints.forEach((constraint, constraintIndex) => constraint.variables.forEach(variableIndex => variableConstraints[variableIndex].push(constraintIndex)));
+          const order = Array.from({ length: variableCount }, (_item, index) => index).sort((left, right) => variableConstraints[right].length - variableConstraints[left].length);
+          const assignment = new Int8Array(variableCount);
+          const sums = localConstraints.map(() => 0);
+          const remaining = localConstraints.map(constraint => constraint.variables.length);
+          const mineCounts = new Int32Array(variableCount);
+          let solutions = 0;
+          let aborted = false;
+          let nodeCount = 0;
+          (function search(depth) {
+            if (aborted) {
               return;
             }
-            if ((++Z & 4095) === 0 && Date.now() > K) {
-              $ = true;
+            if ((++nodeCount & 4095) === 0 && Date.now() > deadline) {
+              aborted = true;
               return;
             }
-            if (C === S.length) {
-              A++;
-              for (let I = 0; I < D; I++) {
-                E[I] += b[I];
+            if (depth === order.length) {
+              solutions++;
+              for (let variableIndex = 0; variableIndex < variableCount; variableIndex++) {
+                mineCounts[variableIndex] += assignment[variableIndex];
               }
-              if (A >= k) {
-                $ = true;
+              if (solutions >= maxSolutions) {
+                aborted = true;
               }
               return;
             }
-            const R = S[C];
-            for (let I = 0; I < 2; I++) {
-              b[R] = I;
-              let _ = true;
-              for (const V of B[R]) {
-                q[V]--;
-                x[V] += I;
-                if (x[V] > P[V].need || x[V] + q[V] < P[V].need) {
-                  _ = false;
+            const variableIndex = order[depth];
+            for (let value = 0; value < 2; value++) {
+              assignment[variableIndex] = value;
+              let feasible = true;
+              for (const constraintIndex of variableConstraints[variableIndex]) {
+                remaining[constraintIndex]--;
+                sums[constraintIndex] += value;
+                if (sums[constraintIndex] > localConstraints[constraintIndex].need || sums[constraintIndex] + remaining[constraintIndex] < localConstraints[constraintIndex].need) {
+                  feasible = false;
                 }
               }
-              if (_) {
-                m(C + 1);
+              if (feasible) {
+                search(depth + 1);
               }
-              for (const V of B[R]) {
-                q[V]++;
-                x[V] -= I;
+              for (const constraintIndex of variableConstraints[variableIndex]) {
+                remaining[constraintIndex]++;
+                sums[constraintIndex] -= value;
               }
-              if ($) {
+              if (aborted) {
                 return;
               }
             }
           }(0));
-          return { invalid: A === 0 && !$, incomplete: $, solutions: A, mineCounts: E };
+          return { invalid: solutions === 0 && !aborted, incomplete: aborted, solutions, mineCounts };
         }
-        function a(p, h, g, k, L) {
-          const P = new Map();
-          const D = [];
-          const B = [];
-          const S = b => {
-            if (!P.has(b)) {
-              P.set(b, D.length);
-              D.push(b);
+        function buildConstraints(numbers, revealed, flagged, rows, cols) {
+          const keyIndex = new Map();
+          const keys = [];
+          const constraints = [];
+          const getKeyIndex = key => {
+            if (!keyIndex.has(key)) {
+              keyIndex.set(key, keys.length);
+              keys.push(key);
             }
-            return P.get(b);
+            return keyIndex.get(key);
           };
-          for (let b = 0; b < k; b++) {
-            for (let x = 0; x < L; x++) {
-              if (!h[b][x] || p[b][x] <= 0) {
+          for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+              if (!revealed[row][col] || numbers[row][col] <= 0) {
                 continue;
               }
-              let q = 0;
-              const E = [];
-              o(b, x, k, L, ($, m) => {
-                if (g[$][m]) {
-                  q++;
-                } else if (!h[$][m]) {
-                  E.push($ * L + m);
+              let flaggedCount = 0;
+              const unknownKeys = [];
+              forEachNeighbor(row, col, rows, cols, (neighborRow, neighborCol) => {
+                if (flagged[neighborRow][neighborCol]) {
+                  flaggedCount++;
+                } else if (!revealed[neighborRow][neighborCol]) {
+                  unknownKeys.push(neighborRow * cols + neighborCol);
                 }
               });
-              const A = p[b][x] - q;
-              if (A < 0 || A > E.length) {
+              const need = numbers[row][col] - flaggedCount;
+              if (need < 0 || need > unknownKeys.length) {
                 return null;
               }
-              if (E.length) {
-                B.push({ need: A, vars: E.map(S) });
+              if (unknownKeys.length) {
+                constraints.push({ need, variables: unknownKeys.map(getKeyIndex) });
               }
             }
           }
-          return { keys: D, constraints: B };
+          return { keys, constraints };
         }
-        function c(p, h, g) {
-          const k = Array.from({ length: p }, () => []);
-          h.forEach((B, S) => B.vars.forEach(b => k[b].push(S)));
-          const L = new Uint8Array(p);
-          const P = new Uint8Array(h.length);
-          const D = [];
-          for (let B = 0; B < p; B++) {
-            if (L[B] || g[B]) {
+        function splitComponents(variableCount, constraints, known) {
+          const variableConstraints = Array.from({ length: variableCount }, () => []);
+          constraints.forEach((constraint, constraintIndex) => constraint.variables.forEach(variableIndex => variableConstraints[variableIndex].push(constraintIndex)));
+          const seenVars = new Uint8Array(variableCount);
+          const seenConstraints = new Uint8Array(constraints.length);
+          const components = [];
+          for (let startVariable = 0; startVariable < variableCount; startVariable++) {
+            if (seenVars[startVariable] || known[startVariable]) {
               continue;
             }
-            const S = [];
-            const b = [];
-            const x = [B];
-            const q = [];
-            L[B] = 1;
-            for (; x.length || q.length;) {
-              for (; x.length;) {
-                const E = x.pop();
-                S.push(E);
-                for (const A of k[E]) {
-                  if (!P[A]) {
-                    P[A] = 1;
-                    q.push(A);
+            const componentVariables = [];
+            const componentConstraints = [];
+            const variableStack = [startVariable];
+            const constraintStack = [];
+            seenVars[startVariable] = 1;
+            for (; variableStack.length || constraintStack.length;) {
+              for (; variableStack.length;) {
+                const variableId = variableStack.pop();
+                componentVariables.push(variableId);
+                for (const constraintIndex of variableConstraints[variableId]) {
+                  if (!seenConstraints[constraintIndex]) {
+                    seenConstraints[constraintIndex] = 1;
+                    constraintStack.push(constraintIndex);
                   }
                 }
               }
-              for (; q.length;) {
-                const E = q.pop();
-                b.push(E);
-                for (const A of h[E].vars) {
-                  if (!L[A] && !g[A]) {
-                    L[A] = 1;
-                    x.push(A);
+              for (; constraintStack.length;) {
+                const constraintId = constraintStack.pop();
+                componentConstraints.push(constraintId);
+                for (const variableId of constraints[constraintId].variables) {
+                  if (!seenVars[variableId] && !known[variableId]) {
+                    seenVars[variableId] = 1;
+                    variableStack.push(variableId);
                   }
                 }
               }
             }
-            D.push({ vars: S, cons: b });
+            components.push({ variables: componentVariables, constraintIds: componentConstraints });
           }
-          return D;
+          return components;
         }
-        function i(p, h, g, k, L) {
-          let P = 0;
-          const D = h.map(m => ({ id: P++, need: m.need, vars: new Set(m.vars) }));
-          const B = m => m.need + "|" + [...m.vars].sort((C, R) => C - R).join(",");
-          const S = new Set(D.map(B));
-          const b = Array.from({ length: p }, () => new Set());
-          D.forEach(m => m.vars.forEach(C => b[C].add(m)));
-          const x = [];
-          const q = m => {
-            if (!g[m]) {
-              g[m] = 1;
-              k.add(m);
-              x.push(m);
+        function propagate(variableCount, constraints, assigned, safeSet, mineSet) {
+          let nextId = 0;
+          const constraintList = constraints.map(constraint => ({ id: nextId++, need: constraint.need, variables: new Set(constraint.variables) }));
+          const keyOf = constraint => constraint.need + "|" + [...constraint.variables].sort((first, second) => first - second).join(",");
+          const seenKeys = new Set(constraintList.map(keyOf));
+          const variableConstraints = Array.from({ length: variableCount }, () => new Set());
+          constraintList.forEach(constraint => constraint.variables.forEach(variableId => variableConstraints[variableId].add(constraint)));
+          const queue = [];
+          const markSafe = variableId => {
+            if (!assigned[variableId]) {
+              assigned[variableId] = 1;
+              safeSet.add(variableId);
+              queue.push(variableId);
             }
           };
-          const E = m => {
-            if (!g[m]) {
-              g[m] = 2;
-              L.add(m);
-              x.push(m);
+          const markMine = variableId => {
+            if (!assigned[variableId]) {
+              assigned[variableId] = 2;
+              mineSet.add(variableId);
+              queue.push(variableId);
             }
           };
-          const A = m => {
-            if (m.vars.size !== 0) {
-              if (m.need === 0) {
-                for (const C of m.vars) {
-                  q(C);
+          const simplify = constraint => {
+            if (constraint.variables.size !== 0) {
+              if (constraint.need === 0) {
+                for (const variableId of constraint.variables) {
+                  markSafe(variableId);
                 }
-                m.vars.clear();
-              } else if (m.need === m.vars.size) {
-                for (const C of m.vars) {
-                  E(C);
+                constraint.variables.clear();
+              } else if (constraint.need === constraint.variables.size) {
+                for (const variableId of constraint.variables) {
+                  markMine(variableId);
                 }
-                m.vars.clear();
+                constraint.variables.clear();
               }
             }
           };
-          const $ = () => {
-            for (; x.length;) {
-              const m = x.pop();
-              const C = g[m] === 2;
-              for (const R of Array.from(b[m])) {
-                if (R.vars.has(m)) {
-                  R.vars.delete(m);
-                  if (C) {
-                    R.need--;
+          const flush = () => {
+            for (; queue.length;) {
+              const variableId = queue.pop();
+              const isMine = assigned[variableId] === 2;
+              for (const constraint of Array.from(variableConstraints[variableId])) {
+                if (constraint.variables.has(variableId)) {
+                  constraint.variables.delete(variableId);
+                  if (isMine) {
+                    constraint.need--;
                   }
-                  A(R);
+                  simplify(constraint);
                 }
               }
-              b[m].clear();
+              variableConstraints[variableId].clear();
             }
           };
-          D.forEach(A);
-          $();
-          for (let m = 0; m < 6; m++) {
-            let C = false;
-            const R = new Map();
-            for (const _ of D) {
-              if (_.vars.size) {
-                for (const V of _.vars) {
-                  if (!R.has(V)) {
-                    R.set(V, []);
+          constraintList.forEach(simplify);
+          flush();
+          for (let round = 0; round < 6; round++) {
+            let changed = false;
+            const constraintsByVariable = new Map();
+            for (const constraint of constraintList) {
+              if (constraint.variables.size) {
+                for (const variableId of constraint.variables) {
+                  if (!constraintsByVariable.has(variableId)) {
+                    constraintsByVariable.set(variableId, []);
                   }
-                  R.get(V).push(_);
+                  constraintsByVariable.get(variableId).push(constraint);
                 }
               }
             }
-            const I = new Set();
-            for (const _ of R.values()) {
-              for (let V = 0; V < _.length; V++) {
-                for (let F = 0; F < _.length; F++) {
-                  if (V === F) {
+            const seenPairs = new Set();
+            for (const group of constraintsByVariable.values()) {
+              for (let indexA = 0; indexA < group.length; indexA++) {
+                for (let indexB = 0; indexB < group.length; indexB++) {
+                  if (indexA === indexB) {
                     continue;
                   }
-                  const y = _[V];
-                  const T = _[F];
-                  if (y.vars.size >= T.vars.size) {
+                  const smaller = group[indexA];
+                  const larger = group[indexB];
+                  if (smaller.variables.size >= larger.variables.size) {
                     continue;
                   }
-                  const U = y.id + ":" + T.id;
-                  if (I.has(U)) {
+                  const pairKey = smaller.id + ":" + larger.id;
+                  if (seenPairs.has(pairKey)) {
                     continue;
                   }
-                  I.add(U);
-                  let W = true;
-                  for (const O of y.vars) {
-                    if (!T.vars.has(O)) {
-                      W = false;
+                  seenPairs.add(pairKey);
+                  let isSubset = true;
+                  for (const variableId of smaller.variables) {
+                    if (!larger.variables.has(variableId)) {
+                      isSubset = false;
                       break;
                     }
                   }
-                  if (!W) {
+                  if (!isSubset) {
                     continue;
                   }
-                  const z = [];
-                  for (const O of T.vars) {
-                    if (!y.vars.has(O)) {
-                      z.push(O);
+                  const diff = [];
+                  for (const variableId of larger.variables) {
+                    if (!smaller.variables.has(variableId)) {
+                      diff.push(variableId);
                     }
                   }
-                  const N = T.need - y.need;
-                  if (!(N < 0 || N > z.length)) {
-                    if (N === 0) {
-                      for (const O of z) {
-                        q(O);
+                  const needDiff = larger.need - smaller.need;
+                  if (!(needDiff < 0 || needDiff > diff.length)) {
+                    if (needDiff === 0) {
+                      for (const variableId of diff) {
+                        markSafe(variableId);
                       }
-                      C = true;
-                    } else if (N === z.length) {
-                      for (const O of z) {
-                        E(O);
+                      changed = true;
+                    } else if (needDiff === diff.length) {
+                      for (const variableId of diff) {
+                        markMine(variableId);
                       }
-                      C = true;
+                      changed = true;
                     } else {
-                      const O = { id: P++, need: N, vars: new Set(z) };
-                      const Q = B(O);
-                      if (!S.has(Q)) {
-                        S.add(Q);
-                        D.push(O);
-                        O.vars.forEach(H => b[H].add(O));
-                        C = true;
+                      const derived = { id: nextId++, need: needDiff, variables: new Set(diff) };
+                      const derivedKey = keyOf(derived);
+                      if (!seenKeys.has(derivedKey)) {
+                        seenKeys.add(derivedKey);
+                        constraintList.push(derived);
+                        derived.variables.forEach(variableId => variableConstraints[variableId].add(derived));
+                        changed = true;
                       }
                     }
                   }
                 }
               }
             }
-            $();
-            if (!C) {
+            flush();
+            if (!changed) {
               break;
             }
           }
-          return D.filter(m => m.vars.size > 0).map(m => ({
-            need: m.need,
-            vars: [...m.vars]
+          return constraintList.filter(constraint => constraint.variables.size > 0).map(constraint => ({
+            need: constraint.need,
+            variables: [...constraint.variables]
           }));
         }
-        const l = (p, h) => [Math.floor(p / h), p % h];
-        const f = {
+        const indexToCoords = (index, cols) => [Math.floor(index / cols), index % cols];
+        const INVALID_RESULT = {
           safe: [],
           mines: [],
           invalid: true,
           probs: [],
           frontierKeys: []
         };
-        function u(p, h, g, k, L, P, D) {
-          const B = a(p, h, g, k, L);
-          if (!B) {
-            return f;
+        function analyzeFrontier(board, revealed, flagged, rows, cols, maxVars, maxSolutions) {
+          const builtConstraints = buildConstraints(board, revealed, flagged, rows, cols);
+          if (!builtConstraints) {
+            return INVALID_RESULT;
           }
-          const { keys: S, constraints: b } = B;
-          if (!S.length) {
+          const { keys, constraints } = builtConstraints;
+          if (!keys.length) {
             return {
               safe: [],
               mines: [],
@@ -3789,1039 +3811,1054 @@
               frontierKeys: []
             };
           }
-          const x = new Uint8Array(S.length);
-          const q = new Set();
-          const E = new Set();
-          const A = new Map();
-          const $ = i(S.length, b, x, q, E);
-          for (const m of c(S.length, $, x)) {
-            if (Date.now() > K) {
+          const assigned = new Uint8Array(keys.length);
+          const safeSet = new Set();
+          const mineSet = new Set();
+          const probs = new Map();
+          const reducedConstraints = propagate(keys.length, constraints, assigned, safeSet, mineSet);
+          for (const component of splitComponents(keys.length, reducedConstraints, assigned)) {
+            if (Date.now() > deadline) {
               break;
             }
-            if (m.vars.length > P) {
+            if (component.variables.length > maxVars) {
               continue;
             }
-            const C = s(m.vars, m.cons, $, D);
-            if (C.invalid) {
-              return f;
+            const result = enumerateSolutions(component.variables, component.constraintIds, reducedConstraints, maxSolutions);
+            if (result.invalid) {
+              return INVALID_RESULT;
             }
-            if (!C.incomplete) {
-              for (let R = 0; R < m.vars.length; R++) {
-                const I = m.vars[R];
-                if (C.mineCounts[R] === 0) {
-                  q.add(I);
-                } else if (C.mineCounts[R] === C.solutions) {
-                  E.add(I);
+            if (!result.incomplete) {
+              for (let componentIndex = 0; componentIndex < component.variables.length; componentIndex++) {
+                const variableIndex = component.variables[componentIndex];
+                if (result.mineCounts[componentIndex] === 0) {
+                  safeSet.add(variableIndex);
+                } else if (result.mineCounts[componentIndex] === result.solutions) {
+                  mineSet.add(variableIndex);
                 } else {
-                  A.set(S[I], C.mineCounts[R] / C.solutions);
+                  probs.set(keys[variableIndex], result.mineCounts[componentIndex] / result.solutions);
                 }
               }
             }
           }
           return {
-            safe: [...q].filter(m => !E.has(m)).map(m => l(S[m], L)),
-            mines: [...E].map(m => l(S[m], L)),
+            safe: [...safeSet].filter(variableIndex => !mineSet.has(variableIndex)).map(variableIndex => indexToCoords(keys[variableIndex], cols)),
+            mines: [...mineSet].map(variableIndex => indexToCoords(keys[variableIndex], cols)),
             invalid: false,
-            probs: [...A.entries()],
-            frontierKeys: S
+            probs: [...probs.entries()],
+            frontierKeys: keys
           };
         }
-        function M(p, h, g, k, L, P, D) {
-          const B = a(p, h, g, k, L);
-          if (!B) {
+        function findSureCells(board, revealed, flagged, rows, cols, maxVars, maxSolutions) {
+          const builtConstraints = buildConstraints(board, revealed, flagged, rows, cols);
+          if (!builtConstraints) {
             return {
               safe: [],
               mines: [],
               invalid: true
             };
           }
-          const { keys: S, constraints: b } = B;
-          if (!S.length) {
+          const { keys, constraints } = builtConstraints;
+          if (!keys.length) {
             return {
               safe: [],
               mines: [],
               invalid: false
             };
           }
-          const x = new Set();
-          const q = new Set();
-          for (const E of c(S.length, b, new Uint8Array(S.length))) {
-            if (E.vars.length > P) {
+          const safeKeys = new Set();
+          const mineKeys = new Set();
+          for (const component of splitComponents(keys.length, constraints, new Uint8Array(keys.length))) {
+            if (component.variables.length > maxVars) {
               continue;
             }
-            const A = s(E.vars, E.cons, b, D);
-            if (A.invalid) {
+            const result = enumerateSolutions(component.variables, component.constraintIds, constraints, maxSolutions);
+            if (result.invalid) {
               return {
                 safe: [],
                 mines: [],
                 invalid: true
               };
             }
-            if (!A.incomplete) {
-              for (let $ = 0; $ < E.vars.length; $++) {
-                const m = S[E.vars[$]];
-                if (A.mineCounts[$] === 0) {
-                  x.add(m);
-                } else if (A.mineCounts[$] === A.solutions) {
-                  q.add(m);
+            if (!result.incomplete) {
+              for (let componentIndex = 0; componentIndex < component.variables.length; componentIndex++) {
+                const key = keys[component.variables[componentIndex]];
+                if (result.mineCounts[componentIndex] === 0) {
+                  safeKeys.add(key);
+                } else if (result.mineCounts[componentIndex] === result.solutions) {
+                  mineKeys.add(key);
                 }
               }
             }
           }
           return {
-            safe: [...x].filter(E => !q.has(E)).map(E => l(E, L)),
-            mines: [...q].map(E => l(E, L)),
+            safe: [...safeKeys].filter(variableIndex => !mineKeys.has(variableIndex)).map(variableIndex => indexToCoords(variableIndex, cols)),
+            mines: [...mineKeys].map(variableIndex => indexToCoords(variableIndex, cols)),
             invalid: false
           };
         }
-        function w(p, h, g, k, L, P, D, B) {
-          const S = h * g;
-          const b = Array.from({ length: h }, () => Array(g).fill(false));
-          const x = Array.from({ length: h }, () => Array(g).fill(false));
-          let q = 0;
-          let E = 0;
-          const A = new Set();
-          const $ = (F, y) => o(F, y, h, g, (T, U) => {
-            if (b[T][U] && p[T][U] > 0) {
-              A.add(T * g + U);
+        function verifyNoGuess(board, rows, cols, mines, startRow, startCol, maxVars, maxSolutions) {
+          const total = rows * cols;
+          const revealedGrid = Array.from({ length: rows }, () => Array(cols).fill(false));
+          const flaggedGrid = Array.from({ length: rows }, () => Array(cols).fill(false));
+          let revealedCount = 0;
+          let flagCount = 0;
+          const pendingNumbers = new Set();
+          const enqueueNumbered = (row, col) => forEachNeighbor(row, col, rows, cols, (neighborRow, neighborCol) => {
+            if (revealedGrid[neighborRow][neighborCol] && board[neighborRow][neighborCol] > 0) {
+              pendingNumbers.add(neighborRow * cols + neighborCol);
             }
           });
-          const m = (F, y) => {
-            const T = [];
-            o(F, y, h, g, (U, W) => {
-              if (!b[U][W] && !x[U][W]) {
-                T.push([U, W]);
+          const unknownNeighbors = (row, col) => {
+            const list = [];
+            forEachNeighbor(row, col, rows, cols, (neighborRow, neighborCol) => {
+              if (!revealedGrid[neighborRow][neighborCol] && !flaggedGrid[neighborRow][neighborCol]) {
+                list.push([neighborRow, neighborCol]);
               }
             });
-            return T;
+            return list;
           };
-          const C = (F, y) => {
-            let T = 0;
-            o(F, y, h, g, (U, W) => {
-              if (x[U][W]) {
-                T++;
+          const countFlagNeighbors = (row, col) => {
+            let count = 0;
+            forEachNeighbor(row, col, rows, cols, (neighborRow, neighborCol) => {
+              if (flaggedGrid[neighborRow][neighborCol]) {
+                count++;
               }
             });
-            return T;
+            return count;
           };
-          const R = (F, y, T) => {
-            if (!n(F, y, h, g) || b[F][y] || x[F][y]) {
+          const revealFrom = (row, col, collect) => {
+            if (!inBounds(row, col, rows, cols) || revealedGrid[row][col] || flaggedGrid[row][col]) {
               return true;
             }
-            if (p[F][y] === -1) {
+            if (board[row][col] === -1) {
               return false;
             }
-            b[F][y] = true;
-            q++;
-            if (T) {
-              T.push(F * g + y);
+            revealedGrid[row][col] = true;
+            revealedCount++;
+            if (collect) {
+              collect.push(row * cols + col);
             }
-            const U = [[F, y]];
-            for (let W = 0; W < U.length; W++) {
-              const [z, N] = U[W];
-              if (p[z][N] > 0) {
-                A.add(z * g + N);
+            const queue = [[row, col]];
+            for (let queueIndex = 0; queueIndex < queue.length; queueIndex++) {
+              const [currentRow, currentCol] = queue[queueIndex];
+              if (board[currentRow][currentCol] > 0) {
+                pendingNumbers.add(currentRow * cols + currentCol);
               }
-              $(z, N);
-              if (p[z][N] === 0) {
-                for (const [O, Q] of e) {
-                  const H = z + O;
-                  const J = N + Q;
-                  if (n(H, J, h, g) && !b[H][J] && !x[H][J]) {
-                    if (p[H][J] === -1) {
+              enqueueNumbered(currentRow, currentCol);
+              if (board[currentRow][currentCol] === 0) {
+                for (const [deltaRow, deltaCol] of NEIGHBOR_DELTAS) {
+                  const neighborRow = currentRow + deltaRow;
+                  const neighborCol = currentCol + deltaCol;
+                  if (inBounds(neighborRow, neighborCol, rows, cols) && !revealedGrid[neighborRow][neighborCol] && !flaggedGrid[neighborRow][neighborCol]) {
+                    if (board[neighborRow][neighborCol] === -1) {
                       return false;
                     }
-                    b[H][J] = true;
-                    q++;
-                    if (T) {
-                      T.push(H * g + J);
+                    revealedGrid[neighborRow][neighborCol] = true;
+                    revealedCount++;
+                    if (collect) {
+                      collect.push(neighborRow * cols + neighborCol);
                     }
-                    U.push([H, J]);
+                    queue.push([neighborRow, neighborCol]);
                   }
                 }
               }
             }
             return true;
           };
-          if (!R(L, P)) {
+          if (!revealFrom(startRow, startCol)) {
             return false;
           }
-          const I = new Set();
-          for (let F = 0; F < h; F++) {
-            for (let y = 0; y < g; y++) {
-              if (!b[F][y] && !x[F][y]) {
-                I.add(F * g + y);
+          const hiddenSet = new Set();
+          for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+              if (!revealedGrid[row][col] && !flaggedGrid[row][col]) {
+                hiddenSet.add(row * cols + col);
               }
             }
           }
-          const _ = (F, y) => {
-            const T = [];
-            if (!R(F, y, T)) {
+          const safeReveal = (row, col) => {
+            const collected = [];
+            if (!revealFrom(row, col, collected)) {
               return false;
             }
-            for (const U of T) {
-              I.delete(U);
+            for (const index of collected) {
+              hiddenSet.delete(index);
             }
             return true;
           };
-          const V = (F, y) => {
-            if (!n(F, y, h, g) || b[F][y] || x[F][y]) {
+          const markMine = (row, col) => {
+            if (!inBounds(row, col, rows, cols) || revealedGrid[row][col] || flaggedGrid[row][col]) {
               return false;
             }
-            x[F][y] = true;
-            E++;
-            $(F, y);
-            I.delete(F * g + y);
+            flaggedGrid[row][col] = true;
+            flagCount++;
+            enqueueNumbered(row, col);
+            hiddenSet.delete(row * cols + col);
             return true;
           };
-          for (let F = 0; F < 4 * S; F++) {
-            if (q >= S - k) {
+          for (let iteration = 0; iteration < 4 * total; iteration++) {
+            if (revealedCount >= total - mines) {
               return true;
             }
-            let y = false;
-            const T = k - E;
-            const U = I.size;
-            if (T < 0 || T > U) {
+            let progress = false;
+            const remainingMines = mines - flagCount;
+            const unknownCount = hiddenSet.size;
+            if (remainingMines < 0 || remainingMines > unknownCount) {
               return false;
             }
-            if (T === 0) {
-              for (const N of I) {
-                if (!_(Math.floor(N / g), N % g)) {
+            if (remainingMines === 0) {
+              for (const index of hiddenSet) {
+                if (!safeReveal(Math.floor(index / cols), index % cols)) {
                   return false;
                 }
-                y = true;
+                progress = true;
               }
-              if (y) {
+              if (progress) {
                 continue;
               }
             }
-            if (U && T === U) {
-              for (const N of I) {
-                y = V(Math.floor(N / g), N % g) || y;
+            if (unknownCount && remainingMines === unknownCount) {
+              for (const index of hiddenSet) {
+                progress = markMine(Math.floor(index / cols), index % cols) || progress;
               }
-              if (y) {
+              if (progress) {
                 continue;
               }
             }
-            const W = [...A];
-            A.clear();
-            for (const N of W) {
-              const O = Math.floor(N / g);
-              const Q = N % g;
-              if (!b[O][Q] || p[O][Q] <= 0) {
+            const numberedList = [...pendingNumbers];
+            pendingNumbers.clear();
+            for (const index of numberedList) {
+              const row = Math.floor(index / cols);
+              const col = index % cols;
+              if (!revealedGrid[row][col] || board[row][col] <= 0) {
                 continue;
               }
-              const H = m(O, Q);
-              const J = p[O][Q] - C(O, Q);
-              if (J < 0 || J > H.length) {
+              const unknowns = unknownNeighbors(row, col);
+              const need = board[row][col] - countFlagNeighbors(row, col);
+              if (need < 0 || need > unknowns.length) {
                 return false;
               }
-              if (H.length) {
-                if (J === 0) {
-                  for (const [Re, Pe] of H) {
-                    if (!_(Re, Pe)) {
+              if (unknowns.length) {
+                if (need === 0) {
+                  for (const [row, col] of unknowns) {
+                    if (!safeReveal(row, col)) {
                       return false;
                     }
-                    y = true;
+                    progress = true;
                   }
-                } else if (J === H.length) {
-                  for (const [Re, Pe] of H) {
-                    y = V(Re, Pe) || y;
+                } else if (need === unknowns.length) {
+                  for (const [row, col] of unknowns) {
+                    progress = markMine(row, col) || progress;
                   }
                 }
               }
             }
-            if (y) {
+            if (progress) {
               continue;
             }
-            const z = M(p, b, x, h, g, D, B);
-            if (z.invalid) {
+            const sureCells = findSureCells(board, revealedGrid, flaggedGrid, rows, cols, maxVars, maxSolutions);
+            if (sureCells.invalid) {
               return false;
             }
-            for (const [N, O] of z.mines) {
-              y = V(N, O) || y;
+            for (const [row, col] of sureCells.mines) {
+              progress = markMine(row, col) || progress;
             }
-            for (const [N, O] of z.safe) {
-              if (!_(N, O)) {
+            for (const [row, col] of sureCells.safe) {
+              if (!safeReveal(row, col)) {
                 return false;
               }
-              y = true;
+              progress = true;
             }
-            if (!y) {
+            if (!progress) {
               return false;
             }
           }
-          return q >= S - k;
+          return revealedCount >= total - mines;
         }
-        self.onmessage = p => {
-          const h = p.data;
-          K = h.mode === "hint" ? Date.now() + 2500 : 1 / 0;
-          const g = h.mode === "hint" ? u(h.board, h.revealed, h.flagged, h.rows, h.cols, h.maxVars, h.maxSolutions) : w(h.board, h.rows, h.cols, h.mines, h.startR, h.startC, h.maxVars, h.maxSolutions);
-          self.postMessage({ id: h.id, result: g });
+        self.onmessage = event => {
+          const message = event.data;
+          deadline = message.mode === "hint" ? Date.now() + 2500 : 1 / 0;
+          const result = message.mode === "hint" ? analyzeFrontier(message.board, message.revealed, message.flagged, message.rows, message.cols, message.maxVars, message.maxSolutions) : verifyNoGuess(message.board, message.rows, message.cols, message.mines, message.startRow, message.startCol, message.maxVars, message.maxSolutions);
+          self.postMessage({ id: message.id, result });
         };
       }
-      const Wt = (() => {
-        const e = URL.createObjectURL(new Blob(["(" + Fn.toString() + ")()"], { type: "application/javascript" }));
-        return () => new Worker(e);
+      const createWorker = (() => {
+        const url = URL.createObjectURL(new Blob(["(" + solverWorkerMain.toString() + ")()"], { type: "application/javascript" }));
+        return () => new Worker(url);
       })();
-      let ve = null;
-      let kn = 0;
-      let He = null;
+      let hintWorker = null;
+      let hintRequestId = 0;
+      let rejectPendingHint = null;
 
-      function Yt() {
-        ve?.terminate();
-        ve = null;
-        He?.(new Error("aborted"));
+      function abortHint() {
+        hintWorker?.terminate();
+        hintWorker = null;
+        rejectPendingHint?.(new Error("aborted"));
       }
 
-      function An() {
-        if (!ve) {
-          ve = Wt();
+      function requestHintFromWorker() {
+        if (!hintWorker) {
+          hintWorker = createWorker();
         }
-        const e = ve;
-        const n = ++kn;
-        return new Promise((o, s) => {
-          const a = setTimeout(Yt, 5000);
-          const c = i => l => {
-            clearTimeout(a);
-            He = null;
-            i(l);
+        const worker = hintWorker;
+        const requestId = ++hintRequestId;
+        return new Promise((resolve, reject) => {
+          const timeoutId = setTimeout(abortHint, 5000);
+          const makeSettler = callback => value => {
+            clearTimeout(timeoutId);
+            rejectPendingHint = null;
+            callback(value);
           };
-          He = c(s);
-          e.onmessage = i => {
-            if (i.data.id === n) {
-              c(o)(i.data.result);
+          rejectPendingHint = makeSettler(reject);
+          worker.onmessage = event => {
+            if (event.data.id === requestId) {
+              makeSettler(resolve)(event.data.result);
             }
           };
-          e.onerror = c(s);
-          e.postMessage({
+          worker.onerror = makeSettler(reject);
+          worker.postMessage({
             mode: "hint",
-            id: n,
-            board: t.board,
-            revealed: t.revealed,
-            flagged: t.flagged,
-            rows: t.rows,
-            cols: t.cols,
-            ...bt,
+            id: requestId,
+            board: state.board,
+            revealed: state.revealed,
+            flagged: state.flagged,
+            rows: state.rows,
+            cols: state.cols,
+            ...SOLVER_LIMITS,
             maxVars: 40
           });
         });
       }
 
-      function Sn(e, n) {
-        let o = 0;
-        for (let l = 0; l < t.rows; l++) {
-          for (let f = 0; f < t.cols; f++) {
-            if (!t.revealed[l][f] && !t.flagged[l][f]) {
-              o++;
+      function pickLowestProbability(probs, frontierKeys) {
+        let hiddenCount = 0;
+        for (let row = 0; row < state.rows; row++) {
+          for (let col = 0; col < state.cols; col++) {
+            if (!state.revealed[row][col] && !state.flagged[row][col]) {
+              hiddenCount++;
             }
           }
         }
-        if (!o) {
+        if (!hiddenCount) {
           return null;
         }
-        const s = G(t.mines - t.flagCount, 0, o);
-        let a = null;
-        e.forEach((l, f) => {
-          if (!a || l < a.prob) {
-            a = { r: Math.floor(f / t.cols), c: f % t.cols, prob: l };
+        const remainingMines = clamp(state.mines - state.flagCount, 0, hiddenCount);
+        let best = null;
+        probs.forEach((prob, index) => {
+          if (!best || prob < best.prob) {
+            best = { row: Math.floor(index / state.cols), col: index % state.cols, prob };
           }
         });
-        const c = n instanceof Set ? n : new Set(n || []);
-        const i = o - c.size;
-        if (i > 0) {
-          let l = 0;
-          e.forEach(u => {
-            l += u;
+        const frontierSet = frontierKeys instanceof Set ? frontierKeys : new Set(frontierKeys || []);
+        const outsideCount = hiddenCount - frontierSet.size;
+        if (outsideCount > 0) {
+          let probSum = 0;
+          probs.forEach(prob => {
+            probSum += prob;
           });
-          const f = G((s - l) / i, 0, 1);
-          if (!a || f < a.prob - 1e-9) {
-            for (let u = 0; u < t.rows; u++) {
-              for (let M = 0; M < t.cols; M++) {
-                if (!t.revealed[u][M] && !t.flagged[u][M] && !c.has(u * t.cols + M)) {
-                  return { r: u, c: M, prob: f, upper: c.size > e.size };
+          const outsideProb = clamp((remainingMines - probSum) / outsideCount, 0, 1);
+          if (!best || outsideProb < best.prob - 1e-9) {
+            for (let row = 0; row < state.rows; row++) {
+              for (let col = 0; col < state.cols; col++) {
+                if (!state.revealed[row][col] && !state.flagged[row][col] && !frontierSet.has(row * state.cols + col)) {
+                  return { row, col, prob: outsideProb, upper: frontierSet.size > probs.size };
                 }
               }
             }
           }
         }
-        return a;
+        return best;
       }
 
-      function vt(e, n) {
-        ee(e, n)?.classList.add("hint-flash");
+      function flashHint(row, col) {
+        cellAt(row, col)?.classList.add("hint-flash");
       }
 
-      async function Kt() {
-        if (t.firstClick) {
-          return Y("先点开一个格子开局吧", 1800);
+      async function useHint() {
+        if (state.firstClick) {
+          return showToast("先点开一个格子开局吧", 1800);
         }
-        if (t.placing) {
-          return Y("棋盘生成中，请稍候", 1500);
+        if (state.placing) {
+          return showToast("棋盘生成中，请稍候", 1500);
         }
-        if (t.gameOver) {
-          return Y("本局已经结束啦", 1500);
+        if (state.gameOver) {
+          return showToast("本局已经结束啦", 1500);
         }
-        if (t.hintBusy) {
+        if (state.hintBusy) {
           return;
         }
-        if (t.flagged.some((l, f) => l.some((u, M) => u && t.board[f][M] !== -1))) {
-          return Y("⚠ 存在错误旗标，提示无法保证安全，请先检查旗子", 2400);
+        if (state.flagged.some((rowFlags, row) => rowFlags.some((isFlagged, col) => isFlagged && state.board[row][col] !== -1))) {
+          return showToast("⚠ 存在错误旗标，提示无法保证安全，请先检查旗子", 2400);
         }
-        t.hintBusy = true;
-        const e = t.gameId;
-        const n = t.boardVersion;
-        const o = v("btn-hint");
-        if (o) {
-          o.disabled = true;
+        state.hintBusy = true;
+        const gameId = state.gameId;
+        const boardVersion = state.boardVersion;
+        const button = byId("btn-hint");
+        if (button) {
+          button.disabled = true;
         }
-        let s;
+        let result;
         try {
-          s = await An();
+          result = await requestHintFromWorker();
         } catch {
-          t.hintBusy = false;
-          if (o) {
-            o.disabled = false;
+          state.hintBusy = false;
+          if (button) {
+            button.disabled = false;
           }
-          if (t.gameId === e) {
-            Y("提示计算失败，请重试", 1800);
+          if (state.gameId === gameId) {
+            showToast("提示计算失败，请重试", 1800);
           }
           return;
         }
-        t.hintBusy = false;
-        if (o) {
-          o.disabled = false;
+        state.hintBusy = false;
+        if (button) {
+          button.disabled = false;
         }
-        if (t.gameId !== e || t.boardVersion !== n || t.gameOver) {
+        if (state.gameId !== gameId || state.boardVersion !== boardVersion || state.gameOver) {
           return;
         }
-        if (s.invalid) {
-          return Y("⚠ 当前局面存在矛盾标记，建议撤销重来", 2400);
+        if (result.invalid) {
+          return showToast("⚠ 当前局面存在矛盾标记，建议撤销重来", 2400);
         }
-        const a = (i, l) => {
-          t.cheated = true;
-          t.hintsUsed++;
-          fe();
-          Z("click");
-          t.usefulClicks++;
-          st([[i, l]], i, l);
-          if (!t.gameOver) {
-            at();
+        const revealHint = (row, col) => {
+          state.cheated = true;
+          state.hintsUsed++;
+          pushUndoSnapshot();
+          playFeedback("click");
+          state.usefulClicks++;
+          revealCells([[row, col]], row, col);
+          if (!state.gameOver) {
+            checkWin();
           }
-          vt(i, l);
+          flashHint(row, col);
         };
-        if (s.safe.length) {
-          const [i, l] = s.safe[Math.floor(Math.random() * s.safe.length)];
-          a(i, l);
-          return Y("💡 已为你翻开一个确定安全的格子", 2200);
+        if (result.safe.length) {
+          const [row, col] = result.safe[Math.floor(Math.random() * result.safe.length)];
+          revealHint(row, col);
+          return showToast("💡 已为你翻开一个确定安全的格子", 2200);
         }
-        if (s.mines.length) {
-          const [i, l] = s.mines[Math.floor(Math.random() * s.mines.length)];
-          t.cheated = true;
-          t.hintsUsed++;
-          fe();
-          t.flagged[i][l] = true;
-          t.flagCount++;
-          t.questioned[i][l] = false;
-          Z("flag");
-          j(i, l, "anim-flag");
-          oe();
-          vt(i, l);
-          return Y("💡 没有安全格了，已为你标记一个确定的雷", 2400);
+        if (result.mines.length) {
+          const [row, col] = result.mines[Math.floor(Math.random() * result.mines.length)];
+          state.cheated = true;
+          state.hintsUsed++;
+          pushUndoSnapshot();
+          state.flagged[row][col] = true;
+          state.flagCount++;
+          state.questioned[row][col] = false;
+          playFeedback("flag");
+          renderCell(row, col, "anim-flag");
+          renderCounters();
+          flashHint(row, col);
+          return showToast("💡 没有安全格了，已为你标记一个确定的雷", 2400);
         }
-        const c = Sn(new Map(s.probs), s.frontierKeys);
-        if (!c) {
-          return Y("当前没有可推导的格子", 1800);
+        const pick = pickLowestProbability(new Map(result.probs), result.frontierKeys);
+        if (!pick) {
+          return showToast("当前没有可推导的格子", 1800);
         }
-        a(c.r, c.c);
-        Y(`💡 没有100%确定的格子，已为你翻开雷概率最低（${ c.upper ? "不高于" : "约" } ${ Math.round(100 * c.prob) }%）的格子`, 2800);
+        revealHint(pick.row, pick.col);
+        showToast(`💡 没有100%确定的格子，已为你翻开雷概率最低（${ pick.upper ? "不高于" : "约" } ${ Math.round(100 * pick.prob) }%）的格子`, 2800);
       }
-      let se = null;
-      let Bn = 0;
-      const ne = new Array(we).fill(null);
-      const ye = new Array(we).fill(0);
+      let noguessWorkers = null;
+      let noguessRequestId = 0;
+      const pendingCallbacks = new Array(WORKER_COUNT).fill(null);
+      const pendingIds = new Array(WORKER_COUNT).fill(0);
 
-      function rt(e) {
-        const n = Wt();
-        n.onmessage = o => {
-          if (o.data.id === ye[e]) {
-            ne[e]?.(o.data.result);
-            ne[e] = null;
-            ye[e] = 0;
+      function spawnNoguessWorker(slot) {
+        const worker = createWorker();
+        worker.onmessage = event => {
+          if (event.data.id === pendingIds[slot]) {
+            pendingCallbacks[slot]?.(event.data.result);
+            pendingCallbacks[slot] = null;
+            pendingIds[slot] = 0;
           }
         };
-        n.onerror = () => {
-          ne[e]?.(false);
-          ne[e] = null;
-          ye[e] = 0;
-          if (se) {
-            se[e].terminate();
-            se[e] = rt(e);
+        worker.onerror = () => {
+          pendingCallbacks[slot]?.(false);
+          pendingCallbacks[slot] = null;
+          pendingIds[slot] = 0;
+          if (noguessWorkers) {
+            noguessWorkers[slot].terminate();
+            noguessWorkers[slot] = spawnNoguessWorker(slot);
           }
         };
-        return n;
+        return worker;
       }
-      const Ln = () => {
-        if (!se) {
-          se = Array.from({ length: we }, (e, n) => rt(n));
+      const getNoguessWorkers = () => {
+        if (!noguessWorkers) {
+          noguessWorkers = Array.from({ length: WORKER_COUNT }, (_item, slot) => spawnNoguessWorker(slot));
         }
-        return se;
+        return noguessWorkers;
       };
 
-      function jt(e) {
-        if (ne[e] !== null) {
-          ne[e](null);
-          ne[e] = null;
-          ye[e] = 0;
-          if (se?.[e]) {
-            se[e].terminate();
-            se[e] = rt(e);
+      function cancelWorkerSlot(slot) {
+        if (pendingCallbacks[slot] !== null) {
+          pendingCallbacks[slot](null);
+          pendingCallbacks[slot] = null;
+          pendingIds[slot] = 0;
+          if (noguessWorkers?.[slot]) {
+            noguessWorkers[slot].terminate();
+            noguessWorkers[slot] = spawnNoguessWorker(slot);
           }
         }
       }
 
-      function ae() {
-        for (let e = 0; e < ne.length; e++) {
-          jt(e);
+      function cancelAllWorkerChecks() {
+        for (let slot = 0; slot < pendingCallbacks.length; slot++) {
+          cancelWorkerSlot(slot);
         }
       }
 
-      function Tn(e, n, o, s, a, c) {
-        const i = Ln();
-        return new Promise(l => {
-          let f = e.length;
-          let u = false;
-          const M = w => {
-            if (!u) {
-              u = true;
-              l(w);
+      function checkBoardsInWorkers(candidates, rows, cols, mines, startRow, startCol) {
+        const workers = getNoguessWorkers();
+        return new Promise(resolve => {
+          let remaining = candidates.length;
+          let done = false;
+          const finish = result => {
+            if (!done) {
+              done = true;
+              resolve(result);
             }
           };
-          e.forEach((w, p) => {
-            jt(p);
-            const h = ++Bn;
-            ye[p] = h;
-            ne[p] = g => {
-              if (!u) {
-                if (g === null) {
-                  M(null);
-                } else if (g !== true) {
-                  if (--f === 0) {
-                    M(false);
+          candidates.forEach((candidate, slot) => {
+            cancelWorkerSlot(slot);
+            const requestId = ++noguessRequestId;
+            pendingIds[slot] = requestId;
+            pendingCallbacks[slot] = result => {
+              if (!done) {
+                if (result === null) {
+                  finish(null);
+                } else if (result !== true) {
+                  if (--remaining === 0) {
+                    finish(false);
                   }
                 } else {
-                  M(w);
+                  finish(candidate);
                 }
               }
             };
-            i[p].postMessage({
+            workers[slot].postMessage({
               mode: "check",
-              id: h,
-              board: w,
-              rows: n,
-              cols: o,
-              mines: s,
-              startR: a,
-              startC: c,
-              ...bt
+              id: requestId,
+              board: candidate,
+              rows,
+              cols,
+              mines,
+              startRow,
+              startCol,
+              ...SOLVER_LIMITS
             });
           });
         });
       }
 
-      async function Dn(e, n, o) {
-        const s = Ht(e, n);
-        if (t.mode !== "noguess") {
-          _e(s);
+      async function generateMines(firstRow, firstCol, gameId) {
+        const safeZone = safeZoneIndices(firstRow, firstCol);
+        if (state.mode !== "noguess") {
+          placeMines(safeZone);
           return;
         }
-        let a = 0;
-        const c = Math.round(1000 * Ye(t.noguessTimeSeconds));
-        const i = Date.now();
-        const l = () => Math.max(0, c - (Date.now() - i));
-        const f = () => {
-          if (t.gameId === o) {
-            Y(`⚙ 生成无猜棋盘… 剩余 ${ (l() / 1000).toFixed(1) }s${ a > 0 ? `·第${ a }轮` : "" } · ${ we } 线程`, 0);
+        let attempts = 0;
+        const budgetMs = Math.round(1000 * normalizePositiveNumber(state.noguessTimeSeconds));
+        const startedAt = Date.now();
+        const remainingMs = () => Math.max(0, budgetMs - (Date.now() - startedAt));
+        const showProgress = () => {
+          if (state.gameId === gameId) {
+            showToast(`⚙ 生成无猜棋盘… 剩余 ${ (remainingMs() / 1000).toFixed(1) }s${ attempts > 0 ? `·第${ attempts }轮` : "" } · ${ WORKER_COUNT } 线程`, 0);
           }
         };
-        f();
-        const u = setInterval(f, 500);
+        showProgress();
+        const progressTimer = setInterval(showProgress, 500);
         try {
           for (;;) {
-            if (t.gameId !== o) {
-              return ae();
+            if (state.gameId !== gameId) {
+              return cancelAllWorkerChecks();
             }
-            if (l() <= 0) {
+            if (remainingMs() <= 0) {
               throw new Error("超时");
             }
-            const M = Array.from({ length: we }, () => {
-              _e(s, { skipBV3: true });
-              return t.board.map(g => g.slice());
+            const candidates = Array.from({ length: WORKER_COUNT }, () => {
+              placeMines(safeZone, { skipBV3: true });
+              return state.board.map(row => row.slice());
             });
-            a++;
-            f();
-            if (t.gameId !== o) {
-              return ae();
+            attempts++;
+            showProgress();
+            if (state.gameId !== gameId) {
+              return cancelAllWorkerChecks();
             }
-            if (l() <= 0) {
+            if (remainingMs() <= 0) {
               throw new Error("超时");
             }
-            let w;
-            let p;
-            const h = new Promise((g, k) => {
-              p = setTimeout(() => {
-                k(new Error("超时"));
-                ae();
-              }, l());
+            let winner;
+            let timeoutId;
+            const timeoutPromise = new Promise((resolve, reject) => {
+              timeoutId = setTimeout(() => {
+                reject(new Error("超时"));
+                cancelAllWorkerChecks();
+              }, remainingMs());
             });
             try {
-              w = await Promise.race([Tn(M, t.rows, t.cols, t.mines, e, n), h]);
+              winner = await Promise.race([checkBoardsInWorkers(candidates, state.rows, state.cols, state.mines, firstRow, firstCol), timeoutPromise]);
             } finally {
-              clearTimeout(p);
+              clearTimeout(timeoutId);
             }
-            if (t.gameId !== o) {
-              return ae();
+            if (state.gameId !== gameId) {
+              return cancelAllWorkerChecks();
             }
-            if (w === null) {
+            if (winner === null) {
               throw new Error("生成中断");
             }
-            if (w !== false) {
-              t.board = w;
-              t.bv3 = Xt();
-              ae();
-              Y("✓ 无猜棋盘已就绪", 2000);
+            if (winner !== false) {
+              state.board = winner;
+              state.bv3 = countBv3();
+              cancelAllWorkerChecks();
+              showToast("✓ 无猜棋盘已就绪", 2000);
               return;
             }
           }
         } finally {
-          clearInterval(u);
+          clearInterval(progressTimer);
         }
       }
 
-      function at() {
-        if (t.revealedCount >= t.nonMineCount) {
-          Gt(true);
+      function checkWin() {
+        if (state.revealedCount >= state.nonMineCount) {
+          endGame(true);
         }
       }
 
-      function Gt(e, n = -1, o = -1) {
-        t.gameOver = true;
-        if (t.timer) {
-          t.timeMs = Math.min(Date.now() - t.timerStart, 9999000);
-          t.time = Math.min(9999, Math.floor(t.timeMs / 1000));
+      function endGame(won, hitRow = -1, hitCol = -1) {
+        state.gameOver = true;
+        if (state.timer) {
+          syncTime(Date.now() - state.timerStart);
         }
-        Me();
-        Rt();
-        Z(e ? "win" : "explode");
-        if (e) {
+        stopTimer();
+        getSettlement();
+        playFeedback(won ? "win" : "explode");
+        if (won) {
           // Flags/modal wait for the running reveal wave; otherwise edge refreshes would
           // overwrite the win-flag animation and the modal could pop up mid-ripple.
           afterWave(() => {
-            for (let i = 0; i < t.rows; i++) {
-              for (let l = 0; l < t.cols; l++) {
-                if (t.board[i][l] === -1 && !t.flagged[i][l]) {
-                  t.flagged[i][l] = true;
-                  t.flagCount++;
-                  t.questioned[i][l] = false;
-                  j(i, l);
-                  ee(i, l)?.classList.add("win-flag");
+            for (let row = 0; row < state.rows; row++) {
+              for (let col = 0; col < state.cols; col++) {
+                if (state.board[row][col] === -1 && !state.flagged[row][col]) {
+                  state.flagged[row][col] = true;
+                  state.flagCount++;
+                  state.questioned[row][col] = false;
+                  renderCell(row, col);
+                  cellAt(row, col)?.classList.add("win-flag");
                 }
               }
             }
-            oe();
-            le();
-            fn();
-            r.timers.modal = setTimeout(() => wt(true), 400);
+            renderCounters();
+            renderProgress();
+            launchConfetti();
+            runtime.timers.modal = setTimeout(() => showResultModal(true), 400);
           });
           return;
         }
-        const s = n >= 0 && o >= 0;
-        const a = [];
-        const c = [];
-        for (let i = 0; i < t.rows; i++) {
-          for (let l = 0; l < t.cols; l++) {
-            if (t.board[i][l] !== -1 || t.flagged[i][l]) {
-              if (t.board[i][l] !== -1 && t.flagged[i][l]) {
-                c.push([i, l]);
+        const hasHit = hitRow >= 0 && hitCol >= 0;
+        const minesToReveal = [];
+        const wrongFlags = [];
+        for (let row = 0; row < state.rows; row++) {
+          for (let col = 0; col < state.cols; col++) {
+            if (state.board[row][col] !== -1 || state.flagged[row][col]) {
+              if (state.board[row][col] !== -1 && state.flagged[row][col]) {
+                wrongFlags.push([row, col]);
               }
             } else {
-              t.questioned[i][l] = false;
-              t.revealed[i][l] = true;
-              if (!(s && i === n && l === o)) {
-                a.push([i, l]);
+              state.questioned[row][col] = false;
+              state.revealed[row][col] = true;
+              if (!(hasHit && row === hitRow && col === hitCol)) {
+                minesToReveal.push([row, col]);
               }
             }
           }
         }
-        c.forEach(([i, l]) => j(i, l));
-        if (s) {
-          j(n, o);
-          ee(n, o)?.classList.add("exploded", "anim-explode");
+        wrongFlags.forEach(([row, col]) => renderCell(row, col));
+        if (hasHit) {
+          renderCell(hitRow, hitCol);
+          cellAt(hitRow, hitCol)?.classList.add("exploded", "anim-explode");
         }
-        oe();
-        le();
-        startWave(a, n, o, () => {
-          oe();
-          le();
-          r.timers.modal = setTimeout(() => wt(false), 120);
-        }, { mineReveal: true, edgeSources: s ? [[n, o]] : [] });
+        renderCounters();
+        renderProgress();
+        startWave(minesToReveal, hitRow, hitCol, () => {
+          renderCounters();
+          renderProgress();
+          runtime.timers.modal = setTimeout(() => showResultModal(false), 120);
+        }, { mineReveal: true, edgeSources: hasHit ? [[hitRow, hitCol]] : [] });
       }
-      const yt = (e, n, o) => `<div class="modal-stat-card"><div class="modal-stat-label">${ e }</div><div class="modal-stat-value">${ n }<small class="modal-stat-unit"> ${ o }</small></div></div>`;
-      const ke = (e, n) => `<div class="quick-stat"><span class="quick-stat-label">${ e }</span><span class="quick-stat-value">${ n }</span></div>`;
+      const statCardHtml = (label, value, unit) => `<div class="modal-stat-card"><div class="modal-stat-label">${ label }</div><div class="modal-stat-value">${ value }<small class="modal-stat-unit"> ${ unit }</small></div></div>`;
+      const quickStatHtml = (label, value) => `<div class="quick-stat"><span class="quick-stat-label">${ label }</span><span class="quick-stat-value">${ value }</span></div>`;
 
-      function qn(e) {
-        return xt(Math.floor(e / 1000)) + "<span class=\"cs\">." + We(Math.floor(e % 1000 / 10)) + "</span>";
+      function formatTimeHtml(milliseconds) {
+        return formatSeconds(Math.floor(milliseconds / 1000)) + "<span class=\"cs\">." + padTwoDigits(Math.floor(milliseconds % 1000 / 10)) + "</span>";
       }
 
-      function wt(e) {
-        const n = t.settlement || Rt();
-        d.modalIconCircle.className = "modal-icon-circle " + (e ? "icon-win" : "icon-loss");
-        d.modalIcon.innerHTML = e ? lt.check : lt.bomb;
-        d.modalTitle.textContent = e ? "通关了" : "踩雷了！";
-        d.modalBadge.innerHTML = n.cheated ? "<span class=\"new-record-badge\">本局使用了辅助</span>" : "";
-        const o = t.timeMs || t.time * 1000;
-        d.modalQuickStats.innerHTML = ke("3BV", t.bv3) + ke("3BV/s", o > 0 ? (t.bv3 / (o / 1000)).toFixed(2) : "0.00") + ke("IOE", t.usefulClicks > 0 ? (t.bv3 / t.usefulClicks).toFixed(2) : "0.00") + ke("提示", t.hintsUsed + "次");
-        d.modalStats.className = "modal-stats";
-        d.modalStats.innerHTML = `<div class="modal-stat-card" style="grid-column:1/-1"><div class="modal-stat-label">用时</div><div class="modal-stat-value">${ qn(o) }<small class="modal-stat-unit">${ o < 60000 ? " 秒" : "" }</small></div></div>` + yt("插旗", t.flagCount, "个") + yt("有效点击", t.usefulClicks, "次");
-        if (n.cheated) {
-          d.modalMsg.textContent = "使用了辅助。";
-        } else if (e) {
-          d.modalMsg.textContent = "通关成功！";
+      function showResultModal(won) {
+        const settlement = state.settlement || getSettlement();
+        dom.modalIconCircle.className = "modal-icon-circle " + (won ? "icon-win" : "icon-loss");
+        dom.modalIcon.innerHTML = won ? MODAL_ICONS.check : MODAL_ICONS.bomb;
+        dom.modalTitle.textContent = won ? "通关了" : "踩雷了！";
+        dom.modalBadge.innerHTML = settlement.cheated ? "<span class=\"new-record-badge\">本局使用了辅助</span>" : "";
+        const elapsedMs = state.timeMs || state.time * 1000;
+        dom.modalQuickStats.innerHTML = quickStatHtml("3BV", state.bv3) + quickStatHtml("3BV/s", elapsedMs > 0 ? (state.bv3 / (elapsedMs / 1000)).toFixed(2) : "0.00") + quickStatHtml("IOE", state.usefulClicks > 0 ? (state.bv3 / state.usefulClicks).toFixed(2) : "0.00") + quickStatHtml("提示", state.hintsUsed + "次");
+        dom.modalStats.className = "modal-stats";
+        dom.modalStats.innerHTML = `<div class="modal-stat-card" style="grid-column:1/-1"><div class="modal-stat-label">用时</div><div class="modal-stat-value">${ formatTimeHtml(elapsedMs) }<small class="modal-stat-unit">${ elapsedMs < 60000 ? " 秒" : "" }</small></div></div>` + statCardHtml("插旗", state.flagCount, "个") + statCardHtml("有效点击", state.usefulClicks, "次");
+        if (settlement.cheated) {
+          dom.modalMessage.textContent = "使用了辅助。";
+        } else if (won) {
+          dom.modalMessage.textContent = "通关成功！";
         } else {
-          d.modalMsg.textContent = "再接再厉！";
+          dom.modalMessage.textContent = "再接再厉！";
         }
-        d.modal.classList.add("show");
+        dom.modal.classList.add("show");
       }
 
-      function Ce() {
-        d.modal.classList.remove("show");
-        Tt();
+      function closeModal() {
+        dom.modal.classList.remove("show");
+        stopConfetti();
       }
 
-      function Rn() {
-        d.area.addEventListener("mousedown", e => {
-          if (e.button !== 0) {
+      function bindAreaGestures() {
+        dom.area.addEventListener("mousedown", event => {
+          if (event.button !== 0) {
             return;
           }
-          if (e.target.closest(".cell") && !t.gameOver && !t.placing) {
-            if (!r.ignoreMouse) {
-              const n = d.wrapper.getBoundingClientRect();
-              const o = d.area.getBoundingClientRect();
-              if (n.width > o.width || n.height > o.height) {
-                r.panArm = { x: e.clientX, y: e.clientY };
+          if (event.target.closest(".cell") && !state.gameOver && !state.placing) {
+            if (!runtime.ignoreMouse) {
+              const wrapRect = dom.wrapper.getBoundingClientRect();
+              const areaRect = dom.area.getBoundingClientRect();
+              if (wrapRect.width > areaRect.width || wrapRect.height > areaRect.height) {
+                runtime.panArm = { x: event.clientX, y: event.clientY };
               }
             }
             return;
           }
-          Ue(e.clientX, e.clientY);
+          beginPan(event.clientX, event.clientY);
         });
-        document.addEventListener("mousemove", e => {
-          if (!r.pan) {
-            if (!r.panArm) {
+        document.addEventListener("mousemove", event => {
+          if (!runtime.pan) {
+            if (!runtime.panArm) {
               return;
             }
-            if (!(e.buttons & 1)) {
-              r.panArm = null;
+            if (!(event.buttons & 1)) {
+              runtime.panArm = null;
               return;
             }
-            if (Math.hypot(e.clientX - r.panArm.x, e.clientY - r.panArm.y) < 8) {
+            if (Math.hypot(event.clientX - runtime.panArm.x, event.clientY - runtime.panArm.y) < 8) {
               return;
             }
-            Ue(r.panArm.x, r.panArm.y);
-            r.panArm = null;
+            beginPan(runtime.panArm.x, runtime.panArm.y);
+            runtime.panArm = null;
           }
-          const n = e.clientX - r.pan.x;
-          const o = e.clientY - r.pan.y;
-          if (Math.abs(n) > 5 || Math.abs(o) > 5) {
-            r.moved = true;
+          const deltaX = event.clientX - runtime.pan.x;
+          const deltaY = event.clientY - runtime.pan.y;
+          if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+            runtime.moved = true;
           }
-          r.offset = { x: r.pan.ox + n, y: r.pan.oy + o };
-          ie();
+          runtime.offset = { x: runtime.pan.startOffsetX + deltaX, y: runtime.pan.startOffsetY + deltaY };
+          schedulePan();
         });
-        document.addEventListener("mouseup", pe);
-        d.area.addEventListener("dblclick", e => {
-          if (!e.target.closest(".cell")) {
-            Pt();
+        document.addEventListener("mouseup", clearPanState);
+        dom.area.addEventListener("dblclick", event => {
+          if (!event.target.closest(".cell")) {
+            resetView();
           }
         });
-        d.area.addEventListener("wheel", e => {
-          e.preventDefault();
-          const n = G(r.scale * (e.deltaY < 0 ? 1.12 : 0.9), r.minScale, r.maxScale);
-          if (n === r.scale) {
+        dom.area.addEventListener("wheel", event => {
+          event.preventDefault();
+          const newScale = clamp(runtime.scale * (event.deltaY < 0 ? 1.12 : 0.9), runtime.minScale, runtime.maxScale);
+          if (newScale === runtime.scale) {
             return;
           }
-          const o = d.wrapper.getBoundingClientRect();
-          const s = e.clientX - (o.left + o.width / 2);
-          const a = e.clientY - (o.top + o.height / 2);
-          const c = 1 - n / r.scale;
-          r.offset = { x: r.offset.x + s * c, y: r.offset.y + a * c };
-          r.scale = n;
-          ie();
-          Ve();
+          const rect = dom.wrapper.getBoundingClientRect();
+          const centerOffsetX = event.clientX - (rect.left + rect.width / 2);
+          const centerOffsetY = event.clientY - (rect.top + rect.height / 2);
+          const ratio = 1 - newScale / runtime.scale;
+          runtime.offset = { x: runtime.offset.x + centerOffsetX * ratio, y: runtime.offset.y + centerOffsetY * ratio };
+          runtime.scale = newScale;
+          applyTransform();
+          releaseWillChange();
         }, { passive: false });
-        d.area.addEventListener("touchstart", e => {
-          if (e.touches.length === 2) {
-            const [n, o] = e.touches;
-            r.pinch = {
-              dist: Math.max(1, Math.hypot(o.clientX - n.clientX, o.clientY - n.clientY)),
-              scale: r.scale,
-              cx: (n.clientX + o.clientX) / 2,
-              cy: (n.clientY + o.clientY) / 2
+        dom.area.addEventListener("touchstart", event => {
+          if (event.touches.length === 2) {
+            const [touch1, touch2] = event.touches;
+            runtime.pinch = {
+              distance: Math.max(1, Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY)),
+              scale: runtime.scale,
+              centerX: (touch1.clientX + touch2.clientX) / 2,
+              centerY: (touch1.clientY + touch2.clientY) / 2
             };
-            r.wasPinching = true;
-            pe();
-            e.preventDefault();
+            runtime.wasPinching = true;
+            clearPanState();
+            event.preventDefault();
           } else {
-            if (e.touches.length === 1 && (!e.target.closest(".cell") || t.gameOver || t.placing)) {
-              Ue(e.touches[0].clientX, e.touches[0].clientY);
+            if (event.touches.length === 1 && (!event.target.closest(".cell") || state.gameOver || state.placing)) {
+              beginPan(event.touches[0].clientX, event.touches[0].clientY);
             }
           }
         }, { passive: false });
-        document.addEventListener("touchmove", e => {
-          if (r.pinch && e.touches.length >= 2) {
-            const [a, c] = e.touches;
-            const i = (a.clientX + c.clientX) / 2;
-            const l = (a.clientY + c.clientY) / 2;
-            const f = G(r.pinch.scale * Math.hypot(c.clientX - a.clientX, c.clientY - a.clientY) / r.pinch.dist, r.minScale, r.maxScale);
-            const u = d.wrapper.getBoundingClientRect();
-            const M = r.pinch.cx - (u.left + u.width / 2);
-            const w = r.pinch.cy - (u.top + u.height / 2);
-            const p = 1 - f / r.scale;
-            r.offset = {
-              x: r.offset.x + M * p + (i - r.pinch.cx),
-              y: r.offset.y + w * p + (l - r.pinch.cy)
+        document.addEventListener("touchmove", event => {
+          if (runtime.pinch && event.touches.length >= 2) {
+            const [touch1, touch2] = event.touches;
+            const midX = (touch1.clientX + touch2.clientX) / 2;
+            const midY = (touch1.clientY + touch2.clientY) / 2;
+            const newScale = clamp(runtime.pinch.scale * Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY) / runtime.pinch.distance, runtime.minScale, runtime.maxScale);
+            const rect = dom.wrapper.getBoundingClientRect();
+            const centerOffsetX = runtime.pinch.centerX - (rect.left + rect.width / 2);
+            const centerOffsetY = runtime.pinch.centerY - (rect.top + rect.height / 2);
+            const ratio = 1 - newScale / runtime.scale;
+            runtime.offset = {
+              x: runtime.offset.x + centerOffsetX * ratio + (midX - runtime.pinch.centerX),
+              y: runtime.offset.y + centerOffsetY * ratio + (midY - runtime.pinch.centerY)
             };
-            r.scale = f;
-            r.pinch.cx = i;
-            r.pinch.cy = l;
-            ie();
-            Ve();
+            runtime.scale = newScale;
+            runtime.pinch.centerX = midX;
+            runtime.pinch.centerY = midY;
+            applyTransform();
+            releaseWillChange();
             return;
           }
-          if (!r.pan || e.touches.length !== 1) {
+          if (!runtime.pan || event.touches.length !== 1) {
             return;
           }
-          const n = e.touches[0];
-          const o = n.clientX - r.pan.x;
-          const s = n.clientY - r.pan.y;
-          if (Math.abs(o) > 5 || Math.abs(s) > 5) {
-            r.moved = true;
+          const touch = event.touches[0];
+          const deltaX = touch.clientX - runtime.pan.x;
+          const deltaY = touch.clientY - runtime.pan.y;
+          if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+            runtime.moved = true;
           }
-          r.offset = { x: r.pan.ox + o, y: r.pan.oy + s };
-          ie();
+          runtime.offset = { x: runtime.pan.startOffsetX + deltaX, y: runtime.pan.startOffsetY + deltaY };
+          applyTransform();
         }, { passive: true });
-        document.addEventListener("touchend", e => {
-          if (r.pinch && e.touches.length < 2) {
-            r.pinch = null;
+        document.addEventListener("touchend", event => {
+          if (runtime.pinch && event.touches.length < 2) {
+            runtime.pinch = null;
           }
-          if (!e.touches.length) {
-            pe();
+          if (!event.touches.length) {
+            clearPanState();
           }
         }, { passive: true });
         document.addEventListener("touchcancel", () => {
-          r.pinch = null;
-          pe();
+          runtime.pinch = null;
+          clearPanState();
         }, { passive: true });
       }
 
-      function Jt() {
-        const e = parseInt(v("c-rows").value, 10) || 0;
-        const n = parseInt(v("c-cols").value, 10) || 0;
-        const o = parseInt(v("c-mines").value, 10) || 0;
-        const s = Math.max(0, e * n);
-        const a = s ? Math.max(0, o) / s : 0;
-        const c = s > 9 ? s - 9 : 1;
-        d.minesHint.textContent = s > 9 ? `(最多 ${ c })` : "";
-        v("c-mines").max = c;
-        d.density.className = "density-hint";
-        d.density.textContent = "";
-        if (s) {
-          if (a > 0.5) {
-            d.density.classList.add("error");
-            d.density.textContent = `⚠ 雷密度 ${ Math.round(100 * a) }%，过高`;
-          } else if (s <= 30 && o > 0.3 * s) {
-            d.density.classList.add("warn");
-            d.density.textContent = `格子较少（${ s }格），建议降低雷数`;
+      function updateCustomHints() {
+        const rows = parseInt(byId("c-rows").value, 10) || 0;
+        const cols = parseInt(byId("c-cols").value, 10) || 0;
+        const mines = parseInt(byId("c-mines").value, 10) || 0;
+        const cellCount = Math.max(0, rows * cols);
+        const density = cellCount ? Math.max(0, mines) / cellCount : 0;
+        const maxMines = cellCount > 9 ? cellCount - 9 : 1;
+        dom.maxMinesHint.textContent = cellCount > 9 ? `(最多 ${ maxMines })` : "";
+        byId("c-mines").max = maxMines;
+        dom.density.className = "density-hint";
+        dom.density.textContent = "";
+        if (cellCount) {
+          if (density > 0.5) {
+            dom.density.classList.add("error");
+            dom.density.textContent = `⚠ 雷密度 ${ Math.round(100 * density) }%，过高`;
+          } else if (cellCount <= 30 && mines > 0.3 * cellCount) {
+            dom.density.classList.add("warn");
+            dom.density.textContent = `格子较少（${ cellCount }格），建议降低雷数`;
           }
         }
       }
 
-      function Pn(e) {
-        const n = d.settings.classList.contains("show");
-        const o = e.key.toLowerCase();
-        const s = !e.ctrlKey && !e.metaKey;
-        if (e.key === "Escape") {
-          return n ? Ae() : Ce();
+      function handleKeydown(event) {
+        const settingsOpen = dom.settings.classList.contains("show");
+        const key = event.key.toLowerCase();
+        const noModifier = !event.ctrlKey && !event.metaKey;
+        if (event.key === "Escape") {
+          return settingsOpen ? closeSettings() : closeModal();
         }
-        if ((e.ctrlKey || e.metaKey) && o === "z" && !e.shiftKey && !n) {
-          e.preventDefault();
-          return ze();
+        if ((event.ctrlKey || event.metaKey) && key === "z" && !event.shiftKey && !settingsOpen) {
+          event.preventDefault();
+          return undoMove();
         }
-        if (o === "r" && s && !n) {
-          Ce();
-          d.settings.classList.remove("show");
-          r.snap = null;
-          return ue();
+        if (key === "r" && noModifier && !settingsOpen) {
+          closeModal();
+          dom.settings.classList.remove("show");
+          runtime.snap = null;
+          return resetGame();
         }
-        if (o === "h" && s && !n) {
-          if (!ft()) {
-            Kt();
+        if (key === "h" && noModifier && !settingsOpen) {
+          if (!isInteractionBlocked()) {
+            useHint();
           }
           return;
         }
-        if (ft() || t.gameOver || t.placing || (e.key === " " || e.key === "Enter") && document.activeElement?.tagName === "BUTTON" || !(e.key in Oe) && ![" ", "Enter", "f", "F"].includes(e.key)) {
+        if (isInteractionBlocked() || state.gameOver || state.placing || (event.key === " " || event.key === "Enter") && document.activeElement?.tagName === "BUTTON" || !(event.key in ARROW_KEY_DELTAS) && ![" ", "Enter", "f", "F"].includes(event.key)) {
           return;
         }
-        e.preventDefault();
-        if (!me(t.kbR, t.kbC)) {
-          t.kbR = Math.floor(t.rows / 2);
-          t.kbC = Math.floor(t.cols / 2);
+        event.preventDefault();
+        if (!inBounds(state.keyboardRow, state.keyboardCol)) {
+          state.keyboardRow = Math.floor(state.rows / 2);
+          state.keyboardCol = Math.floor(state.cols / 2);
         }
-        if (e.key in Oe) {
-          ee(t.kbR, t.kbC)?.classList.remove("kb-focus");
-          const [c, i] = Oe[e.key];
-          t.kbR = G(t.kbR + c, 0, t.rows - 1);
-          t.kbC = G(t.kbC + i, 0, t.cols - 1);
+        if (event.key in ARROW_KEY_DELTAS) {
+          cellAt(state.keyboardRow, state.keyboardCol)?.classList.remove("kb-focus");
+          const [deltaRow, deltaCol] = ARROW_KEY_DELTAS[event.key];
+          state.keyboardRow = clamp(state.keyboardRow + deltaRow, 0, state.rows - 1);
+          state.keyboardCol = clamp(state.keyboardCol + deltaCol, 0, state.cols - 1);
         } else {
-          if (e.key === " " || e.key === "Enter") {
-            if (Qe(t.kbR, t.kbC)) {
-              tt(t.kbR, t.kbC);
+          if (event.key === " " || event.key === "Enter") {
+            if (isRevealedNumber(state.keyboardRow, state.keyboardCol)) {
+              chordReveal(state.keyboardRow, state.keyboardCol);
             } else {
-              qe(t.kbR, t.kbC);
+              revealCell(state.keyboardRow, state.keyboardCol);
             }
-          } else if (o === "f") {
-            ot(t.kbR, t.kbC);
+          } else if (key === "f") {
+            toggleFlag(state.keyboardRow, state.keyboardCol);
           }
         }
-        const a = ee(t.kbR, t.kbC);
-        if (a) {
-          a.classList.add("kb-focus");
-          an(a, 40);
+        const focusCell = cellAt(state.keyboardRow, state.keyboardCol);
+        if (focusCell) {
+          focusCell.classList.add("kb-focus");
+          scrollCellIntoView(focusCell, 40);
         }
       }
 
-      function On() {
-        const e = {
-          "btn-newgame": ue,
+      function bindUi() {
+        const clickHandlers = {
+          "btn-newgame": resetGame,
           "btn-replay": () => {
-            Ce();
-            ue();
+            closeModal();
+            resetGame();
           },
-          "btn-close-modal": Ce,
-          "btn-settings": hn,
-          "btn-close-settings": Ae,
+          "btn-close-modal": closeModal,
+          "btn-settings": openSettings,
+          "btn-close-settings": closeSettings,
           "btn-close-warning": () => {
-            d.warning.hidden = true;
+            dom.warning.hidden = true;
           },
-          "btn-undo-modal": ze,
-          "btn-undo-topbar": ze,
-          "btn-hint": Kt,
+          "btn-undo-modal": undoMove,
+          "btn-undo-topbar": undoMove,
+          "btn-hint": useHint,
           "btn-apply-custom": () => {
-            qt({ selectDifficulty: true });
-            r.snap = null;
-            d.settings.classList.remove("show");
-            ue();
+            readCustomInputs({ selectDifficulty: true });
+            runtime.snap = null;
+            dom.settings.classList.remove("show");
+            resetGame();
           },
           "btn-reset-settings"() {
-            if (r.confirmReset) {
-              clearTimeout(r.confirmReset);
-              r.confirmReset = null;
+            if (runtime.confirmReset) {
+              clearTimeout(runtime.confirmReset);
+              runtime.confirmReset = null;
               this.textContent = "重置所有设置";
-              gn();
+              resetAllSettings();
               return;
             }
             this.textContent = "再点一次确认重置";
-            r.confirmReset = setTimeout(() => {
-              r.confirmReset = null;
+            runtime.confirmReset = setTimeout(() => {
+              runtime.confirmReset = null;
               this.textContent = "重置所有设置";
             }, 3000);
           }
         };
-        for (const [o, s] of Object.entries(e)) {
-          v(o)?.addEventListener("click", s);
+        for (const [elementId, handler] of Object.entries(clickHandlers)) {
+          byId(elementId)?.addEventListener("click", handler);
         }
-        const n = [
+        const changeBindings = [
           [
             "toggle-dark",
             "change",
-            o => {
-              Te(o.target.checked);
-              te();
+            event => {
+              runtime.darkManual = true;
+              setDarkMode(event.target.checked);
+              scheduleSaveSettings();
             }
           ],
           [
             "toggle-sound",
             "change",
-            o => {
-              t.soundEnabled = o.target.checked;
-              te();
+            event => {
+              state.soundEnabled = event.target.checked;
+              scheduleSaveSettings();
             }
           ],
           [
             "toggle-question",
             "change",
-            o => {
-              t.questionMarkEnabled = o.target.checked;
-              te();
+            event => {
+              state.questionMarkEnabled = event.target.checked;
+              scheduleSaveSettings();
             }
           ],
           [
             "longpress-delay",
             "input",
-            o => {
-              je(o.target.value);
-              te();
+            event => {
+              syncLongPressUI(event.target.value);
+              scheduleSaveSettings();
             }
           ],
-          ["noguess-time-seconds", "input", o => ut(o.target, false)],
-          ["noguess-time-seconds", "blur", o => ut(o.target, true)]
+          ["noguess-time-seconds", "input", event => handleNoguessTimeInput(event.target, false)],
+          ["noguess-time-seconds", "blur", event => handleNoguessTimeInput(event.target, true)]
         ];
-        for (const [o, s, a] of n) {
-          v(o).addEventListener(s, a);
+        for (const [elementId, eventName, handler] of changeBindings) {
+          byId(elementId).addEventListener(eventName, handler);
         }
-        ["c-rows", "c-cols", "c-mines"].forEach(o => v(o).addEventListener("input", Jt));
-        d.settings.addEventListener("click", o => {
-          const s = o.target.closest("[data-set]");
-          if (s) {
-            ce(s.dataset.set, s.dataset.val);
-          } else if (o.target === o.currentTarget) {
-            Ae();
+        ["c-rows", "c-cols", "c-mines"].forEach(elementId => byId(elementId).addEventListener("input", updateCustomHints));
+        dom.settings.addEventListener("click", event => {
+          const button = event.target.closest("[data-set]");
+          if (button) {
+            setOption(button.dataset.set, button.dataset.val);
+          } else if (event.target === event.currentTarget) {
+            closeSettings();
           }
         });
-        d.modal.addEventListener("click", o => {
-          if (o.target === o.currentTarget) {
-            Ce();
+        dom.modal.addEventListener("click", event => {
+          if (event.target === event.currentTarget) {
+            closeModal();
           }
         });
-        document.addEventListener("keydown", Pn);
-        document.addEventListener("click", o => {
-          o.detail && o.target.closest?.("button")?.blur();
+        document.addEventListener("keydown", handleKeydown);
+        document.addEventListener("click", event => {
+          event.detail && event.target.closest?.("button")?.blur();
         });
         addEventListener("resize", () => {
-          K("resize");
-          r.timers.resize = setTimeout(() => Ot(true), 100);
+          clearTimer("resize");
+          runtime.timers.resize = setTimeout(() => layoutBoard(true), 100);
         });
         addEventListener("pagehide", () => {
-          if (r.timers.save) {
-            K("save");
-            Dt();
+          if (runtime.timers.save) {
+            clearTimer("save");
+            saveSettingsNow();
           }
-          r.audio?.close();
+          runtime.audio?.close();
         });
-        Rn();
+        bindAreaGestures();
       }
-      matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
-        if (kt(Le.get(Be)).dark === undefined) {
-          Te(e.matches);
+      matchMedia("(prefers-color-scheme: dark)").addEventListener("change", event => {
+        if (!runtime.darkManual) {
+          setDarkMode(event.matches);
         }
       });
 
-      function In() {
-        mn();
-        On();
-        ue();
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          if (state.timer && !state.gameOver) {
+            syncTime(Date.now() - state.timerStart);
+            stopTimer();
+            runtime.hiddenPaused = true;
+          }
+        } else if (runtime.hiddenPaused) {
+          runtime.hiddenPaused = false;
+          if (!(state.timer || state.gameOver || state.firstClick || state.placing || runtime.settingsPaused || dom.settings.classList.contains("show"))) {
+            startTimer();
+          }
+        }
+      });
+
+      function init() {
+        loadSettings();
+        bindUi();
+        resetGame();
       }
-      In();
+      init();
     })();
   </script>
 </body>
