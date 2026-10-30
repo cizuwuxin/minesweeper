@@ -644,11 +644,6 @@
       background: var(--md-sys-color-on-primary);
     }
 
-    .toggle-switch input:focus-visible+.toggle-track {
-      outline: 3px solid var(--accent);
-      outline-offset: 2px;
-    }
-
     .custom-fields {
       display: none;
       flex-direction: column;
@@ -1067,13 +1062,6 @@
       }
     }
 
-    @media(prefers-reduced-motion:reduce) {
-      * {
-        animation-duration: 0s!important;
-        transition-duration: 0s!important;
-      }
-    }
-
     #status-toast {
       position: fixed;
       left: 12px;
@@ -1147,6 +1135,67 @@
         flex: 1.65;
       }
     }
+
+    #home { z-index: 90; background: var(--bg); align-items: flex-start; overflow-y: auto; color: var(--fg); }
+    @keyframes homeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    .home-panel { width: 100%; max-width: 560px; margin: 0 auto; min-height: 100%; padding: max(20px, env(safe-area-inset-top)) 16px 0; display: flex; flex-direction: column; gap: 12px; }
+    .home-hero { padding: 16px 4px 8px; }
+    .home-hero h1 { margin: 0; font-size: 30px; line-height: 1.1; font-weight: 700; }
+    #home-continue { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border: 0; border-radius: 16px; font-size: 15px; box-shadow: none; }
+    #home-continue[hidden] { display: none; }
+    .home-label { margin: 10px 4px 0; font-size: 13px; font-weight: 600; letter-spacing: .04em; color: var(--muted); }
+    .seg { display: flex; border: 1px solid var(--md-sys-color-outline); border-radius: 999px; overflow: hidden; }
+    .seg .btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 8px; border: 0; border-radius: 0; box-shadow: none; color: var(--fg); font-size: 14px; }
+    .seg .btn + .btn { border-left: 1px solid var(--md-sys-color-outline); }
+    .seg .btn.active { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+    .seg .btn svg { display: none; }
+    .seg .btn.active svg { display: block; }
+    .home-hint { margin: 0 4px; font-size: 12px; color: var(--muted); }
+    .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mode-card { position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px; text-align: left; border: 1px solid transparent; border-radius: 16px; background: var(--md-sys-color-surface-container-high); color: var(--fg); cursor: pointer; transition: background-color .16s var(--md-ease), transform .1s var(--md-ease); }
+    #home.show .mode-card { animation: homeIn .28s var(--md-ease) both; }
+    .mode-card:hover { background: var(--md-sys-color-surface-container-highest); }
+    .mode-card:active { transform: scale(.97); background: var(--md-sys-color-surface-container-highest); }
+    .mc-icon { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+    .mc-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+    .mc-text b { font-size: 15px; font-weight: 600; }
+    .home-soon { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+    .home-soon .mode-card { flex-direction: row; align-items: center; gap: 14px; padding: 12px 16px; border: 0; border-radius: 0; background: transparent; opacity: .6; }
+    .home-soon .mode-card + .mode-card { border-top: 1px solid var(--border); }
+    .home-soon .mc-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--md-sys-color-surface-container-highest); color: var(--muted); }
+    .mc-tag { flex: none; padding: 4px 10px; border-radius: 8px; background: var(--md-sys-color-surface-container-highest); font-size: 12px; font-weight: 600; color: var(--muted); }
+    .home-nav { position: sticky; bottom: 0; margin: auto -16px 0; padding: 10px 16px max(12px, env(safe-area-inset-bottom)); display: flex; justify-content: space-around; background: var(--md-sys-color-surface-container); }
+    .home-nav button { position: relative; overflow: hidden; border-radius: 16px; padding: 4px 8px; border: 0; background: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; cursor: pointer; min-width: 80px; }
+    .home-nav button i { width: 64px; height: 32px; border-radius: 16px; display: grid; place-items: center; transition: background-color .16s var(--md-ease); }
+    .home-nav button:hover i, .home-nav button:active i { background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
+    #sub { z-index: 95; background: var(--bg); align-items: flex-start; overflow-y: auto; color: var(--fg); }
+    .sub-panel { width: 100%; max-width: 560px; margin: 0 auto; padding: max(12px, env(safe-area-inset-top)) 16px 28px; display: flex; flex-direction: column; gap: 10px; }
+    .sub-head { display: flex; align-items: center; gap: 8px; padding: 4px 0 6px; }
+    .sub-head h2 { margin: 0; font-size: 22px; }
+    .sub-sum { margin: 0 4px 4px; font-size: 13px; color: var(--muted); }
+    .ach, .les { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 20px; background: var(--md-sys-color-surface-container-high); }
+    .ach { flex-direction: row; align-items: center; gap: 14px; }
+    .ach.off { opacity: .6; }
+    .ach-ic { flex: none; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--md-sys-color-surface-container-highest); }
+    .ach:not(.off) .ach-ic { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+    .ach.off .ach-ic { color: var(--muted); }
+    .ach-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .ach-tx b, .les b { font-size: 15px; font-weight: 600; }
+    .ach-tx small, .les p { margin: 0; font-size: 12.5px; color: var(--muted); }
+    .bar { height: 4px; border-radius: 2px; background: var(--md-sys-color-surface-container-highest); overflow: hidden; }
+    .bar i { display: block; height: 100%; background: var(--accent); }
+    .lv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .lv { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 4px; border: 1px solid transparent; border-radius: 16px; background: var(--md-sys-color-surface-container-high); color: var(--fg); cursor: pointer; font-size: 20px; font-weight: 700; }
+    .lv small { font-size: 11px; font-weight: 500; color: var(--muted); }
+    .lv.done { background: var(--md-sys-color-primary-container); }
+    .lv.cur { border-color: var(--md-sys-color-primary); }
+    .lv:disabled { opacity: .4; cursor: default; }
+    .dg { display: grid; gap: 3px; justify-content: center; margin: 4px 0; }
+    .dg .c { width: 34px; height: 34px; border-radius: 6px; display: grid; place-items: center; font-weight: 700; background: var(--md-sys-color-surface-container-lowest); }
+    .dg .c.u { background: var(--hidden); }
+    #sub .btn, #sub .btn-close { position: relative; overflow: hidden; }
+    .rip { position: absolute; border-radius: 50%; background: currentColor; opacity: .18; transform: scale(0); pointer-events: none; animation: rip .55s var(--md-ease) forwards; }
+    @keyframes rip { to { transform: scale(1); opacity: 0; } }
   </style>
   </head>
   <body>
@@ -1154,7 +1203,7 @@
       <div id="top-bar-stats">
         <div class="stat-item" title="剩余雷数">
           <div class="stat-row">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="color:var(--boom)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="color:var(--boom)">
               <g stroke="currentColor" stroke-linecap="round" stroke-width="1.8">
                 <line x1="12" y1="1.5" x2="12" y2="4.5"/>
                 <line x1="12" y1="19.5" x2="12" y2="22.5"/>
@@ -1174,7 +1223,7 @@
         </div>
         <div class="stat-item stat-item-timer" title="用时">
           <div class="stat-row">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/>
               <path d="M12 6v6l4 2"/>
             </svg>
@@ -1188,7 +1237,7 @@
         </div>
         <div class="stat-item" title="已插旗">
           <div class="stat-row">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b">
               <path d="M5 21V4h9l.4 2H20v10h-7l-.4-2H7v7H5z"/>
             </svg>
             <span class="stat-value" id="flag-count">0</span>
@@ -1197,38 +1246,39 @@
         </div>
       </div>
       <div id="top-bar-actions">
-        <button class="btn icon-btn" id="btn-undo-topbar" title="撤销 (Ctrl+Z)" disabled aria-label="撤销">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <button class="btn icon-btn" id="btn-undo-topbar" title="撤销 (Ctrl+Z)" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 7v6h6"/>
             <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
           </svg>
         </button>
-        <button class="btn icon-btn" id="btn-hint" title="提示 (H)" aria-label="提示">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <button class="btn icon-btn" id="btn-hint" title="提示 (H)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 18h6"/>
             <path d="M10 22h4"/>
             <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2.3h6c0-1.1.4-1.8 1-2.3A7 7 0 0 0 12 2z"/>
           </svg>
         </button>
         <button class="btn btn-primary" id="btn-newgame" title="新游戏 (R)">重开</button>
-        <button class="btn icon-btn" id="btn-settings" title="设置" aria-label="设置">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <button class="btn icon-btn" id="btn-settings" title="设置">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.36.07-.73.07-1.08s-.03-.73-.07-1.08l2.32-1.81c.21-.16.27-.46.13-.7l-2.2-3.81c-.13-.24-.42-.32-.66-.24l-2.74 1.1c-.57-.44-1.18-.8-1.86-1.08L14.22 2.4c-.04-.26-.26-.4-.5-.4h-4.4c-.24 0-.46.14-.5.4l-.41 2.48c-.68.28-1.3.64-1.86 1.08l-2.74-1.1c-.24-.09-.53 0-.66.24L1.95 8.41c-.14.24-.08.54.13.7l2.32 1.81C4.36 11.27 4.33 11.64 4.33 12s.03.73.07 1.08L2.08 14.89c-.21.16-.27.46-.13.7l2.2 3.81c.13.24.42.32.66.24l2.74-1.1c.57.44 1.18.8 1.86 1.08l.41 2.48c.04.26.26.4.5.4h4.4c.24 0 .46-.14.5-.4l.41-2.48c.68-.28 1.3-.64 1.86-1.08l2.74 1.1c.24.09.53 0 .66-.24l2.2-3.81c.14-.24.08-.54-.13-.7l-2.32-1.81z"/>
           </svg>
         </button>
       </div>
     </div>
     <div id="warning-bar" hidden>
-      <span>⚠ 无猜模式生成超时，已回退为传统随机布雷。</span>
-      <button id="btn-close-warning" title="关闭" aria-label="关闭">✕</button>
+      <span>无猜模式生成超时，已回退为传统随机布雷。</span>
+      <button id="btn-close-warning" title="关闭">✕</button>
     </div>
-    <div class="overlay" id="settings-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="overlay" id="settings-overlay">
       <div class="settings-panel">
         <div class="settings-header">
           <h3 id="settings-title">设置</h3>
-          <button class="btn-close" id="btn-close-settings" aria-label="关闭设置">✕</button>
+          <button class="btn-close" id="btn-close-settings">✕</button>
         </div>
         <div class="settings-content">
+          <button class="btn" id="btn-home-settings" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-bottom:12px"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>返回主页</button>
           <div class="settings-grid">
             <section class="settings-section">
               <div class="settings-label">难度</div>
@@ -1342,11 +1392,11 @@
 </div>
 <div id="game-area">
   <div id="board-wrapper">
-    <div id="board" role="grid" aria-label="扫雷棋盘">
+    <div id="board">
     </div>
   </div>
 </div>
-<div class="overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+<div class="overlay" id="modal">
   <div class="modal-content">
     <div class="modal-icon-wrap">
       <div id="modal-icon-circle" class="modal-icon-circle">
@@ -1372,12 +1422,39 @@
     </div>
     <div class="modal-actions-section">
       <button class="btn btn-primary" id="btn-replay">再来一局</button>
-      <button class="btn" id="btn-undo-modal" disabled style="display:flex;justify-content:center;align-items:center;gap:6px">↶ 撤销最后一步</button>
-      <button class="btn" id="btn-close-modal" aria-label="关闭">关闭</button>
+      <button class="btn" id="btn-undo-modal" disabled style="display:flex;justify-content:center;align-items:center;gap:6px">撤销最后一步</button>
+      <button class="btn" id="btn-home-modal">主页</button>
+      <button class="btn" id="btn-close-modal">关闭</button>
     </div>
   </div>
 </div>
-<div id="status-toast" aria-live="polite">
+<div class="overlay show" id="home">
+  <div class="home-panel">
+    <div class="home-hero">
+      <h1>扫雷</h1>
+    </div>
+    <button class="btn btn-primary" id="home-continue" hidden><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>继续当前游戏</button>
+    <div class="home-label">难度</div>
+    <div class="seg"><button class="btn" data-set="difficulty" data-val="easy"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><span>简单</span></button><button class="btn" data-set="difficulty" data-val="medium"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><span>中等</span></button><button class="btn" data-set="difficulty" data-val="hard"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><span>困难</span></button></div>
+    <p class="home-hint" id="home-hint"></p>
+    <div class="home-label">玩法</div>
+    <div class="home-grid" id="home-modes"></div>
+    <div class="home-label">即将推出</div>
+    <div class="home-soon" id="home-soon"></div>
+    <div class="home-nav">
+      <button id="home-ach"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></i>成就</button>
+      <button id="home-settings"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg></i>设置</button>
+      <button id="home-theme"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></i>主题</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="sub">
+  <div class="sub-panel">
+    <div class="sub-head"><button class="btn-close" id="sub-back" title="返回"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button><h2 id="sub-title"></h2></div>
+    <div id="sub-body" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+</div>
+<div id="status-toast">
 </div>
 <script>
     "use strict";
@@ -1464,7 +1541,6 @@
           }
         }
       };
-      const qn = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
       const m = {
         board: O("board"),
         area: O("game-area"),
@@ -1705,7 +1781,6 @@
       function Yt(e, t) {
         if (e) {
           e.classList.toggle("invalid", t);
-          e.setAttribute("aria-invalid", t ? "true" : "false");
           e.setCustomValidity(t ? "请输入大于 0 的数字" : "");
         }
       }
@@ -1875,6 +1950,7 @@
             De();
           }
         }
+        window.MineHome?.sync?.();
       }
 
       function ft() {
@@ -2251,6 +2327,7 @@
       }
 
       function we() {
+        finishPendingSettlement();
         if (o.audio) {
           se("newgame");
         }
@@ -2902,7 +2979,7 @@
       function ns() {
         const { rows: e, cols: t } = n;
         const s = e * t;
-        if (m.board.setAttribute("aria-label", `${ e }\xD7${ t } ${ n.mines }\u96F7`), o.cells?.length !== s || o.cells.cols !== t) {
+        if (o.cells?.length !== s || o.cells.cols !== t) {
           o.cells = Array.from({ length: s }, (i, r) => new jn(Math.floor(r / t), r % t, t)), o.cells.cols = t;
         } else {
           for (const i of o.cells) {
@@ -3025,7 +3102,7 @@
           return;
         }
         const l = o.waveToken;
-        const c = qn();
+        const c = false;
         const u = e.map(([y, M, v], C) => ({
           row: y,
           col: M,
@@ -3514,6 +3591,9 @@
             m.warning.querySelector("span").textContent = `\u26A0 \u65E0\u731C\u6A21\u5F0F\u751F\u6210${ i?.message === "超时" ? "超时" : "失败或被中断" }\uFF0C\u5DF2\u56DE\u9000\u4E3A\u4F20\u7EDF\u968F\u673A\u5E03\u96F7\u3002`;
             m.warning.hidden = false;
             He(true);
+            if (n.mode === "noguess") {
+              ye("mode", "traditional", false);
+            }
             hn(gn(e, t));
           } finally {
             if (n.gameId === a) {
@@ -3600,8 +3680,9 @@
         if (u !== n.mines) {
           n.mines = u;
         }
+        o.rng = o.rngSeed != null ? mb(o.rngSeed) : null;
         for (let d = 0; d < u; d++) {
-          const g = d + Math.floor(Math.random() * (c - d));
+          const g = d + Math.floor((o.rng || Math.random)() * (c - d));
           const p = l[g];
           l[g] = l[d];
           l[d] = p;
@@ -4194,7 +4275,7 @@
           }
           return v >= I - k;
         }
-        function B(S, f, w, k, b) {
+        function B(S, f, w, k, b, random = Math.random) {
           const P = S * f;
           const x = Array.from({ length: S }, () => Array(f).fill(0));
           const A = new Set([k * f + b]);
@@ -4206,7 +4287,7 @@
           }
           const M = Math.min(w, y);
           for (let v = 0; v < M; v++) {
-            const C = v + Math.floor(Math.random() * (y - v));
+            const C = v + Math.floor(random() * (y - v));
             const T = I[C];
             I[C] = I[v];
             I[v] = T;
@@ -4261,7 +4342,17 @@
             return;
           }
           if (f.mode === "random") {
-            const b = B(f.rows, f.cols, f.mines, f.startRow, f.startCol);
+            let random = Math.random;
+            if (Number.isFinite(f.seed)) {
+              let seed = f.seed >>> 0;
+              random = () => {
+                seed = seed + 0x6D2B79F5 | 0;
+                let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+                t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+              };
+            }
+            const b = B(f.rows, f.cols, f.mines, f.startRow, f.startCol, random);
             self.postMessage({
               id: f.id,
               result: {
@@ -4405,7 +4496,7 @@
           return;
         }
         if (n.flagged.some((l, c) => l.some((u, d) => u && n.board[c][d] !== -1))) {
-          return j("⚠ 存在错误旗标，提示无法保证安全，请先检查旗子", 2400);
+          return j("存在错误旗标，提示无法保证安全，请先检查旗子", 2400);
         }
         n.hintBusy = true;
         const e = n.gameId;
@@ -4431,7 +4522,7 @@
           return;
         }
         if (a.invalid) {
-          return j("⚠ 当前局面存在矛盾标记，建议撤销重来", 2400);
+          return j("当前局面存在矛盾标记，建议撤销重来", 2400);
         }
         const i = (l, c) => {
           n.cheated = true;
@@ -4447,7 +4538,7 @@
         if (a.safe.length) {
           const [l, c] = a.safe[Math.floor(Math.random() * a.safe.length)];
           i(l, c);
-          return j("💡 已为你翻开一个确定安全的格子", 2200);
+          return j("已翻开一个确定安全的格子", 2200);
         }
         if (a.mines.length) {
           const [l, c] = a.mines[Math.floor(Math.random() * a.mines.length)];
@@ -4461,7 +4552,7 @@
           te(l, c, "anim-flag");
           ce();
           vn(l, c);
-          return j("💡 没有安全格了，已为你标记一个确定的雷", 2400);
+          return j("没有安全格了，已标记一个确定的雷", 2400);
         }
         const r = fs(new Map(a.probs), a.frontierKeys);
         if (!r) {
@@ -4531,7 +4622,7 @@
         Qe?.();
       }
 
-      function vs(e, t, s, a, i) {
+      function vs(e, t, s, a, i, seed) {
         return new Promise((r, l) => {
           let c = false;
           let u = 0;
@@ -4562,7 +4653,7 @@
           };
           d.onerror = () => p(l, new Error("Worker 生成失败"));
           try {
-            d.postMessage({ mode: "random", id: g, rows: e, cols: t, mines: s, startRow: a, startCol: i });
+            d.postMessage({ mode: "random", id: g, rows: e, cols: t, mines: s, startRow: a, startCol: i, seed });
           } catch (B) {
             p(l, B);
           }
@@ -4624,7 +4715,7 @@
         const a = gn(e, t);
         if (n.mode !== "noguess") {
           try {
-            const g = await vs(n.rows, n.cols, n.mines, e, t);
+            const g = await vs(n.rows, n.cols, n.mines, e, t, o.rngSeed);
             if (n.gameId !== s) {
               return;
             }
@@ -4685,16 +4776,24 @@
           n.nonMineCount = n.rows * n.cols - n.mines;
           n.bv3 = F.bv3;
           pe();
-          j("✓ 无猜棋盘已就绪", 2000);
+          j("无猜棋盘已就绪", 2000);
         } finally {
           clearTimeout(d);
           clearInterval(u);
         }
       }
 
+      function finishPendingSettlement() {
+        const settlement = n.settlement;
+        if (n.gameOver && settlement && !settlement.recorded) {
+          settlement.recorded = true;
+          window.MineHome?.onEnd?.(settlement.win);
+        }
+      }
+
       function bn() {
         if (!n.settlement) {
-          n.settlement = { cheated: n.cheated, undoUsed: n.undoUsed };
+          n.settlement = { cheated: n.cheated, undoUsed: n.undoUsed, recorded: false };
         }
         return n.settlement;
       }
@@ -4706,6 +4805,7 @@
       }
 
       function Mn(e, t = -1, s = -1) {
+        bn().win = e;
         if (n.gameOver = true, n.timer && Be(Date.now() - n.timerStart), ve(), bn(), se(e ? "win" : "explode"), e) {
           os(() => {
             for (let l = 0; l < n.rows; l++) {
@@ -4746,6 +4846,10 @@
 
       function kn(e) {
         const t = n.settlement || bn();
+        if (!t.recorded) {
+          t.recorded = true;
+          window.MineHome?.onEnd?.(e);
+        }
         m.modalIconCircle.className = "modal-icon-circle " + (e ? "icon-win" : "icon-loss");
         m.modalIcon.innerHTML = e ? At.check : At.bomb;
         m.modalTitle.textContent = e ? "通关了" : "踩雷了！";
@@ -4918,6 +5022,18 @@
       }
 
       function Cs(e) {
+        if (Hm.open) {
+          if (e.key === "Escape") {
+            if (O("sub").classList.contains("show")) {
+              O("sub").classList.remove("show");
+            } else if (m.settings.classList.contains("show")) {
+              _e();
+            } else if (Hm.canContinue()) {
+              Hm.close();
+            }
+          }
+          return;
+        }
         const t = m.settings.classList.contains("show");
         const s = e.key.toLowerCase();
         const a = !e.ctrlKey && !e.metaKey;
@@ -5093,17 +5209,342 @@
         } else {
           if (o.hiddenPaused) {
             o.hiddenPaused = false;
-            if (!(n.timer || n.gameOver || n.firstClick || n.placing || o.settingsPaused || m.settings.classList.contains("show"))) {
+            if (!(n.timer || n.gameOver || n.firstClick || n.placing || o.settingsPaused || o.homePaused || m.settings.classList.contains("show"))) {
               De();
             }
           }
         }
       });
 
+      /* ===== 主页：玩法注册表。新增玩法时调用 MineHome.register({...}) 即可 =====
+         字段：id, icon, title, desc, mode（复用已有 n.mode 值）或 start()（自定义启动逻辑）, disabled */
+      const Hm = {
+        open: true,
+        modes: [],
+        el: O("home"),
+        canContinue() {
+          return !n.firstClick && !n.gameOver && !n.placing;
+        },
+        register(def) {
+          this.modes.push(def);
+          this.render();
+        },
+        render() {
+          const main = O("home-modes");
+          const soon = O("home-soon");
+          main.textContent = "";
+          soon.textContent = "";
+          this.modes.forEach((d, i) => {
+            const b = document.createElement("button");
+            b.className = "mode-card";
+            b.style.setProperty("--i", i);
+            b.innerHTML = '<span class="mc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path></path></svg></span><span class="mc-text"><b></b></span>' + (d.disabled ? '<span class="mc-tag">敬请期待</span>' : "");
+            b.querySelector("path").setAttribute("d", d.icon);
+            b.querySelector("b").textContent = d.title;
+            b.addEventListener("click", () => {
+              if (this.busy) {
+                return;
+              }
+              this.busy = true;
+              setTimeout(() => {
+                this.busy = false;
+                this.launch(d);
+              }, 140);
+            });
+            (d.disabled ? soon : main).appendChild(b);
+          });
+          O("home-soon").previousElementSibling.hidden = !soon.children.length;
+          soon.hidden = !soon.children.length;
+          this.sync();
+        },
+        sync() {
+          if (this.run && n.difficulty !== this.run.key) {
+            this.run = null;
+            o.rngSeed = null;
+          }
+          O("home-continue").hidden = !this.open || !this.canContinue() || n.difficulty !== this.diff0;
+          O("btn-home-settings").style.display = this.open ? "none" : "flex";
+          this.hint();
+        },
+        hint() {
+          const g = G[n.difficulty];
+          O("home-hint").textContent = n.difficulty === "screen" ? "按屏幕尺寸自适应" : g ? `${ g.rows }×${ g.cols } · ${ g.mines } 雷` : "";
+        },
+        show() {
+          finishPendingSettlement();
+          if (this.open) {
+            return;
+          }
+          this.open = true;
+          o.homePaused = !!n.timer && !n.gameOver;
+          if (o.homePaused) {
+            ve();
+          }
+          m.settings.classList.remove("show");
+          Se();
+          this.diff0 = n.difficulty;
+          ee("modal");
+          this.render();
+          this.el.classList.add("show");
+        },
+        close() {
+          this.open = false;
+          this.el.classList.remove("show");
+          this.sync();
+          if (o.homePaused) {
+            o.homePaused = false;
+            if (!(n.timer || n.gameOver || n.firstClick || n.placing)) {
+              De();
+            }
+          }
+        },
+        launch(d) {
+          if (d.disabled) {
+            j("敬请期待", 1500);
+            return;
+          }
+          if (d.action) {
+            d.action();
+            return;
+          }
+          this.endRun?.();
+          if (d.start) {
+            d.start();
+          } else if (d.mode) {
+            ye("mode", d.mode);
+          }
+          o.homePaused = false;
+          o.snap = null;
+          this.close();
+          we();
+        }
+      };
+      window.MineHome = Hm;
+      document.addEventListener("pointerdown", e => {
+        const b = e.target.closest?.("#home button:not(:disabled), #sub button:not(:disabled)");
+        if (!b) {
+          return;
+        }
+        const r = b.getBoundingClientRect();
+        const d = Math.max(r.width, r.height) * 2;
+        const i = document.createElement("i");
+        i.className = "rip";
+        i.style.cssText = `width:${ d }px;height:${ d }px;left:${ e.clientX - r.left - d / 2 }px;top:${ e.clientY - r.top - d / 2 }px`;
+        b.appendChild(i);
+        setTimeout(() => i.remove(), 600);
+        Wn[b.closest(".seg") ? "select" : "tap"]?.();
+      }, { passive: true });
+      Object.assign(Wn, {
+        tap: () => z({ type: "triangle", frequency: 620, endFrequency: 520, duration: 0.04, volume: 0.08 }),
+        select: () => z({ frequency: 520, endFrequency: 700, duration: 0.06, volume: 0.09 }),
+        unlock: () => {
+          z({ type: "triangle", frequency: 784, duration: 0.12, volume: 0.12 });
+          z({ type: "triangle", frequency: 1175, duration: 0.24, volume: 0.12, delay: 0.1 });
+          z({ frequency: 2350, duration: 0.14, volume: 0.03, delay: 0.1 });
+        }
+      });
+      Object.assign(Xn, { tap: 6, select: 8, unlock: [20, 40, 30] });
+
+      /* ===== 成就 / 每日 / 战役 / 课堂 ===== */
+      function mb(a) {
+        return () => {
+          a |= 0;
+          a = a + 0x6D2B79F5 | 0;
+          let t = Math.imul(a ^ a >>> 15, 1 | a);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      const MK = "minesweeper_meta";
+      const meta = Object.assign({ played: 0, wins: 0, ng: 0, clean: 0, best: {}, daily: {}, camp: 0, lessons: [], ach: {} }, (() => {
+        try {
+          return JSON.parse(at.get(MK) || "{}");
+        } catch {
+          return {};
+        }
+      })());
+      const saveMeta = () => at.set(MK, JSON.stringify(meta));
+      const today = () => {
+        const d = new Date();
+        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+      };
+      const streak = () => {
+        let best = 0;
+        let cur = 0;
+        const ds = Object.keys(meta.daily).sort().map(x => Date.parse(x) / 864e5);
+        ds.forEach((v, i) => {
+          cur = i && v - ds[i - 1] === 1 ? cur + 1 : 1;
+          best = Math.max(best, cur);
+        });
+        return best;
+      };
+      const LV = [[8, 8, 8, 0], [9, 9, 12, 0], [12, 12, 22, 0], [14, 14, 34, 1], [16, 16, 45, 0], [16, 20, 58, 1], [16, 30, 85, 0], [20, 30, 115, 1]];
+      const LES = [
+        ["数字的含义", "数字表示它周围 8 个格子里的雷数。点开空白格会自动向外展开。", [["?", "?", "?"], ["?", "3", "?"], ["?", "?", "?"]]],
+        ["唯一的选择", "数字 1 周围只剩一个未知格时，那一格一定是雷，请插旗。", [["1", "?"]]],
+        ["1-2-1 口诀", "靠边出现 1-2-1：两侧的未知格是雷，中间那格安全。", [["?", "?", "?"], ["1", "2", "1"]]],
+        ["旗数已满", "数字周围的旗数等于它本身时，其余相邻的未知格都是安全的。", [["?", "1", "F"], ["?", "?", "?"]]]
+      ];
+      const ACH = [
+        ["首胜", "赢得第一局", m => m.wins >= 1],
+        ["十胜", "累计获胜 10 局", m => m.wins >= 10, m => m.wins, 10],
+        ["五十局", "累计对局 50 局", m => m.played >= 50, m => m.played, 50],
+        ["快手", "简单难度 30 秒内通关", m => m.best.easy <= 30000],
+        ["困难通关", "通关一次困难难度", m => m.best.hard != null],
+        ["无猜通关", "赢得一局无猜模式", m => m.ng >= 1],
+        ["不求助", "不用撤销和提示通关中等", m => m.clean >= 1],
+        ["连续三天", "每日挑战连续完成 3 天", m => streak() >= 3, () => streak(), 3],
+        ["战役过半", "通过战役前 4 关", m => m.camp >= 4, m => m.camp, 4],
+        ["战役通关", "通过战役全部 8 关", m => m.camp >= 8, m => m.camp, 8],
+        ["学完课堂", "学完全部扫雷课堂", m => m.lessons.length >= LES.length, m => m.lessons.length, LES.length]
+      ];
+      const dgm = rows => `<div class="dg" style="grid-template-columns:repeat(${ rows[0].length },34px)">` + rows.flat().map(c => c === "?" ? '<span class="c u"></span>' : c === "F" ? '<span class="c" style="color:var(--flag)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14.4 6 14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg></span>' : `<span class="c" style="color:var(--n${ c })">${ c }</span>`).join("") + "</div>";
+      Object.assign(Hm, {
+        run: null,
+        endRun() {
+          finishPendingSettlement();
+          if (n.difficulty === "camp" || n.difficulty === "daily") {
+            ye("difficulty", this.base || "medium", false);
+          }
+          this.run = null;
+          o.rngSeed = null;
+        },
+        begin(run, cfg, mode) {
+          finishPendingSettlement();
+          if (n.difficulty !== "camp" && n.difficulty !== "daily") {
+            this.base = n.difficulty;
+          }
+          G[run.key] = cfg;
+          n.difficulty = run.key;
+          ye("mode", mode);
+          this.run = run;
+          o.rngSeed = run.seed ?? null;
+          o.snap = null;
+          o.homePaused = false;
+          O("sub").classList.remove("show");
+          this.close();
+          we();
+        },
+        daily() {
+          const date = today();
+          const seed = [...date].reduce((h, c) => Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0, 2166136261);
+          this.begin({ key: "daily", date, seed }, { rows: 16, cols: 16, mines: 40 }, "traditional");
+          const b = meta.daily[date];
+          j(b ? `今日最佳 ${ (b / 1000).toFixed(1) } 秒` : "今日棋盘", 2200);
+        },
+        level(i) {
+          const [rows, cols, mines, ng] = LV[i];
+          this.begin({ key: "camp", level: i }, { rows, cols, mines }, ng ? "noguess" : "traditional");
+          j(`第 ${ i + 1 } 关`, 1500);
+        },
+        onEnd(win) {
+          meta.played++;
+          if (win && !n.cheated) {
+            const ms = n.timeMs || n.time * 1000;
+            const d = n.difficulty;
+            meta.wins++;
+            if (n.mode === "noguess") {
+              meta.ng++;
+            }
+            if (["easy", "medium", "hard"].includes(d)) {
+              meta.best[d] = Math.min(meta.best[d] ?? 1e9, ms);
+            }
+            if (d === "medium" && !n.undoUsed && !n.hintsUsed) {
+              meta.clean++;
+            }
+            const r = this.run;
+            if (r && r.key === d) {
+              if (d === "daily") {
+                meta.daily[r.date] = Math.min(meta.daily[r.date] ?? 1e9, ms);
+              } else if (r.level === meta.camp && n.mode === (LV[r.level][3] ? "noguess" : "traditional")) {
+                meta.camp++;
+                j(r.level < LV.length - 1 ? `第 ${ r.level + 1 } 关通过，下一关已解锁` : "战役已全部通过", 2200);
+              }
+            }
+          }
+          this.check();
+        },
+        check() {
+          const got = ACH.filter(a => !meta.ach[a[0]] && a[2](meta));
+          got.forEach(a => meta.ach[a[0]] = Date.now());
+          saveMeta();
+          if (got.length) {
+            se("unlock");
+            j("解锁成就：" + got.map(a => a[0]).join("、"), 2600);
+          }
+        },
+        page(k) {
+          this.pg = k;
+          O("sub-title").textContent = { ach: "成就", camp: "战役闯关", lesson: "扫雷课堂" }[k];
+          this.paint();
+          O("sub").classList.add("show");
+        },
+        paint() {
+          const b = O("sub-body");
+          if (this.pg === "ach") {
+            const n0 = ACH.filter(a => meta.ach[a[0]]).length;
+            b.innerHTML = `<p class="sub-sum">已解锁 ${ n0 } / ${ ACH.length }，共 ${ meta.played } 局，赢 ${ meta.wins } 局</p>` + ACH.map(a => {
+              const on = !!meta.ach[a[0]];
+              const pr = a[3] ? `<div class="bar"><i style="width:${ Math.min(100, 100 * a[3](meta) / a[4]) }%"></i></div><small>${ Math.min(a[3](meta), a[4]) }/${ a[4] }</small>` : "";
+              return `<div class="ach${ on ? "" : " off" }"><div class="ach-ic">${ on ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>' : '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' }</div><div class="ach-tx"><b>${ a[0] }</b><small>${ a[1] }</small>${ on ? "" : pr }</div></div>`;
+            }).join("");
+          } else if (this.pg === "camp") {
+            b.innerHTML = `<p class="sub-sum">已通过 ${ meta.camp } / ${ LV.length } 关，用了提示的对局不计入</p><div class="lv-grid">` + LV.map((l, i) => `<button class="lv${ i < meta.camp ? " done" : i === meta.camp ? " cur" : "" }" data-lv="${ i }"${ i > meta.camp ? " disabled" : "" }>${ i + 1 }<small>${ l[0] }×${ l[1] }${ l[3] ? " 无猜" : "" }</small></button>`).join("") + "</div>";
+            b.querySelectorAll("[data-lv]").forEach(x => x.addEventListener("click", () => this.level(+x.dataset.lv)));
+          } else {
+            b.innerHTML = `<p class="sub-sum">已学 ${ meta.lessons.length } / ${ LES.length } 课</p>` + LES.map((l, i) => `<div class="les"><b>${ i + 1 }. ${ l[0] }</b><p>${ l[1] }</p>${ dgm(l[2]) }<button class="btn${ meta.lessons.includes(i) ? " active" : "" }" data-les="${ i }">${ meta.lessons.includes(i) ? "已学会" : "我学会了" }</button></div>`).join("");
+            b.querySelectorAll("[data-les]").forEach(x => x.addEventListener("click", () => {
+              const i = +x.dataset.les;
+              const at0 = meta.lessons.indexOf(i);
+              at0 < 0 ? meta.lessons.push(i) : meta.lessons.splice(at0, 1);
+              this.check();
+              this.paint();
+            }));
+          }
+        }
+      });
+      /* 新增玩法：icon 为 24×24 的 SVG path；disabled 的会进"即将推出"列表；
+         mode 复用已有 n.mode 值，或用 start() / action() 自定义 */
+      const IC = {
+        grid: "M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z",
+        bulb: "M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z",
+        board: "M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z",
+        cal: "M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z",
+        flag: "M14.4 6 14 4H5v17h2v-7h5.6l.4 2h7V6z",
+        school: "M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3 1 9l11 6 9-4.91V17h2V9L12 3z"
+      };
+      Hm.register({ id: "classic", icon: IC.grid, title: "经典模式", mode: "traditional" });
+      Hm.register({ id: "noguess", icon: IC.bulb, title: "无猜模式", mode: "noguess" });
+      Hm.register({ id: "custom", icon: IC.board, title: "自定义棋盘", action() { ye("difficulty", "custom"); Hm.sync(); Dn(); } });
+      Hm.register({ id: "daily", icon: IC.cal, title: "每日挑战", action() { Hm.daily(); } });
+      Hm.register({ id: "campaign", icon: IC.flag, title: "战役闯关", action() { Hm.page("camp"); } });
+      Hm.register({ id: "lesson", icon: IC.school, title: "扫雷课堂", action() { Hm.page("lesson"); } });
+      O("home-continue").hidden = true;
+      O("home-continue").addEventListener("click", () => Hm.close());
+      O("home-settings").addEventListener("click", Dn);
+      O("home-ach").addEventListener("click", () => Hm.page("ach"));
+      O("sub-back").addEventListener("click", () => O("sub").classList.remove("show"));
+      O("home-theme").addEventListener("click", () => {
+        o.darkManual = true;
+        Ve(!document.body.classList.contains("dark"));
+        le();
+      });
+      O("btn-home-settings").addEventListener("click", () => {
+        _e();
+        Hm.show();
+      });
+      O("btn-home-modal").addEventListener("click", () => Hm.show());
+      O("home").querySelectorAll("[data-set=difficulty]").forEach(b => b.addEventListener("click", () => {
+        ye("difficulty", b.dataset.val);
+        Hm.sync();
+      }));
+
       function Ss() {
         Nn();
         ks();
         we();
+        Hm.diff0 = n.difficulty;
+        Hm.render();
       }
       Ss();
     })();
