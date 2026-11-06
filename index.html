@@ -35,22 +35,11 @@
       --md-sys-shape-corner-medium: 12px;
       --md-sys-shape-corner-full: 999px;
       --md-ease: cubic-bezier(.2,0,0,1);
-      --bg: var(--md-sys-color-background);
-      --fg: var(--md-sys-color-on-background);
-      --muted: var(--md-sys-color-on-surface-variant);
-      --accent: var(--md-sys-color-primary);
       --accent-hover: var(--md-sys-color-on-primary-fixed-variant);
-      --border: var(--md-sys-color-outline-variant);
       --area-bg: linear-gradient(160deg,color-mix(in srgb,var(--md-sys-color-surface-bright) 94%,var(--md-sys-color-primary) 4%) 0%,color-mix(in srgb,var(--md-sys-color-surface-dim) 96%,var(--md-sys-color-primary) 3%) 100%);
-      --wrap-bg: var(--md-sys-color-surface-container-low);
-      --hidden: var(--md-sys-color-surface-container-high);
-      --open: var(--md-sys-color-surface-container-lowest);
       --hover: var(--md-sys-color-surface-dim);
-      --mine-bg: var(--md-sys-color-error-container);
-      --mine-fg: var(--md-sys-color-on-error-container);
       --boom: var(--md-sys-color-error);
       --flag: #E53935;
-      --wrong: color-mix(in srgb,var(--md-sys-color-error) 16%,var(--md-sys-color-surface-container-high));
       --warn: #E65100;
       --warn-soft: #FFF3E0;
       --board-gap: 1.5;
@@ -92,22 +81,11 @@
       --md-sys-color-surface-container-highest: #36343B;
       --md-sys-color-outline: #938F99;
       --md-sys-color-outline-variant: #49454F;
-      --bg: var(--md-sys-color-background);
-      --fg: var(--md-sys-color-on-background);
-      --muted: var(--md-sys-color-on-surface-variant);
-      --accent: var(--md-sys-color-primary);
       --accent-hover: #B69DF8;
-      --border: var(--md-sys-color-outline-variant);
       --area-bg: linear-gradient(160deg,color-mix(in srgb,var(--md-sys-color-surface-dim) 94%,var(--md-sys-color-primary) 6%) 0%,color-mix(in srgb,var(--md-sys-color-surface-container-low) 96%,var(--md-sys-color-primary) 4%) 100%);
-      --wrap-bg: var(--md-sys-color-surface-container-low);
-      --hidden: var(--md-sys-color-surface-container-high);
-      --open: var(--md-sys-color-surface-container-lowest);
       --hover: var(--md-sys-color-surface-bright);
-      --mine-bg: var(--md-sys-color-error-container);
-      --mine-fg: var(--md-sys-color-on-error-container);
       --boom: #B3261E;
       --flag: #EF4444;
-      --wrong: color-mix(in srgb,var(--md-sys-color-error) 16%,var(--md-sys-color-surface-container-high));
       --warn: #FDD663;
       --warn-soft: #3E2723;
       --n1: #82B1FF;
@@ -120,6 +98,7 @@
       --n8: #90A4AE;
     }
 
+
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
@@ -127,7 +106,17 @@
     }
 
     body {
-      overscroll-behavior: none;
+      --bg: var(--md-sys-color-background);
+      --fg: var(--md-sys-color-on-background);
+      --muted: var(--md-sys-color-on-surface-variant);
+      --accent: var(--md-sys-color-primary);
+      --border: var(--md-sys-color-outline-variant);
+      --wrap-bg: var(--md-sys-color-surface-container-low);
+      --hidden: var(--md-sys-color-surface-container-high);
+      --open: var(--md-sys-color-surface-container-lowest);
+      --mine-bg: var(--md-sys-color-error-container);
+      --mine-fg: var(--md-sys-color-on-error-container);
+      --wrong: color-mix(in srgb,var(--md-sys-color-error) 16%,var(--md-sys-color-surface-container-high));      overscroll-behavior: none;
       margin: 0;
       height: 100dvh;
       overflow: hidden;
@@ -373,6 +362,29 @@
       }
     }
 
+    input, textarea {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+    :focus-visible {
+      outline: 2px solid var(--md-sys-color-primary, #6750a4);
+      outline-offset: 2px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    #settings-overlay.show, #sub.show {
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+    }
+    #home.show {
+      background: var(--bg);
+    }
     .overlay {
       position: fixed;
       top: 0;
@@ -1159,11 +1171,6 @@
     .mc-icon { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
     .mc-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
     .mc-text b { font-size: 15px; font-weight: 600; }
-    .home-soon { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
-    .home-soon .mode-card { flex-direction: row; align-items: center; gap: 14px; padding: 12px 16px; border: 0; border-radius: 0; background: transparent; opacity: .6; }
-    .home-soon .mode-card + .mode-card { border-top: 1px solid var(--border); }
-    .home-soon .mc-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--md-sys-color-surface-container-highest); color: var(--muted); }
-    .mc-tag { flex: none; padding: 4px 10px; border-radius: 8px; background: var(--md-sys-color-surface-container-highest); font-size: 12px; font-weight: 600; color: var(--muted); }
     .home-nav { position: sticky; bottom: 0; margin: auto -16px 0; padding: 10px 16px max(12px, env(safe-area-inset-bottom)); display: flex; justify-content: space-around; background: var(--md-sys-color-surface-container); }
     .home-nav button { position: relative; overflow: hidden; border-radius: 16px; padding: 4px 8px; border: 0; background: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; cursor: pointer; min-width: 80px; }
     .home-nav button i { width: 64px; height: 32px; border-radius: 16px; display: grid; place-items: center; transition: background-color .16s var(--md-ease); }
@@ -1193,9 +1200,44 @@
     .dg { display: grid; gap: 3px; justify-content: center; margin: 4px 0; }
     .dg .c { width: 34px; height: 34px; border-radius: 6px; display: grid; place-items: center; font-weight: 700; background: var(--md-sys-color-surface-container-lowest); }
     .dg .c.u { background: var(--hidden); }
+    .th-preview { padding: 12px; border-radius: 20px; background: var(--wrap-bg); }
+    .th-label { margin: 18px 4px 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+    .th-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; }
+    .th-card { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 6px 10px; border: 2px solid transparent; border-radius: 18px; background: var(--md-sys-color-surface-container-low); color: var(--fg); font: inherit; font-size: 13px; cursor: pointer; }
+    .th-card.active { border-color: var(--accent); background: var(--md-sys-color-secondary-container); }
+    .th-sw { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--sw1) 50%, var(--sw2) 50%); box-shadow: inset 0 0 0 1px #0003; }
+    .th-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .th-row input[type=color] { width: 56px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: none; cursor: pointer; }
+    .th-hint { font-size: 12px; color: var(--muted); }
+    .th-card:hover { background: var(--md-sys-color-surface-container-highest); }
+    .th-card.active:hover { background: var(--md-sys-color-secondary-container); }
+    .seg .btn:not(.active):hover { background: color-mix(in srgb, var(--md-sys-color-secondary-container) 45%, transparent); }
+    .home-keys { display: none; margin: 4px 4px 0; font-size: 12px; line-height: 1.6; color: var(--muted); text-align: center; }
+    @media (hover: hover) and (min-width: 900px) { .home-keys { display: block; } }
+    .th-row input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+    .th-row input[type=color]::-webkit-color-swatch { border: 2px solid var(--border); border-radius: 12px; }
+    .th-row input[type=color]::-moz-color-swatch { border: 2px solid var(--border); border-radius: 12px; }
     #sub .btn, #sub .btn-close { position: relative; overflow: hidden; }
     .rip { position: absolute; border-radius: 50%; background: currentColor; opacity: .18; transform: scale(0); pointer-events: none; animation: rip .55s var(--md-ease) forwards; }
     @keyframes rip { to { transform: scale(1); opacity: 0; } }
+      /* ===== 电脑端适配：按窗口大小整体放大，限制内容宽度 ===== */
+    @media (min-width: 900px) and (min-height: 640px) { :root { --ui-zoom: 1.2; } }
+    @media (min-width: 1400px) and (min-height: 820px) { :root { --ui-zoom: 1.4; } }
+    @media (min-width: 1900px) and (min-height: 1000px) { :root { --ui-zoom: 1.7; } }
+    @media (min-width: 2500px) and (min-height: 1300px) { :root { --ui-zoom: 2.1; } }
+    @media (min-width: 900px) {
+      .home-panel, .sub-panel, #top-bar, .settings-panel, #modal .modal-content, #back-confirm > div { zoom: var(--ui-zoom, 1); }
+      .home-panel, .sub-panel { max-width: 760px; }
+      .home-panel { padding-inline: 24px; }
+      .home-hero { margin-top: auto; }
+      .home-nav { margin-inline: -24px; padding-inline: 24px; box-shadow: 0 0 0 100vmax var(--md-sys-color-surface-container); clip-path: inset(0 -100vmax); }
+      .home-grid { grid-template-columns: repeat(3, 1fr); }
+      .th-grid { grid-template-columns: repeat(6, 1fr); }
+      #top-bar { padding-inline: max(14px, calc((100% - 1100px / var(--ui-zoom, 1)) / 2)); }
+      .settings-panel { max-height: calc(88vh / var(--ui-zoom, 1)); }
+      #modal .modal-content { max-height: calc(86vh / var(--ui-zoom, 1)); }
+      #status-toast { width: fit-content; max-width: 90vw; margin-inline: auto; }
+    }
   </style>
   </head>
   <body>
@@ -1274,7 +1316,7 @@
     <div class="overlay" id="settings-overlay">
       <div class="settings-panel">
         <div class="settings-header">
-          <h3 id="settings-title">设置</h3>
+          <h3>设置</h3>
           <button class="btn-close" id="btn-close-settings">✕</button>
         </div>
         <div class="settings-content">
@@ -1347,6 +1389,10 @@
         <section class="settings-section">
           <div class="settings-label">偏好</div>
           <div class="setting-list">
+            <div class="toggle-row">
+              <label for="open-theme">主题与配色</label>
+              <button class="btn" id="open-theme">打开</button>
+            </div>
             <div class="toggle-row">
               <label for="toggle-dark">深色模式</label>
               <label class="toggle-switch">
@@ -1439,8 +1485,7 @@
     <p class="home-hint" id="home-hint"></p>
     <div class="home-label">玩法</div>
     <div class="home-grid" id="home-modes"></div>
-    <div class="home-label">即将推出</div>
-    <div class="home-soon" id="home-soon"></div>
+    <p class="home-keys">左键翻开 · 右键插旗 · 中键或双击数字快速翻开 · 方向键 + 空格键盘操作 · H 提示 · R 重开 · Ctrl+Z 撤销</p>
     <div class="home-nav">
       <button id="home-ach"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></i>成就</button>
       <button id="home-settings"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg></i>设置</button>
@@ -1454,7 +1499,7 @@
     <div id="sub-body" style="display:flex;flex-direction:column;gap:10px"></div>
   </div>
 </div>
-<div id="status-toast">
+<div id="status-toast" role="status" aria-live="polite">
 </div>
 <script>
     "use strict";
@@ -1489,7 +1534,7 @@
       const Pn = 450;
       const Lt = 20;
       const Ln = 120;
-      const Ee = Math.max(1, (navigator.hardwareConcurrency || 4) - 1);
+      const Ee = Math.min(4, Math.max(1, (navigator.hardwareConcurrency || 4) - 1));
       const Rt = 30;
       const O = e => document.getElementById(e);
       const Te = (e, t, s) => Array.from({ length: e }, () => Array(t).fill(s));
@@ -1695,12 +1740,17 @@
         }
         Be(n.timeMs > 0 ? n.timeMs : n.time * 1000);
         n.timerStart = Date.now() - n.timeMs;
+        let lastPaint = 0;
         const e = () => {
           Be(Date.now() - n.timerStart);
           if (n.time >= 9999) {
             ve();
           }
-          it();
+          const nowTs = performance.now();
+          if (nowTs - lastPaint >= 50) {
+            lastPaint = nowTs;
+            it();
+          }
           if (n.timer) {
             n.timer = requestAnimationFrame(e);
           }
@@ -1728,15 +1778,7 @@
       const rt = (e, t) => n.revealed[e] && n.revealed[e][t] && n.board[e][t] > 0;
       const On = () => n.actionMode === "normal" ? Ge : wt;
       const Vt = () => n.actionMode === "normal" ? wt : Ge;
-      const Le = (e, t, s) => {
-        for (const [a, i] of En) {
-          const r = e + a;
-          const l = t + i;
-          if (Pe(r, l)) {
-            s(r, l);
-          }
-        }
-      };
+      const Le = (e, t, s) => nbrs(e, t, n.rows, n.cols, s);
       const _t = (e, t) => {
         const s = [];
         Le(e, t, (a, i) => s.push({ row: a, col: i }));
@@ -1816,9 +1858,10 @@
       }
 
       function Ut() {
+        const inRun = n.difficulty === "camp" || n.difficulty === "daily";
         if (!at.set(et, JSON.stringify({
-            difficulty: n.difficulty,
-            mode: n.mode,
+            difficulty: inRun ? window.MineHome?.base || "medium" : n.difficulty,
+            mode: inRun ? window.MineHome?.baseMode || "traditional" : n.mode,
             actionMode: n.actionMode,
             dark: o.darkManual ? document.body.classList.contains("dark") : undefined,
             soundEnabled: n.soundEnabled,
@@ -1829,7 +1872,7 @@
             noguessTimeSeconds: n.noguessTimeSeconds,
             longPressDelay: n.longPressDelay
           }))) {
-          j("设置保存失败，可能是浏览器存储不可用", 2500);
+          j("设置没能保存（浏览器可能禁用了存储），本次仍可正常游玩", 2500);
         }
       }
 
@@ -1878,7 +1921,7 @@
         n.questionMarkEnabled = !!e.questionMarkEnabled;
         O("toggle-question").checked = n.questionMarkEnabled;
         lt(Nt(e.longPressDelay));
-        ct(ot(e.noguessTimeSeconds ?? e.noguessSeconds, 6));
+        ct(ot(e.noguessTimeSeconds, 6));
         dt(Object.assign(G.custom, ut({ rows: e.customRows, cols: e.customCols, mines: e.customMines }, G.custom)));
         ["difficulty", "mode", "actionMode"].forEach(t => ye(t, Ot(t, e[t]) ? e[t] : n[t], false));
       }
@@ -2294,7 +2337,7 @@
         const c = Math.max(240, m.area.clientHeight - r);
         const u = Math.floor(Math.min((l - (n.cols - 1) * t) / n.cols, (c - (n.rows - 1) * t) / n.rows));
         const d = innerWidth < 640;
-        o.cellSize = U(Number.isFinite(u) ? u : 30, d ? 24 : 28, d ? 46 : 56);
+        o.cellSize = U(Number.isFinite(u) ? u : 30, d ? 21 : 28, d ? 46 : 56);
         const g = m.board.style;
         g.gap = `${ t }px`;
         Zt();
@@ -2366,6 +2409,7 @@
           settlement: null,
           cheated: false,
           undoUsed: false,
+          noguessFallback: false,
           hintsUsed: 0,
           bv3: 0,
           usefulClicks: 0,
@@ -2583,6 +2627,8 @@
       function Zn() {
         if (!o.canvas) {
           o.canvas = document.createElement("canvas");
+          o.canvas.setAttribute("role", "img");
+          o.canvas.setAttribute("aria-label", "扫雷棋盘，可用方向键移动、空格或回车翻开、F 插旗");
           m.board.replaceChildren(o.canvas);
         }
         return o.canvas;
@@ -2600,7 +2646,7 @@
         const u = i.style.width === s + "px" && i.style.height === a + "px";
         let d = null;
         if (u && o.ctx && (i.width !== l || i.height !== c)) {
-          d = document.createElement("canvas");
+          d = o.scratchCanvas || (o.scratchCanvas = document.createElement("canvas"));
           d.width = i.width;
           d.height = i.height;
           d.getContext("2d").drawImage(i, 0, 0);
@@ -3588,13 +3634,11 @@
             }
             pe();
             Wt();
-            m.warning.querySelector("span").textContent = `\u26A0 \u65E0\u731C\u6A21\u5F0F\u751F\u6210${ i?.message === "超时" ? "超时" : "失败或被中断" }\uFF0C\u5DF2\u56DE\u9000\u4E3A\u4F20\u7EDF\u968F\u673A\u5E03\u96F7\u3002`;
+            m.warning.querySelector("span").textContent = `⚠ 无猜棋盘${ i?.message === "超时" ? "没能在限定时间内生成" : "生成失败" }，本局改为普通随机布雷（不计入无猜成绩）。可以在设置里把生成时间调长。`;
             m.warning.hidden = false;
             He(true);
-            if (n.mode === "noguess") {
-              ye("mode", "traditional", false);
-            }
-            hn(gn(e, t));
+            n.noguessFallback = true;
+            hn(e, t);
           } finally {
             if (n.gameId === a) {
               n.placing = false;
@@ -3659,94 +3703,113 @@
         ln(a, t, s);
         return false;
       }
-      const gn = (e, t) => {
-        const s = new Set([xe(e, t)]);
-        Le(e, t, (a, i) => s.add(xe(a, i)));
-        return s;
-      };
+      function hn(row, col) {
+        const { rows, cols } = n;
+        const fixed = o.rngSeed != null;
+        n.board = genBoard(rows, cols, n.mines, row, col, fixed ? mb(o.rngSeed) : Math.random, fixed);
+        n.mines = n.board.flat().filter(v => v === -1).length;
+        n.nonMineCount = rows * cols - n.mines;
+        n.bv3 = bv3(n.board, rows, cols);
+      }
 
-      function hn(e, { skipBV3: t = false } = {}) {
-        const { rows: s, cols: a, board: i } = n;
-        const r = s * a;
-        for (let d = 0; d < s; d++) {
-          i[d].fill(0);
-        }
-        const l = new Int32Array(r - e.size);
-        let c = 0;
-        for (let d = 0; d < r; d++) {
-          e.has(d) || (l[c++] = d);
-        }
-        const u = Math.min(n.mines, c);
-        if (u !== n.mines) {
-          n.mines = u;
-        }
-        o.rng = o.rngSeed != null ? mb(o.rngSeed) : null;
-        for (let d = 0; d < u; d++) {
-          const g = d + Math.floor((o.rng || Math.random)() * (c - d));
-          const p = l[g];
-          l[g] = l[d];
-          l[d] = p;
-          const F = Math.floor(p / a);
-          const B = p % a;
-          i[F][B] = -1;
-          Le(F, B, (_, S) => {
-            if (i[_][S] !== -1) {
-              i[_][S]++;
-            }
-          });
-        }
-        n.nonMineCount = r - u;
-        if (!t) {
-          n.bv3 = ls();
+      /* 以下函数会同时注入 worker，必须保持自包含 */
+      function inB(r, c, R, C) {
+        return r >= 0 && r < R && c >= 0 && c < C;
+      }
+
+      function nbrs(r, c, R, C, cb) {
+        for (const [dr, dc] of En) {
+          if (inB(r + dr, c + dc, R, C)) {
+            cb(r + dr, c + dc);
+          }
         }
       }
 
-      function ls() {
-        const { rows: e, cols: t, board: s } = n;
-        const a = Te(e, t, false);
-        let i = 0;
-        for (let r = 0; r < e; r++) {
-          for (let l = 0; l < t; l++) {
-            if (s[r][l] !== 0 || a[r][l]) {
+      /* 种子生成器 mulberry32 */
+      function mb(a) {
+        return () => {
+          a |= 0;
+          a = a + 0x6D2B79F5 | 0;
+          let t = Math.imul(a ^ a >>> 15, 1 | a);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+
+      /* 布雷：首击 3x3 无雷；fixed 时先按种子洗全盘再顺延，保证同一种子棋盘基本一致 */
+      function genBoard(R, C, mines, sr, sc, random = Math.random, fixed = false) {
+        const P = R * C;
+        const board = Array.from({ length: R }, () => Array(C).fill(0));
+        const safe = new Set([sr * C + sc]);
+        nbrs(sr, sc, R, C, (r, c) => safe.add(r * C + c));
+        const order = new Int32Array(P).map((_, i) => i);
+        const cap = Math.min(mines, P - safe.size);
+        const picked = [];
+        if (fixed) {
+          for (let i = P - 1; i > 0; i--) {
+            const j = Math.floor(random() * (i + 1));
+            [order[i], order[j]] = [order[j], order[i]];
+          }
+          for (let i = 0; i < P && picked.length < cap; i++) {
+            if (!safe.has(order[i])) picked.push(order[i]);
+          }
+        } else {
+          const pool = order.filter(i => !safe.has(i));
+          for (let i = 0; i < cap; i++) {
+            const j = i + Math.floor(random() * (pool.length - i));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+            picked.push(pool[i]);
+          }
+        }
+        for (const p of picked) {
+          const r = Math.floor(p / C);
+          const c = p % C;
+          board[r][c] = -1;
+          nbrs(r, c, R, C, (y, x) => {
+            if (board[y][x] !== -1) {
+              board[y][x]++;
+            }
+          });
+        }
+        return board;
+      }
+
+      function bv3(board, R, C) {
+        const seen = Array.from({ length: R }, () => Array(C).fill(false));
+        let count = 0;
+        for (let r = 0; r < R; r++) {
+          for (let c = 0; c < C; c++) {
+            if (board[r][c] !== 0 || seen[r][c]) {
               continue;
             }
-            i++;
-            const c = [[r, l]];
-            a[r][l] = true;
-            for (let u = 0; u < c.length; u++) {
-              const [d, g] = c[u];
-              Le(d, g, (p, F) => {
-                if (!(a[p][F] || s[p][F] === -1)) {
-                  a[p][F] = true;
-                  if (s[p][F] === 0) {
-                    c.push([p, F]);
+            count++;
+            const queue = [[r, c]];
+            seen[r][c] = true;
+            for (let i = 0; i < queue.length; i++) {
+              nbrs(queue[i][0], queue[i][1], R, C, (y, x) => {
+                if (!seen[y][x] && board[y][x] !== -1) {
+                  seen[y][x] = true;
+                  if (board[y][x] === 0) {
+                    queue.push([y, x]);
                   }
                 }
               });
             }
           }
         }
-        for (let r = 0; r < e; r++) {
-          for (let l = 0; l < t; l++) {
-            !a[r][l] && s[r][l] !== -1 && i++;
+        for (let r = 0; r < R; r++) {
+          for (let c = 0; c < C; c++) {
+            if (!seen[r][c] && board[r][c] !== -1) {
+              count++;
+            }
           }
         }
-        return i;
+        return count;
       }
 
       function cs() {
         let e = 1 / 0;
-        const t = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
-        const s = (S, f, w, k) => S >= 0 && S < w && f >= 0 && f < k;
-        const a = (S, f, w, k, b) => {
-          for (const [P, x] of t) {
-            const A = S + P;
-            const I = f + x;
-            if (s(A, I, w, k)) {
-              b(A, I);
-            }
-          }
-        };
+        const t = En, s = inB, a = nbrs;
         function i(S, f, w, k) {
           const b = new Map();
           S.forEach((N, E) => b.set(N, E));
@@ -4275,64 +4338,6 @@
           }
           return v >= I - k;
         }
-        function B(S, f, w, k, b, random = Math.random) {
-          const P = S * f;
-          const x = Array.from({ length: S }, () => Array(f).fill(0));
-          const A = new Set([k * f + b]);
-          a(k, b, S, f, (v, C) => A.add(v * f + C));
-          const I = new Int32Array(Math.max(0, P - A.size));
-          let y = 0;
-          for (let v = 0; v < P; v++) {
-            A.has(v) || (I[y++] = v);
-          }
-          const M = Math.min(w, y);
-          for (let v = 0; v < M; v++) {
-            const C = v + Math.floor(random() * (y - v));
-            const T = I[C];
-            I[C] = I[v];
-            I[v] = T;
-            const D = Math.floor(T / f);
-            const h = T % f;
-            x[D][h] = -1;
-            a(D, h, S, f, (N, E) => {
-              if (x[N][E] !== -1) {
-                x[N][E]++;
-              }
-            });
-          }
-          return x;
-        }
-        function _(S, f, w) {
-          const k = Array.from({ length: f }, () => Array(w).fill(false));
-          let b = 0;
-          for (let P = 0; P < f; P++) {
-            for (let x = 0; x < w; x++) {
-              if (S[P][x] !== 0 || k[P][x]) {
-                continue;
-              }
-              b++;
-              const A = [[P, x]];
-              k[P][x] = true;
-              for (let I = 0; I < A.length; I++) {
-                const [y, M] = A[I];
-                a(y, M, f, w, (v, C) => {
-                  if (!(k[v][C] || S[v][C] === -1)) {
-                    k[v][C] = true;
-                    if (S[v][C] === 0) {
-                      A.push([v, C]);
-                    }
-                  }
-                });
-              }
-            }
-          }
-          for (let P = 0; P < f; P++) {
-            for (let x = 0; x < w; x++) {
-              !k[P][x] && S[P][x] !== -1 && b++;
-            }
-          }
-          return b;
-        }
         self.onmessage = S => {
           const f = S.data;
           const w = Date.now();
@@ -4342,37 +4347,22 @@
             return;
           }
           if (f.mode === "random") {
-            let random = Math.random;
-            if (Number.isFinite(f.seed)) {
-              let seed = f.seed >>> 0;
-              random = () => {
-                seed = seed + 0x6D2B79F5 | 0;
-                let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-                t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-                return ((t ^ t >>> 14) >>> 0) / 4294967296;
-              };
-            }
-            const b = B(f.rows, f.cols, f.mines, f.startRow, f.startCol, random);
-            self.postMessage({
-              id: f.id,
-              result: {
-                board: b,
-                bv3: _(b, f.rows, f.cols)
-              }
-            });
+            const fixed = Number.isFinite(f.seed);
+            const b = genBoard(f.rows, f.cols, f.mines, f.startRow, f.startCol, fixed ? mb(f.seed) : Math.random, fixed);
+            self.postMessage({ id: f.id, result: { board: b, bv3: bv3(b, f.rows, f.cols) } });
             return;
           }
           if (f.mode === "generate") {
             let b = 0;
             for (; Date.now() < e;) {
-              const P = B(f.rows, f.cols, f.mines, f.startRow, f.startCol);
+              const P = genBoard(f.rows, f.cols, f.mines, f.startRow, f.startCol);
               if (b++, F(P, f.rows, f.cols, f.mines, f.startRow, f.startCol, f.maxVars, f.maxSolutions)) {
                 if (Date.now() < e) {
                   self.postMessage({
                     id: f.id,
                     result: {
                       board: P,
-                      bv3: _(P, f.rows, f.cols),
+                      bv3: bv3(P, f.rows, f.cols),
                       attempts: b
                     }
                   });
@@ -4389,7 +4379,8 @@
         };
       }
       const Mt = (() => {
-        const e = URL.createObjectURL(new Blob(["(" + cs.toString() + ")()"], { type: "application/javascript" }));
+        const src = `const En = ${ JSON.stringify(En) };\n` + [inB, nbrs, mb, genBoard, bv3, cs].map(f => f.toString()).join("\n") + "\ncs();";
+        const e = URL.createObjectURL(new Blob([src], { type: "application/javascript" }));
         return () => new Worker(e);
       })();
       let Oe = null;
@@ -4484,19 +4475,21 @@
       }
       async function yn() {
         if (n.firstClick) {
-          return j("先点开一个格子开局吧", 1800);
+          return j("先随便点开一格开局，再来用提示吧", 1800);
         }
         if (n.placing) {
-          return j("棋盘生成中，请稍候", 1500);
+          return j("棋盘还在生成，稍等一下", 1500);
         }
         if (n.gameOver) {
-          return j("本局已经结束啦", 1500);
+          return j("这局已经结束了，点“重开”再来一局吧", 1500);
         }
         if (n.hintBusy) {
           return;
         }
         if (n.flagged.some((l, c) => l.some((u, d) => u && n.board[c][d] !== -1))) {
-          return j("存在错误旗标，提示无法保证安全，请先检查旗子", 2400);
+          n.cheated = true;
+          n.hintsUsed++;
+          return j("有旗子插错了，提示没法保证安全，先检查一下旗子吧（这次算使用了提示）", 2400);
         }
         n.hintBusy = true;
         const e = n.gameId;
@@ -4514,7 +4507,7 @@
             s.disabled = false;
           }
           if (n.gameId === e) {
-            j("提示计算失败，请重试", 1800);
+            j("提示没算出来，再点一次试试", 1800);
           }
           return;
         }
@@ -4522,7 +4515,7 @@
           return;
         }
         if (a.invalid) {
-          return j("当前局面存在矛盾标记，建议撤销重来", 2400);
+          return j("标记之间有矛盾，试试撤销上一步？", 2400);
         }
         const i = (l, c) => {
           n.cheated = true;
@@ -4538,7 +4531,7 @@
         if (a.safe.length) {
           const [l, c] = a.safe[Math.floor(Math.random() * a.safe.length)];
           i(l, c);
-          return j("已翻开一个确定安全的格子", 2200);
+          return j("已翻开一格确定安全的格子", 2200);
         }
         if (a.mines.length) {
           const [l, c] = a.mines[Math.floor(Math.random() * a.mines.length)];
@@ -4552,14 +4545,16 @@
           te(l, c, "anim-flag");
           ce();
           vn(l, c);
-          return j("没有安全格了，已标记一个确定的雷", 2400);
+          return j("没有稳妥的安全格了，已帮你标出一颗确定的雷", 2400);
         }
         const r = fs(new Map(a.probs), a.frontierKeys);
         if (!r) {
-          return j("当前没有可推导的格子", 1800);
+          return j("暂时推不出确定的格子，换个区域试试", 1800);
         }
-        i(r.row, r.col);
-        j(`\u{1F4A1} \u6CA1\u6709100%\u786E\u5B9A\u7684\u683C\u5B50\uFF0C\u5DF2\u4E3A\u4F60\u7FFB\u5F00\u96F7\u6982\u7387\u6700\u4F4E\uFF08${ r.upper ? "不高于" : "约" } ${ Math.round(100 * r.prob) }%\uFF09\u7684\u683C\u5B50`, 2800);
+        n.cheated = true;
+        n.hintsUsed++;
+        vn(r.row, r.col);
+        j(`\u{1F4A1} \u6CA1\u6709100%\u786E\u5B9A\u7684\u683C\u5B50\uFF0C\u5DF2\u9AD8\u4EAE\u96F7\u6982\u7387\u6700\u4F4E\uFF08${ r.upper ? "不高于" : "约" } ${ Math.round(100 * r.prob) }%\uFF09\u7684\u683C\u5B50`, 2800);
       }
       let ae = null;
       let wn = 0;
@@ -4712,8 +4707,7 @@
         });
       }
       async function ws(e, t, s) {
-        const a = gn(e, t);
-        if (n.mode !== "noguess") {
+                if (n.mode !== "noguess") {
           try {
             const g = await vs(n.rows, n.cols, n.mines, e, t, o.rngSeed);
             if (n.gameId !== s) {
@@ -4728,16 +4722,17 @@
               return;
             }
             console.warn("Worker board generation failed; using synchronous fallback", g);
-            hn(a);
+            hn(e, t);
             return;
           }
         }
-        const i = Math.round(1000 * ot(n.noguessTimeSeconds));
+        const campBoost = window.MineHome?.run?.key === "camp" ? 20 : 0;
+        const i = Math.round(1000 * Math.max(ot(n.noguessTimeSeconds), campBoost));
         const r = Date.now();
         const l = () => Math.max(0, i - (Date.now() - r));
         const c = () => {
           if (n.gameId === s) {
-            j(`\u2699 \u751F\u6210\u65E0\u731C\u68CB\u76D8\u2026 \u5269\u4F59 ${ (l() / 1000).toFixed(1) }s \xB7 ${ Ee } \u7EBF\u7A0B`, 0);
+            j(`正在生成无猜棋盘… 还剩 ${ Math.ceil(l() / 1000) } 秒`, 0);
           }
         };
         c();
@@ -4776,7 +4771,7 @@
           n.nonMineCount = n.rows * n.cols - n.mines;
           n.bv3 = F.bv3;
           pe();
-          j("无猜棋盘已就绪", 2000);
+          j("无猜棋盘准备好了", 2000);
         } finally {
           clearTimeout(d);
           clearInterval(u);
@@ -5044,6 +5039,14 @@
           return e.preventDefault(), vt();
         }
         if (s === "r" && a && !t) {
+          if (!n.firstClick && !n.gameOver && !n.placing) {
+            const nowTs = Date.now();
+            if (!(o.rConfirm && nowTs - o.rConfirm < 1800)) {
+              o.rConfirm = nowTs;
+              return j("再按一次 R 确认重开", 1600);
+            }
+          }
+          o.rConfirm = 0;
           return Se(), m.settings.classList.remove("show"), o.snap = null, we();
         }
         if (s === "h" && a && !t) {
@@ -5111,54 +5114,22 @@
         for (const [s, a] of Object.entries(e)) {
           O(s)?.addEventListener("click", a);
         }
-        const t = [
-          [
-            "toggle-dark",
-            "change",
-            s => {
-              o.darkManual = true;
-              Ve(s.target.checked);
-              le();
-            }
-          ],
-          [
-            "toggle-sound",
-            "change",
-            s => {
-              n.soundEnabled = s.target.checked;
-              le();
-            }
-          ],
-          [
-            "toggle-question",
-            "change",
-            s => {
-              n.questionMarkEnabled = s.target.checked;
-              le();
-            }
-          ],
-          [
-            "longpress-delay",
-            "input",
-            s => {
-              lt(s.target.value);
-              le();
-            }
-          ],
-          [
-            "noguess-time-seconds",
-            "input",
-            s => Ht(s.target, false)
-          ],
-          [
-            "noguess-time-seconds",
-            "blur",
-            s => Ht(s.target, true)
-          ]
-        ];
-        for (const [s, a, i] of t) {
-          O(s).addEventListener(a, i);
-        }
+        O("toggle-dark").addEventListener("change", s => {
+          o.darkManual = true;
+          Ve(s.target.checked);
+          le();
+        });
+        [["toggle-sound", "soundEnabled"], ["toggle-question", "questionMarkEnabled"]].forEach(([id, key]) => {
+          O(id).addEventListener("change", s => {
+            n[key] = s.target.checked;
+            le();
+          });
+        });
+        O("longpress-delay").addEventListener("input", s => {
+          lt(s.target.value);
+          le();
+        });
+        ["input", "blur"].forEach(type => O("noguess-time-seconds").addEventListener(type, s => Ht(s.target, type === "blur")));
         ["c-rows", "c-cols", "c-mines"].forEach(s => O(s).addEventListener("input", Sn));
         m.settings.addEventListener("click", s => {
           const a = s.target.closest("[data-set]");
@@ -5217,7 +5188,7 @@
       });
 
       /* ===== 主页：玩法注册表。新增玩法时调用 MineHome.register({...}) 即可 =====
-         字段：id, icon, title, desc, mode（复用已有 n.mode 值）或 start()（自定义启动逻辑）, disabled */
+         字段：id, icon, title, desc, mode（复用已有 n.mode 值）或 start()/action()（自定义启动逻辑） */
       const Hm = {
         open: true,
         modes: [],
@@ -5231,14 +5202,11 @@
         },
         render() {
           const main = O("home-modes");
-          const soon = O("home-soon");
           main.textContent = "";
-          soon.textContent = "";
-          this.modes.forEach((d, i) => {
+          this.modes.forEach(d => {
             const b = document.createElement("button");
             b.className = "mode-card";
-            b.style.setProperty("--i", i);
-            b.innerHTML = '<span class="mc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path></path></svg></span><span class="mc-text"><b></b></span>' + (d.disabled ? '<span class="mc-tag">敬请期待</span>' : "");
+            b.innerHTML = '<span class="mc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path></path></svg></span><span class="mc-text"><b></b></span>';
             b.querySelector("path").setAttribute("d", d.icon);
             b.querySelector("b").textContent = d.title;
             b.addEventListener("click", () => {
@@ -5251,10 +5219,8 @@
                 this.launch(d);
               }, 140);
             });
-            (d.disabled ? soon : main).appendChild(b);
+            main.appendChild(b);
           });
-          O("home-soon").previousElementSibling.hidden = !soon.children.length;
-          soon.hidden = !soon.children.length;
           this.sync();
         },
         sync() {
@@ -5299,10 +5265,6 @@
           }
         },
         launch(d) {
-          if (d.disabled) {
-            j("敬请期待", 1500);
-            return;
-          }
           if (d.action) {
             d.action();
             return;
@@ -5346,15 +5308,6 @@
       Object.assign(Xn, { tap: 6, select: 8, unlock: [20, 40, 30] });
 
       /* ===== 成就 / 每日 / 战役 / 课堂 ===== */
-      function mb(a) {
-        return () => {
-          a |= 0;
-          a = a + 0x6D2B79F5 | 0;
-          let t = Math.imul(a ^ a >>> 15, 1 | a);
-          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-          return ((t ^ t >>> 14) >>> 0) / 4294967296;
-        };
-      }
       const MK = "minesweeper_meta";
       const meta = Object.assign({ played: 0, wins: 0, ng: 0, clean: 0, best: {}, daily: {}, camp: 0, lessons: [], ach: {} }, (() => {
         try {
@@ -5405,6 +5358,7 @@
           finishPendingSettlement();
           if (n.difficulty === "camp" || n.difficulty === "daily") {
             ye("difficulty", this.base || "medium", false);
+            ye("mode", this.baseMode || "traditional", false);
           }
           this.run = null;
           o.rngSeed = null;
@@ -5413,6 +5367,7 @@
           finishPendingSettlement();
           if (n.difficulty !== "camp" && n.difficulty !== "daily") {
             this.base = n.difficulty;
+            this.baseMode = n.mode;
           }
           G[run.key] = cfg;
           n.difficulty = run.key;
@@ -5438,12 +5393,15 @@
           j(`第 ${ i + 1 } 关`, 1500);
         },
         onEnd(win) {
-          meta.played++;
+          if (this.countedGame !== n.gameId) {
+            this.countedGame = n.gameId;
+            meta.played++;
+          }
           if (win && !n.cheated) {
             const ms = n.timeMs || n.time * 1000;
             const d = n.difficulty;
             meta.wins++;
-            if (n.mode === "noguess") {
+            if (n.mode === "noguess" && !n.noguessFallback) {
               meta.ng++;
             }
             if (["easy", "medium", "hard"].includes(d)) {
@@ -5456,7 +5414,7 @@
             if (r && r.key === d) {
               if (d === "daily") {
                 meta.daily[r.date] = Math.min(meta.daily[r.date] ?? 1e9, ms);
-              } else if (r.level === meta.camp && n.mode === (LV[r.level][3] ? "noguess" : "traditional")) {
+              } else if (r.level === meta.camp && (LV[r.level][3] ? n.mode === "noguess" && !n.noguessFallback : n.mode === "traditional")) {
                 meta.camp++;
                 j(r.level < LV.length - 1 ? `第 ${ r.level + 1 } 关通过，下一关已解锁` : "战役已全部通过", 2200);
               }
@@ -5475,13 +5433,15 @@
         },
         page(k) {
           this.pg = k;
-          O("sub-title").textContent = { ach: "成就", camp: "战役闯关", lesson: "扫雷课堂" }[k];
+          O("sub-title").textContent = { ach: "成就", camp: "战役闯关", lesson: "扫雷课堂", theme: "主题" }[k];
           this.paint();
           O("sub").classList.add("show");
         },
         paint() {
           const b = O("sub-body");
-          if (this.pg === "ach") {
+          if (this.pg === "theme") {
+            paintTheme(b);
+          } else if (this.pg === "ach") {
             const n0 = ACH.filter(a => meta.ach[a[0]]).length;
             b.innerHTML = `<p class="sub-sum">已解锁 ${ n0 } / ${ ACH.length }，共 ${ meta.played } 局，赢 ${ meta.wins } 局</p>` + ACH.map(a => {
               const on = !!meta.ach[a[0]];
@@ -5503,8 +5463,6 @@
           }
         }
       });
-      /* 新增玩法：icon 为 24×24 的 SVG path；disabled 的会进"即将推出"列表；
-         mode 复用已有 n.mode 值，或用 start() / action() 自定义 */
       const IC = {
         grid: "M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z",
         bulb: "M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z",
@@ -5524,10 +5482,10 @@
       O("home-settings").addEventListener("click", Dn);
       O("home-ach").addEventListener("click", () => Hm.page("ach"));
       O("sub-back").addEventListener("click", () => O("sub").classList.remove("show"));
-      O("home-theme").addEventListener("click", () => {
-        o.darkManual = true;
-        Ve(!document.body.classList.contains("dark"));
-        le();
+      O("home-theme").addEventListener("click", () => Hm.page("theme"));
+      O("open-theme").addEventListener("click", () => {
+        _e();
+        Hm.page("theme");
       });
       O("btn-home-settings").addEventListener("click", () => {
         _e();
@@ -5539,6 +5497,184 @@
         Hm.sync();
       }));
 
+      /* ===== 主题：模式 / 预设 / 自定义主色 / 纯黑 / 数字配色 ===== */
+      const THEME_KEY = "minesweeper_theme";
+      const PRESETS = [
+        ["default", "经典紫", null], ["ocean", "海洋蓝", "#1E88E5"], ["forest", "森林绿", "#2E7D32"],
+        ["sakura", "樱花粉", "#D81B60"], ["sunset", "日落橙", "#EF6C00"], ["mint", "薄荷青", "#00897B"],
+        ["indigo", "靛蓝", "#3949AB"], ["coffee", "咖啡棕", "#6D4C41"], ["ruby", "宝石红", "#C62828"],
+        ["slate", "石墨灰", "#607D8B"], ["lime", "青柠", "#689F38"], ["sky", "天空", "#039BE5"]
+      ];
+      const NUMSETS = {
+        cb: [["#0072B2", "#007A5A", "#D55E00", "#8E3B8E", "#B07A00", "#00829B", "#333333", "#6B6B6B"],
+             ["#56B4E9", "#4CD1A0", "#FF9A57", "#E0A3D0", "#F0C24B", "#6FD6E8", "#E0E0E0", "#B0B0B0"]],
+        hc: [["#0000FF", "#007000", "#E00000", "#800080", "#800000", "#007070", "#000000", "#404040"],
+             ["#8AB4FF", "#66FF66", "#FF8080", "#E080FF", "#FFB366", "#66FFFF", "#FFFFFF", "#C0C0C0"]]
+      };
+      const AMOLED = "body.dark{--md-sys-color-background:#000;--md-sys-color-surface-dim:#000;--md-sys-color-surface-container-lowest:#000;--md-sys-color-surface-container-low:#0c0c0c;--md-sys-color-surface-container:#111;--md-sys-color-surface-container-high:#171717;--md-sys-color-surface-container-highest:#1e1e1e;--md-sys-color-surface-bright:#2a2a2a}";
+      const th = Object.assign({ preset: "default", custom: null, amoled: false, nums: "classic" }, (() => {
+        try {
+          return JSON.parse(at.get(THEME_KEY) || "{}");
+        } catch {
+          return {};
+        }
+      })());
+      const themeStyle = document.head.appendChild(document.createElement("style"));
+      const saveTheme = () => at.set(THEME_KEY, JSON.stringify(th));
+      const curMode = () => o.darkManual ? (document.body.classList.contains("dark") ? "dark" : "light") : "auto";
+      const setMode = m => {
+        o.darkManual = m !== "auto";
+        Ve(m === "auto" ? matchMedia("(prefers-color-scheme: dark)").matches : m === "dark");
+        le();
+      };
+
+      function hexHsl(hex) {
+        const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255);
+        const mx = Math.max(r, g, b);
+        const d = mx - Math.min(r, g, b);
+        const l = (mx + Math.min(r, g, b)) / 2;
+        let h = d === 0 ? 0 : mx === r ? (g - b) / d % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+        h = (h * 60 + 360) % 360;
+        return [Math.round(h), d ? d / (1 - Math.abs(2 * l - 1)) * 100 : 0];
+      }
+
+      function hslRgb(h, s, l) {
+        s /= 100;
+        l /= 100;
+        const a = s * Math.min(l, 1 - l);
+        return [0, 8, 4].map(n => {
+          const k = (n + h / 30) % 12;
+          return 255 * (l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)));
+        });
+      }
+
+      const hslHex = (h, s, l) => "#" + hslRgb(h, s, l).map(v => Math.round(v).toString(16).padStart(2, "0")).join("");
+
+      function contrast(a, b) {
+        const lum = c => c.map(v => (v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4).reduce((x, y, i) => x + y * [0.2126, 0.7152, 0.0722][i], 0);
+        const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+        return (hi + 0.05) / (lo + 0.05);
+      }
+
+      /* 由一个主色生成整套 Material 色板：[名称, 饱和度, 亮度] */
+      function palette(hex, dark) {
+        const [h, s0] = hexHsl(hex);
+        const s = Math.max(25, Math.min(85, s0));
+        const t = Math.max(6, Math.min(33, s0 / 2));
+        /* 主色与按钮文字的对比度至少 4.5:1，避免黄色之类的浅色主色看不清字 */
+        const ps = dark ? Math.min(s + 15, 90) : s;
+        const ink = dark ? hslRgb(h, 60, 20) : [255, 255, 255];
+        let pl = dark ? 82 : 40;
+        while (contrast(hslRgb(h, ps, pl), ink) < 4.5 && pl > 18 && pl < 94) {
+          pl += dark ? 1 : -1;
+        }
+        const spec = dark ? [
+          ["primary", ps, pl], ["on-primary", 60, 20], ["primary-container", 40, 35],
+          ["on-primary-fixed-variant", 40, 35], ["secondary-container", 15, 29], ["on-secondary-container", 40, 91],
+          ["background", t / 2, 8], ["on-background", 15, 90], ["on-surface", 15, 90], ["surface-dim", t / 2, 8],
+          ["surface-bright", 6, 23], ["on-surface-variant", 10, 80], ["surface-container-lowest", t / 2, 6],
+          ["surface-container-low", t / 3, 12], ["surface-container", t / 3, 14], ["surface-container-high", t / 3, 17],
+          ["surface-container-highest", t / 3, 22], ["outline", 6, 58], ["outline-variant", 8, 29]
+        ] : [
+          ["primary", ps, pl], ["primary-container", Math.min(s, 80), 90], ["on-primary-fixed-variant", s, Math.min(30, pl - 8)],
+          ["secondary-container", t + 2, 90], ["on-secondary-container", 30, 12], ["background", t, 93],
+          ["on-background", 15, 19], ["on-surface", 15, 19], ["surface-dim", t, 85], ["surface-bright", t + 5, 95],
+          ["on-surface-variant", 12, 35], ["surface-container-lowest", t + 8, 97], ["surface-container-low", t, 91],
+          ["surface-container", t, 89], ["surface-container-high", t, 86], ["surface-container-highest", t, 82],
+          ["outline", 6, 47], ["outline-variant", 10, 80]
+        ];
+        const p = {};
+        spec.forEach(([k, sat, l]) => p[k] = `hsl(${ h } ${ Math.round(sat) }% ${ l }%)`);
+        p["tertiary-container"] = dark ? `hsl(${ h + 50 } 25% 29%)` : `hsl(${ h + 50 } 60% 91%)`;
+        if (!dark) {
+          p["on-primary"] = "#fff";
+        }
+        p.accentHover = `hsl(${ h } ${ Math.round(s) }% ${ dark ? 72 : 30 }%)`;
+        return p;
+      }
+
+      const themeSeed = () => th.custom || PRESETS.find(p => p[0] === th.preset)?.[2] || null;
+      const themeRule = (sel, p) => `${ sel }{${ Object.entries(p).filter(([k]) => k !== "accentHover").map(([k, v]) => `--md-sys-color-${ k }:${ v }`).join(";") };--accent-hover:${ p.accentHover }}`;
+
+      function applyTheme(repaint = true) {
+        const seed = themeSeed();
+        let css = seed ? themeRule(":root", palette(seed, false)) + themeRule("body.dark", palette(seed, true)) : "";
+        if (th.amoled) {
+          css += AMOLED;
+        }
+        const ns = NUMSETS[th.nums];
+        if (ns) {
+          const decl = a => a.map((c, i) => `--n${ i + 1 }:${ c }`).join(";");
+          css += `:root{${ decl(ns[0]) }}body.dark{${ decl(ns[1]) }}`;
+        }
+        themeStyle.textContent = css;
+        if (repaint) {
+          Qn();
+          syncThemeColor();
+        }
+      }
+
+      function syncThemeColor() {
+        const probe = document.body.appendChild(document.createElement("i"));
+        probe.style.background = "var(--md-sys-color-background)";
+        document.querySelector("meta[name=theme-color]").content = getComputedStyle(probe).backgroundColor;
+        probe.style.background = "var(--md-sys-color-primary)";
+        const primary = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        document.querySelector("link[rel=icon]").href = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='${ primary }'/><circle cx='16' cy='16' r='6' fill='white'/></svg>`);
+      }
+
+      new MutationObserver(syncThemeColor).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+      function paintTheme(b) {
+        const mode = curMode();
+        const seedOf = p => p[2] || "#6750A4";
+        const seg = (items, cur, attr) => `<div class="seg">${ items.map(([k, n]) => `<button class="btn${ cur === k ? " active" : "" }" aria-pressed="${ cur === k }" data-${ attr }="${ k }"><span>${ n }</span></button>`).join("") }</div>`;
+        b.innerHTML = `<div class="th-preview">${ dgm([["1", "2", "F"], ["?", "3", "?"], ["?", "?", "?"]]) }</div>
+          <div class="th-label">外观</div>
+          ${ seg([["auto", "跟随系统"], ["light", "浅色"], ["dark", "深色"]], mode, "mode") }
+          <div class="th-label">配色预设</div>
+          <div class="th-grid">${ PRESETS.map(p => {
+            const pl = palette(seedOf(p), document.body.classList.contains("dark"));
+            return `<button class="th-card${ !th.custom && th.preset === p[0] ? " active" : "" }" aria-pressed="${ !th.custom && th.preset === p[0] }" data-preset="${ p[0] }" style="--sw1:${ pl.background };--sw2:${ pl.primary }"><i class="th-sw"></i>${ p[1] }</button>`;
+          }).join("") }</div>
+          <div class="th-label">自定义主色</div>
+          <div class="th-row"><input type="color" id="th-color" value="${ themeSeed() || "#6750A4" }" aria-label="自定义主色"><button class="btn" id="th-rand">随机一个</button><span class="th-hint" id="th-hint">${ th.custom ? `自定义 ${ th.custom.toUpperCase() }` : "选个颜色，整套界面会跟着变" }</span></div>
+          <div class="th-label">深色模式</div>
+          <div class="toggle-row"><label for="th-amoled">纯黑背景（OLED 更省电）</label><label class="toggle-switch"><input type="checkbox" id="th-amoled"${ th.amoled ? " checked" : "" }><span class="toggle-track"></span></label></div>
+          <div class="th-label">数字配色</div>
+          ${ seg([["classic", "经典"], ["cb", "色盲友好"], ["hc", "高对比"]], th.nums, "nums") }
+          <button class="btn" id="th-reset" style="margin-top:20px;width:100%">恢复默认主题</button>`;
+        const change = patch => {
+          Object.assign(th, patch);
+          applyTheme();
+          saveTheme();
+          paintTheme(b);
+        };
+        b.querySelectorAll("[data-mode]").forEach(x => x.addEventListener("click", () => {
+          setMode(x.dataset.mode);
+          paintTheme(b);
+        }));
+        b.querySelectorAll("[data-preset]").forEach(x => x.addEventListener("click", () => {
+          change({ preset: x.dataset.preset, custom: null });
+          j(`已切换为「${ PRESETS.find(p => p[0] === x.dataset.preset)[1] }」`, 1200);
+        }));
+        b.querySelectorAll("[data-nums]").forEach(x => x.addEventListener("click", () => change({ nums: x.dataset.nums })));
+        b.querySelector("#th-amoled").addEventListener("change", e => change({ amoled: e.target.checked }));
+        b.querySelector("#th-rand").addEventListener("click", () => change({ custom: hslHex(Math.floor(Math.random() * 360), 55 + Math.random() * 30, 45) }));
+        b.querySelector("#th-reset").addEventListener("click", () => change({ preset: "default", custom: null, amoled: false, nums: "classic" }));
+        const col = b.querySelector("#th-color");
+        col.addEventListener("input", () => {
+          th.custom = col.value;
+          applyTheme();
+          saveTheme();
+          b.querySelector("#th-hint").textContent = `自定义 ${ col.value.toUpperCase() }`;
+          b.querySelectorAll(".th-card.active").forEach(x => x.classList.remove("active"));
+        });
+        col.addEventListener("change", () => paintTheme(b));
+      }
+      applyTheme(false);
+
       function Ss() {
         Nn();
         ks();
@@ -5547,6 +5683,152 @@
         Hm.render();
       }
       Ss();
+      syncThemeColor();
+    })();
+    /* ===== 返回手势：系统返回键 / 返回手势 + 左边缘右滑 =====
+       层级：游戏界面算 1 层（首页打开时为 0），设置 / 成就页 / 结算弹窗各算 1 层。
+       每多一层就 pushState 一条历史，返回时从最上层往下关；游戏界面返回 = 回首页。 */
+    (() => {
+      const $ = id => document.getElementById(id);
+      const home = $("home"), sub = $("sub"), settings = $("settings-overlay"), modal = $("modal");
+      const shown = el => !!el && el.classList.contains("show");
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const MH = () => window.MineHome;
+
+      /* 返回确认弹窗：是 / 否 */
+      const dlg = document.createElement("div");
+      dlg.className = "overlay";
+      dlg.id = "back-confirm";
+      dlg.style.zIndex = "120";
+      dlg.setAttribute("role", "alertdialog");
+      dlg.setAttribute("aria-label", "返回主页");
+      dlg.innerHTML = '<div style="background:var(--md-sys-color-surface-container-high,var(--bg));color:var(--fg);border-radius:24px;padding:24px;width:min(320px,86vw);box-shadow:0 8px 32px #0005;display:flex;flex-direction:column;gap:16px"><div style="font-size:18px;font-weight:600">返回主页吗？</div><div style="font-size:14px;opacity:.75">当前对局会保留，可在主页点“继续当前游戏”。</div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn" id="back-no">否</button><button class="btn btn-primary" id="back-yes">是</button></div></div>';
+      document.body.appendChild(dlg);
+      $("back-no").addEventListener("click", () => dlg.classList.remove("show"));
+      $("back-yes").addEventListener("click", () => { dlg.classList.remove("show"); MH()?.show(); });
+
+      const depth = () => (shown(home) ? 0 : 1) + shown(sub) + shown(settings) + shown(modal) + shown(dlg);
+      const closeTop = () => {
+        if (shown(dlg)) { dlg.classList.remove("show"); return true; }
+        if (shown(sub)) { $("sub-back").click(); return true; }
+        if (shown(settings)) { $("btn-close-settings").click(); return true; }
+        if (shown(modal)) { $("btn-close-modal").click(); return true; }
+        if (!shown(home)) {
+          if (!MH().canContinue()) { MH().show(); return true; }
+          dlg.classList.add("show");
+          return "ask";
+        }
+        return false;
+      };
+      const topPanel = () => shown(sub) ? sub.querySelector(".sub-panel")
+        : shown(settings) ? settings.firstElementChild
+        : shown(modal) ? modal.querySelector(".modal-content") : null;
+
+      let pushed = 0, pending = 0, queued = false;
+      try { history.replaceState({ mineDepth: 0 }, ""); } catch {}
+
+      const sync = () => {
+        queued = false;
+        if (pending) return;
+        const d = depth();
+        try {
+          if (d > pushed) {
+            for (let i = pushed + 1; i <= d; i++) history.pushState({ mineDepth: i }, "");
+            pushed = d;
+          } else if (d < pushed) {
+            pending = 1;
+            const k = pushed - d;
+            pushed = d;
+            history.go(-k);
+          }
+        } catch { pending = 0; }
+      };
+      const schedule = () => { if (!queued) { queued = true; queueMicrotask(sync); } };
+
+      const mo = new MutationObserver(schedule);
+      [home, sub, settings, modal, dlg].forEach(el => mo.observe(el, { attributes: true, attributeFilter: ["class"] }));
+      new MutationObserver(() => shown(dlg) && setTimeout(() => $("back-yes").focus(), 60)).observe(dlg, { attributes: true, attributeFilter: ["class"] });
+      addEventListener("keydown", e => {
+        if (e.key === "Escape" && shown(dlg)) {
+          e.stopImmediatePropagation();
+          dlg.classList.remove("show");
+        }
+      }, true);
+      /* 游戏开始后 Hm.close() 才会改变 home 的 class，所以首页层的变化也会被观察到 */
+
+      addEventListener("popstate", e => {
+        if (pending) {
+          pending = 0;
+          pushed = Math.min(pushed, e.state?.mineDepth ?? 0);
+          schedule();
+          return;
+        }
+        const target = e.state?.mineDepth ?? 0;
+        let guard = 8;
+        while (depth() > target && guard-- > 0) {
+          const r = closeTop();
+          if (!r || r === "ask") break;
+        }
+        /* 弹出确认框后历史比界面少，补推回去；其余情况以实际界面为准 */
+        const d = depth();
+        try {
+          if (d > target) {
+            for (let i = target + 1; i <= d; i++) history.pushState({ mineDepth: i }, "");
+          } else {
+            history.replaceState({ mineDepth: d }, "");
+          }
+        } catch {}
+        pushed = d;
+        schedule();
+      });
+
+      /* ---- 左边缘右滑（用于没有系统返回手势的环境，如 iOS 主屏 App）---- */
+      const EDGE = 22, COMMIT = 90;
+      let g = null;
+      const reset = (anim) => {
+        if (!g) return;
+        const p = g.panel;
+        if (p) {
+          p.style.transition = anim && !reduce ? "transform .2s ease, opacity .2s ease" : "";
+          p.style.transform = "";
+          p.style.opacity = "";
+          if (anim && !reduce) setTimeout(() => { p.style.transition = ""; }, 220);
+        }
+        g = null;
+      };
+      addEventListener("touchstart", e => {
+        if (e.touches.length !== 1 || shown(dlg) || depth() === (shown(home) ? 0 : 1)) return; /* 只在有弹层时启用 */
+        const t = e.touches[0];
+        if (t.clientX > EDGE) return;
+        const panel = topPanel();
+        if (!panel) return;
+        g = { x: t.clientX, y: t.clientY, dx: 0, panel, active: false, t0: Date.now() };
+      }, { passive: true });
+      addEventListener("touchmove", e => {
+        if (!g) return;
+        const t = e.touches[0];
+        const dx = t.clientX - g.x, dy = t.clientY - g.y;
+        if (!g.active) {
+          if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10) { g = null; return; }
+          if (dx > 8) g.active = true; else return;
+        }
+        g.dx = Math.max(0, dx);
+        if (!reduce) {
+          const p = g.panel;
+          p.style.transition = "none";
+          p.style.transform = `translateX(${ g.dx * 0.6 }px) scale(${ 1 - Math.min(g.dx, 300) / 3000 })`;
+          p.style.opacity = String(1 - Math.min(g.dx, 300) / 700);
+        }
+        if (e.cancelable) e.preventDefault();
+      }, { passive: false });
+      addEventListener("touchend", () => {
+        if (!g) return;
+        const fast = g.dx / Math.max(1, Date.now() - g.t0) > 0.6;
+        const commit = g.active && (g.dx > COMMIT || (fast && g.dx > 40));
+        reset(!commit);
+        if (commit) { try { history.back(); } catch { closeTop(); } }
+      }, { passive: true });
+      addEventListener("touchcancel", () => reset(true), { passive: true });
     })();
   </script></body>
 </html>
