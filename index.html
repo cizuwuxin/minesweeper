@@ -29,7 +29,7 @@ to{transform:scale(1);opacity:0}}
 body.dark{color-scheme:dark;--cell-border:rgba(230,224,233,.09);--md-sys-color-primary:#D0BCFF;--md-sys-color-on-primary:#381E72;--md-sys-color-primary-container:#4F378B;--md-sys-color-on-primary-fixed-variant:#4F378B;--md-sys-color-secondary-container:#4A4458;--md-sys-color-on-secondary-container:#E8DEF8;--md-sys-color-tertiary-container:#633B48;--md-sys-color-error:#F2B8B5;--md-sys-color-error-container:#8C1D18;--md-sys-color-on-error-container:#F9DEDC;--md-sys-color-background:#141218;--md-sys-color-on-background:#E6E0E9;--md-sys-color-on-surface:#E6E0E9;--md-sys-color-surface-dim:#141218;--md-sys-color-surface-bright:#3B383E;--md-sys-color-on-surface-variant:#CAC4D0;--md-sys-color-surface-container-lowest:#0F0D13;--md-sys-color-surface-container-low:#1D1B20;--md-sys-color-surface-container:#211F26;--md-sys-color-surface-container-high:#2B2930;--md-sys-color-surface-container-highest:#36343B;--md-sys-color-outline:#938F99;--md-sys-color-outline-variant:#49454F;--accent-hover:#B69DF8;--area-bg:linear-gradient(160deg,color-mix(in srgb,var(--md-sys-color-surface-dim) 94%,var(--md-sys-color-primary) 6%) 0%,color-mix(in srgb,var(--md-sys-color-surface-container-low) 96%,var(--md-sys-color-primary) 4%) 100%);--hover:var(--md-sys-color-surface-bright);--boom:#B3261E;--flag:#EF4444;--warn:#FDD663;--warn-soft:#3E2723;--n1:#82B1FF;--n2:#81C784;--n3:#EF9A9A;--n4:#CE93D8;--n5:#F48FB1;--n6:#4DB6AC;--n7:#B0BEC5;--n8:#90A4AE}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
 .btn,body{overflow:hidden}
-body{--bg:var(--md-sys-color-background);--fg:var(--md-sys-color-on-background);--muted:var(--md-sys-color-on-surface-variant);--accent:var(--md-sys-color-primary);--border:var(--md-sys-color-outline-variant);--wrap-bg:var(--md-sys-color-surface-container-low);--hidden:var(--md-sys-color-surface-container-high);--open:var(--md-sys-color-surface-container-lowest);--mine-bg:var(--md-sys-color-error-container);--mine-fg:var(--md-sys-color-on-error-container);--wrong:color-mix(in srgb,var(--md-sys-color-error) 16%,var(--md-sys-color-surface-container-high));overscroll-behavior:none;margin:0;height:100dvh;display:flex;flex-direction:column;font-family:system-ui,-apple-system,Segoe UI,Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif;background:var(--bg);color:var(--fg);user-select:none;-webkit-user-select:none;transition:background-color .2s var(--md-ease),color .2s var(--md-ease)}
+body{--bg:var(--md-sys-color-background);--fg:var(--md-sys-color-on-background);--muted:var(--md-sys-color-on-surface-variant);--accent:var(--md-sys-color-primary);--border:var(--md-sys-color-outline-variant);--wrap-bg:var(--md-sys-color-surface-container-low);--hidden:var(--md-sys-color-surface-container-high);--open:var(--md-sys-color-surface-container-lowest);--mine-bg:var(--md-sys-color-error-container);--mine-fg:var(--md-sys-color-on-error-container);--wrong:color-mix(in srgb,var(--md-sys-color-error) 22%,var(--md-sys-color-surface-container-high));overscroll-behavior:none;margin:0;height:100dvh;display:flex;flex-direction:column;font-family:system-ui,-apple-system,Segoe UI,Noto Sans SC,PingFang SC,Microsoft YaHei,sans-serif;background:var(--bg);color:var(--fg);user-select:none;-webkit-user-select:none;transition:background-color .2s var(--md-ease),color .2s var(--md-ease)}
 button,input{font:inherit}
 .btn{position:relative;min-height:34px;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);background:0 0;color:var(--md-sys-color-primary);padding:7px 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background-color .16s var(--md-ease),box-shadow .16s var(--md-ease),transform .1s var(--md-ease)}
 .btn:hover{background:color-mix(in srgb,var(--md-sys-color-primary) 8%,transparent)}
@@ -265,6 +265,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 #modal .modal-content{max-height:calc(86vh/var(--ui-zoom, 1))}
 #status-toast{width:fit-content;max-width:90vw;margin-inline:auto}}
 
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -345,7 +346,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div class="settings-panel">
 <div class="settings-header">
 <h3>设置</h3>
-<button class="btn-close" id="btn-close-settings">✕</button>
+<button class="btn-close" id="btn-close-settings" aria-label="关闭设置">✕</button>
 </div>
 <div class="settings-content">
 <button class="btn" id="btn-home-settings" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-bottom:12px"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>返回主页</button>
@@ -1178,7 +1179,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   k.offset = {
    x: d(k.offset.x, -a, a),
    y: d(k.offset.y, -i, i)
-  }, w.wrapper.style.transform = `translate3d(${k.offset.x}px,${k.offset.y}px,0) scale(${k.scale})`;
+  }, w.wrapper.style.transform = `translate3d(${k.offset.x}px,${k.offset.y}px,0) scale(${k.scale})`, ovApply(), ovSchedule();
  }
  let Me = null;
  function ke() {
@@ -1231,7 +1232,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   };
  }
  function $e() {
-  en(), k.audio && pe("newgame"), N(), lt(), Gt(), Jt(), Bt(), M.hintBusy = !1, w.warning.hidden = !0, 
+  en(), k.audio && pe("newgame"), N(), lt(), Jt(), Bt(), M.hintBusy = !1, w.warning.hidden = !0, 
   X("modal"), "screen" === M.difficulty && qe(), k.cells?.forEach(e => e.remove("kb-focus"));
   const t = G(e[M.difficulty] || e.medium);
   Object.assign(M, {
@@ -1281,9 +1282,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
   "anim-mine-reveal": 4096,
   "anim-flag": 8192,
   "anim-unflag": 16384,
-  "anim-explode": 32768,
-  "win-flag": 65536
- }, Ae = Fe, Te = [ [ Ae["anim-reveal"], .26, !0 ], [ Ae["anim-mine-reveal"], .12, !0 ], [ Ae["anim-flag"], .18, !0 ], [ Ae["anim-unflag"], .12, !0 ], [ Ae["hint-flash"], 1, !0 ], [ Ae["anim-explode"], .6, !1 ], [ Ae["win-flag"], 2.8, !1 ] ], Pe = Te.reduce((e, [t]) => e | t, 0), Re = Pe | Ae.hint | Ae["hint-dim"] | Ae["kb-focus"] | Ae.pressing, Be = 12e6, Oe = [ [ .12, 0 ], [ .62, 0 ], [ .66, .12 ], [ 1, .12 ], [ 1, .64 ], [ .48, .64 ], [ .44, .52 ], [ .24, .52 ], [ .24, 1 ], [ .12, 1 ] ], De = {
+  "anim-explode": 32768
+ }, Ae = Fe, Te = [ [ Ae["anim-reveal"], .26, !0 ], [ Ae["anim-mine-reveal"], .12, !0 ], [ Ae["anim-flag"], .18, !0 ], [ Ae["anim-unflag"], .12, !0 ], [ Ae["hint-flash"], 1, !0 ], [ Ae["anim-explode"], .6, !1 ] ], Pe = Te.reduce((e, [t]) => e | t, 0), Re = Pe | Ae.hint | Ae["hint-dim"] | Ae["kb-focus"] | Ae.pressing, Be = 12e6, Oe = [ [ .12, 0 ], [ .62, 0 ], [ .66, .12 ], [ 1, .12 ], [ 1, .64 ], [ .48, .64 ], [ .44, .52 ], [ .24, .52 ], [ .24, 1 ], [ .12, 1 ] ], De = {
   lines: new Path2D("M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.1 4.1l2.1 2.1M17.8 17.8l2.1 2.1M19.9 4.1l-2.1 2.1M6.2 17.8l-2.1 2.1")
  }, ze = new Path2D("M9 9a3 3 0 1 1 5.12 2.13C13.38 12 12 13 12 14"), Ie = new Path2D("M18 6L6 18M6 6l12 12");
  class Ve {
@@ -1352,6 +1352,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
    mineFg: t("var(--mine-fg)", "color"),
    boom: t("var(--boom)"),
    wrong: t("var(--wrong)"),
+   error: t("var(--md-sys-color-error)"),
    warn: t("var(--warn)"),
    warnSoft: t("var(--warn-soft)"),
    accent: t("var(--accent)"),
@@ -1418,8 +1419,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
   const o = e.starts?.[t];
   return null == o ? null : (n - o) / 1e3;
  }
- function Qe(e, t, n, o, s, a, i) {
-  e.save(), e.translate(t, n), e.rotate(i * Math.PI / 180), e.scale(a, a), e.fillStyle = s, 
+ function Qe(e, t, n, o, s, a, i, r) {
+  e.save(), null != r && (e.globalAlpha *= r), e.translate(t, n), e.rotate(i * Math.PI / 180), e.scale(a, a), e.fillStyle = s, 
   e.beginPath(), Oe.forEach(([t, n], s) => {
    const a = (t - .5) * o, i = (n - .5) * o;
    s ? e.lineTo(a, i) : e.moveTo(a, i);
@@ -1448,10 +1449,6 @@ input,textarea{-webkit-user-select:text;user-select:text}
    const e = x / .18;
    S = Ke(e, [ [ 0, 0 ], [ .65, 1.18 ], [ 1, 1 ] ]), L = Ke(e, [ [ 0, -35 ], [ .65, 7 ], [ 1, 0 ] ]);
   }
-  if (y & Ae["win-flag"] && null !== (x = Ge(t, Ae["win-flag"], n))) {
-   const e = x % .7 / .7;
-   S = Ke(e, [ [ 0, 1 ], [ .35, 1.12 ], [ .7, 1.05 ], [ 1, 1 ] ]), L = Ke(e, [ [ 0, 0 ], [ .35, 6 ], [ .7, -4 ], [ 1, 0 ] ]);
-  }
   M && (C *= .92);
   const q = y & Ae.questioned;
   let $ = o.hidden;
@@ -1465,8 +1462,9 @@ input,textarea{-webkit-user-select:text;user-select:text}
   Je(e, u, m + 1, a, a, l), e.fill()), e.fillStyle = $, Je(e, u, m, a, a, l), e.fill(), 
   b ? (e.save(), e.clip(), e.fillStyle = "rgba(0,0,0,.07)", e.fillRect(u, m, a, 1.5), 
   e.restore()) : (e.strokeStyle = o.border, e.lineWidth = 1, Je(e, u + .5, m + .5, a - 1, a - 1, l - .5), 
-  e.stroke()), w && Qe(e, F, A, .6 * a, o.flag, S, L), y & Ae["wrong-flag"]) e.strokeStyle = "#ef4444", 
-  e.lineWidth = 2.5, _e(e, F, A, .6 * a, () => e.stroke(Ie)); else if (q) e.strokeStyle = "#6366f1", 
+  e.stroke()), w && Qe(e, F, A, .6 * a, o.flag, S, L, y & Ae["wrong-flag"] ? .4 : null), y & Ae["wrong-flag"]) _e(e, F, A, .66 * a, () => {
+   e.strokeStyle = o.error, e.lineWidth = 2.4, e.stroke(Ie);
+  }); else if (q) e.strokeStyle = "#6366f1", 
   e.lineWidth = 2.2, _e(e, F, A, .6 * a, () => {
    e.stroke(ze), e.fillStyle = "#6366f1", e.beginPath(), e.arc(12, 18, 1, 0, 2 * Math.PI), 
    e.fill();
@@ -1501,6 +1499,156 @@ input,textarea{-webkit-user-select:text;user-select:text}
    }
   }
  }
+
+ /* 重画工具：先画所有格子，再画溢出到邻格的效果 */
+ function drawCells(ctx, geo, cells, time, pal) {
+  for (const cell of cells) Ze(ctx, cell, time, pal, geo);
+  for (const cell of cells) cell.mask & Re && et(ctx, cell, time, pal, geo);
+ }
+ /* 分片重画：超出时间预算返回 false，下一帧从 prog 记录的位置继续 */
+ function paintSlice(ctx, geo, prog, time, pal, budget) {
+  const deadline = performance.now() + budget, {list} = prog;
+  for (;prog.phase < 2; prog.phase++, prog.i = 0) {
+   while (prog.i < list.length) {
+    const cell = list[prog.i++];
+    if (prog.phase === 0) Ze(ctx, cell, time, pal, geo); else cell.mask & Re && et(ctx, cell, time, pal, geo);
+    if (!(prog.i & 15) && performance.now() >= deadline) return false;
+   }
+  }
+  return true;
+ }
+
+ /* 高清叠层：放大或大棋盘时，额外画一层只覆盖可见区域的高分辨率画布，整盘位图作后备 */
+ const OV_MAX_PIXELS = 7e6;
+ const ovCovers = (v, r, slack = 0) => r.x0 >= v.x0 - slack && r.x1 <= v.x0 + v.w + slack && r.y0 >= v.y0 - slack && r.y1 <= v.y0 + v.h + slack;
+ /* 屏幕需要的倍率；整盘位图已经够清晰时返回 0 */
+ function ovNeed() {
+  if (!k.geo || !k.cells || k.ov?.off) return 0;
+  const want = Math.min(12, (window.devicePixelRatio || 1) * k.scale);
+  return k.geo.k < .9 * want ? want : 0;
+ }
+ /* 屏幕可见区域（棋盘坐标） */
+ function ovVisible() {
+  const {width, height} = k.geo, {aw, ah} = ye(), s = k.scale;
+  const cx = width / 2 - k.offset.x / s, cy = height / 2 - k.offset.y / s;
+  return {
+   x0: Math.max(0, cx - aw / 2 / s),
+   x1: Math.min(width, cx + aw / 2 / s),
+   y0: Math.max(0, cy - ah / 2 / s),
+   y1: Math.min(height, cy + ah / 2 / s)
+  };
+ }
+ function ovFail(err) {
+  const v = k.ov;
+  if (v) v.off = !0, v.prog = null, v.ready = !1, v.canvas?.remove();
+  if (k.canvas) k.canvas.style.visibility = "visible";
+  console.warn("hi-res overlay disabled", err);
+ }
+ /* 叠层就绪且完全盖住可见区域时显示它、隐藏整盘位图；否则反过来 */
+ function ovApply() {
+  const v = k.ov;
+  if (!v || v.off || !v.canvas) return;
+  try {
+   const show = v.ready && v.w > 0 && ovNeed() > 0 && v.k2 > 1.05 * k.geo.k && ovCovers(v, ovVisible(), .5);
+   if (show === !!v.on) return;
+   v.on = show;
+   v.canvas.style.visibility = show ? "visible" : "hidden";
+   k.canvas.style.visibility = show ? "hidden" : "visible";
+  } catch (err) {
+   ovFail(err);
+  }
+ }
+ function ovInvalidate() {
+  const v = k.ov;
+  if (!v) return;
+  v.ready = !1, v.prog = null, v.w = 0, v.need = !0;
+  ovApply();
+ }
+ function ovSchedule(delay = 140) {
+  if (!ovNeed()) return;
+  const v = k.ov || (k.ov = {});
+  clearTimeout(v.timer), v.timer = setTimeout(ovCheck, delay);
+ }
+ function ovCheck() {
+  const v = k.ov;
+  if (!v || v.off) return;
+  const want = ovNeed();
+  if (!want) {
+   /* 整盘位图已够清晰：释放叠层占用的内存 */
+   if (v.canvas && v.canvas.width > 1) v.ready = !1, v.prog = null, v.w = 0, v.canvas.width = v.canvas.height = 1;
+   return ovApply();
+  }
+  const vis = ovVisible();
+  if (v.ready && v.w && ovCovers(v, vis) && Math.abs(want / v.k2 - 1) < .15) return;
+  ovBuild(want, vis);
+ }
+ function ovBuild(want, vis) {
+  const v = k.ov, g = k.geo, vw = vis.x1 - vis.x0, vh = vis.y1 - vis.y0;
+  if (!v || !g || vw <= 0 || vh <= 0) return;
+  try {
+   /* 在像素预算内尽量留出平移余量（10%~35%），放不下就降低倍率 */
+   let res = want, margin = Math.min(.35, (Math.sqrt(OV_MAX_PIXELS / (vw * vh * res * res)) - 1) / 2);
+   if (margin < .1) margin = .1, res = Math.min(res, Math.sqrt(OV_MAX_PIXELS / (vw * vh * 1.44)));
+   if (res <= 1.05 * g.k) return v.ready = !1, v.w = 0, ovApply();
+   /* 窗口左上角对齐到整数设备像素，保证与整盘位图的格子对得上 */
+   const x0 = Math.max(0, Math.floor((vis.x0 - margin * vw) * res)) / res, y0 = Math.max(0, Math.floor((vis.y0 - margin * vh) * res)) / res;
+   const pw = Math.max(1, Math.ceil((Math.min(g.width, vis.x1 + margin * vw) - x0) * res - 1e-6));
+   const ph = Math.max(1, Math.ceil((Math.min(g.height, vis.y1 + margin * vh) - y0) * res - 1e-6));
+   if (!v.canvas) {
+    v.canvas = document.createElement("canvas");
+    v.canvas.style.cssText = "position:absolute;left:0;top:0;pointer-events:none;visibility:hidden";
+    w.board.style.position = "relative";
+    w.board.appendChild(v.canvas);
+    v.ctx = v.canvas.getContext("2d");
+   }
+   if (v.canvas.width !== pw || v.canvas.height !== ph) v.canvas.width = pw, v.canvas.height = ph;
+   Object.assign(v.canvas.style, {
+    left: x0 + "px",
+    top: y0 + "px",
+    width: pw / res + "px",
+    height: ph / res + "px"
+   });
+   v.ctx.setTransform(1, 0, 0, 1, 0, 0), v.ctx.clearRect(0, 0, pw, ph), v.ctx.setTransform(res, 0, 0, res, -x0 * res, -y0 * res);
+   Object.assign(v, {
+    x0, y0, w: pw / res, h: ph / res, k2: res, ready: !1,
+    geo: {...g, k: res}
+   });
+   /* 窗口内（外扩一格）需要重画的格子 */
+   const step = g.step, r0 = Math.max(0, Math.floor(y0 / step) - 1), r1 = Math.min(M.rows - 1, Math.ceil((y0 + v.h) / step) + 1);
+   const c0 = Math.max(0, Math.floor(x0 / step) - 1), c1 = Math.min(M.cols - 1, Math.ceil((x0 + v.w) / step) + 1), list = [];
+   for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) list.push(k.cells[r * M.cols + c]);
+   v.rng = [r0, r1, c0, c1], v.prog = {list, phase: 0, i: 0};
+   ovApply(), Xe();
+  } catch (err) {
+   ovFail(err);
+  }
+ }
+ function ovStep() {
+  const v = k.ov;
+  if (!v || v.off || !v.prog) return;
+  try {
+   if (!paintSlice(v.ctx, v.geo, v.prog, performance.now(), k.palette, 5)) return Xe();
+   v.prog = null, v.ready = !0, ovApply();
+  } catch (err) {
+   ovFail(err);
+  }
+ }
+ /* 同步翻开、插旗、动画等变化到叠层（只画窗口内的格子） */
+ function ovDirty(cells, time, pal) {
+  const v = k.ov;
+  if (!v || v.off || !v.ctx || !v.w) return;
+  try {
+   const [r0, r1, c0, c1] = v.rng;
+   drawCells(v.ctx, v.geo, cells.filter(c => c.row >= r0 && c.row <= r1 && c.col >= c0 && c.col <= c1), time, pal);
+  } catch (err) {
+   ovFail(err);
+  }
+ }
+ function ovTail() {
+  const v = k.ov || (k.ov = {need: !0});
+  if (v.need && !v.off) v.need = !1, ovCheck();
+  ovStep();
+ }
  function tt() {
   k.paintFrame = 0;
   const e = k.ctx, t = k.geo;
@@ -1516,21 +1664,22 @@ input,textarea{-webkit-user-select:text;user-select:text}
    k.dirty.add(e), t || k.animating.delete(e);
   }
   if (k.fullRepaint && (k.fullRepaint = !1, k.keepBitmap || e.clearRect(0, 0, t.width, t.height), 
-  k.keepBitmap = !1, k.dirty.clear(), k.repaintProgress = {
+  k.keepBitmap = !1, k.dirty.clear(), ovInvalidate(), k.repaintProgress = {
    phase: 0,
-   index: 0
+   i: 0,
+   list: (() => {
+    const e = at(), t = [], n = [];
+    for (const o of k.cells) (e(o.row, o.col) ? t : n).push(o);
+    return t.concat(n);
+   })()
   }), k.repaintProgress) {
-   const s = k.repaintProgress, a = performance.now() + 5, i = k.cells;
-   if (0 === s.phase) {
-    for (;s.index < i.length; ) if (Ze(e, i[s.index], o, n, t), s.index++, !(15 & s.index) && performance.now() >= a) return void Xe();
-    s.phase = 1, s.index = 0;
-   }
-   for (;s.index < i.length; ) {
-    const r = i[s.index++];
-    if (r.mask & Re && et(e, r, o, n, t), !(15 & s.index) && performance.now() >= a) return void Xe();
-   }
+   ovTail(), k.dirty.size && ttFlush(e, t, n, o);
+   if (!paintSlice(e, t, k.repaintProgress, o, n, 5)) return void Xe();
    k.repaintProgress = null;
   }
+  ttFlush(e, t, n, o), ovTail(), k.animating.size && Xe();
+ }
+ function ttFlush(e, t, n, o) {
   const s = new Set, {rows: a, cols: i} = M;
   for (const e of k.dirty) {
    s.add(e);
@@ -1545,9 +1694,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   }
   const r = [ ...s ].sort((e, t) => e.idx - t.idx);
   k.dirty.clear();
-  for (const s of r) Ze(e, s, o, n, t);
-  for (const s of r) s.mask & Re && et(e, s, o, n, t);
-  k.animating.size && Xe();
+  drawCells(e, t, r, o, n), ovDirty(r, o, n);
  }
  function nt() {
   const {rows: e, cols: t} = M, n = e * t;
@@ -1603,7 +1750,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
  }
  function ut(e, t, n, o, s = {}) {
   ct();
-  const a = !0 === s.mineReveal;
+  const a = !0 === s.mineReveal || !0 === s.flagReveal;
   if (!e.length) return void o?.();
   const i = k.waveToken, r = e.map(([e, o, s], a) => ({
    row: e,
@@ -1618,9 +1765,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
    const e = at();
    let t = 0;
    for (const n of r) n.visible = e(n.row, n.col), t += n.visible ? 1 : 0;
-   a ? d = "anim-mine-reveal" : t <= 450 && (d = "anim-reveal");
+   if (a) d = s.flagReveal ? "anim-flag" : "anim-mine-reveal"; else if (d = "anim-reveal", t > 450) {
+    let e = 0;
+    for (const t of r) t.visible && ++e > 450 && (t.visible = !1);
+   }
   }
-  const u = a ? Math.max(260, Math.ceil(l / 20) * (1e3 / 60)) : Math.min(1600, Math.max(280, 240 + 16 * c, 240 + .11 * l)), m = performance.now(), f = Math.max(12, Math.ceil(l / 90)), h = Math.max(f, Math.ceil(l / Math.max(1, u / (1e3 / 60)) * 1.5));
+  const u = a ? Math.max(150, Math.ceil(l / 40) * (1e3 / 60)) : Math.min(1600, Math.max(280, 240 + 16 * c, 240 + .11 * l)), m = performance.now(), f = Math.max(12, Math.ceil(l / 90)), h = Math.max(f, Math.ceil(l / Math.max(1, u / (1e3 / 60)) * 1.5));
   let g = 7, p = m;
   const v = {
    items: r,
@@ -1637,10 +1787,10 @@ input,textarea{-webkit-user-select:text;user-select:text}
   }, b = () => {
    v.frame = null, d ? setTimeout(() => {
     i === k.waveToken && y();
-   }, a ? 140 : 270) : y();
+   }, a ? s.flagReveal ? 180 : 120 : 270) : y();
   }, w = e => {
    const t = Math.min(1, Math.max(0, (e - m) / u));
-   if (a) return Math.min(Math.ceil(t * l), v.index + 20);
+   if (a) return Math.min(Math.ceil(t * l), v.index + 40);
    if (t >= 1) return Math.min(l, v.index + h);
    const n = t * c;
    let o = v.index;
@@ -1835,7 +1985,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
     await Zt(e, t, n);
    } catch (o) {
     if (M.gameId !== n) return;
-    Jt(), N(), w.warning.querySelector("span").textContent = `⚠ 无猜棋盘${"超时" === o?.message ? "没能在限定时间内生成" : "生成失败"}，本局改为普通随机布雷（不计入无猜成绩）。可以在设置里把生成时间调长。`, 
+    Jt(), N(), w.warning.querySelector("span").textContent = `⚠ 无猜生成${"超时" === o?.message ? "超时" : "失败"}，本局改为随机布雷（不计成绩）。${"超时" === o?.message ? "可在设置调长生成时间。" : ""}`, 
     w.warning.hidden = !1, Le(!0), M.noguessFallback = !0, Ft(e, t);
    } finally {
     M.gameId === n && (M.placing = !1);
@@ -2268,16 +2418,6 @@ input,textarea{-webkit-user-select:text;user-select:text}
      result: e
     });
    }
-   if ("random" === n.mode) {
-    const e = Number.isFinite(n.seed), t = genBoard(n.rows, n.cols, n.mines, n.startRow, n.startCol, e ? mb(n.seed) : Math.random, e);
-    return void self.postMessage({
-     id: n.id,
-     result: {
-      board: t,
-      bv3: bv3(t, n.rows, n.cols)
-     }
-    });
-   }
    if ("generate" === n.mode) {
     let t = 0;
     const step = () => {
@@ -2435,7 +2575,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   if (!a) return Y("暂时推不出确定的格子，换个区域试试", 1800);
   M.cheated = !0, M.hintsUsed++, zt(a.row, a.col), Y(`💡 没有100%确定的格子，已高亮雷概率最低（${a.upper ? "不高于" : "约"} ${Math.round(100 * a.prob)}%）的格子`, 2800);
  }
- let Vt = null, Ht = 0, Xt = null, Yt = null;
+ let Vt = null, Ht = 0;
  const Nt = new Array(r).fill(null), jt = new Array(r).fill(0);
  function Ut(e) {
   const t = At();
@@ -2460,37 +2600,6 @@ input,textarea{-webkit-user-select:text;user-select:text}
  }
  function Jt() {
   for (let e = 0; e < Nt.length; e++) Kt(e);
- }
- function Gt() {
-  Yt?.();
- }
- function Qt(e, t, n, o, s, a) {
-  return new Promise((i, r) => {
-   let l = !1, c = 0;
-   const d = At(), u = ++Ht;
-   Xt = d;
-   const m = (e, t) => {
-    l || (l = !0, clearTimeout(c), Xt === d && (Xt = null), Yt === f && (Yt = null), 
-    d.terminate(), e(t));
-   }, f = () => m(r, new Error("生成中断"));
-   Yt = f, c = setTimeout(() => m(r, new Error("超时")), 5e3), d.onmessage = e => {
-    e.data.id === u && Xt === d && m(i, e.data.result);
-   }, d.onerror = () => m(r, new Error("Worker 生成失败"));
-   try {
-    d.postMessage({
-     mode: "random",
-     id: u,
-     rows: e,
-     cols: t,
-     mines: n,
-     startRow: o,
-     startCol: s,
-     seed: a
-    });
-   } catch (e) {
-    m(r, e);
-   }
-  });
  }
  function _t(e, t, n, o, a, i) {
   Jt();
@@ -2571,9 +2680,14 @@ input,textarea{-webkit-user-select:text;user-select:text}
  function on(e, t = -1, n = -1) {
   if (tn().win = e, M.gameOver = !0, M.timer && $(performance.now() - M.timerStart), A(), q(), 
   tn(), pe(e ? "win" : "explode"), e) return void dt(() => {
+   const f = [];
    for (let e = 0; e < M.rows; e++) for (let t = 0; t < M.cols; t++) -1 === M.board[e][t] && !M.flagged[e][t] && (M.flagged[e][t] = !0, 
-   M.flagCount++, M.questioned[e][t] = !1, ot(e, t), R(e, t)?.add("win-flag"));
-   T(), k.timers.modal = setTimeout(() => ln(!0), 400);
+   M.flagCount++, M.questioned[e][t] = !1, f.push([ e, t ]));
+   T(), ut(f, M.rows / 2, M.cols / 2, () => {
+    T(), k.timers.modal = setTimeout(() => ln(!0), 250);
+   }, {
+    flagReveal: !0
+   });
   });
   const o = t >= 0 && n >= 0, s = [], a = [];
   for (let e = 0; e < M.rows; e++) for (let i = 0; i < M.cols; i++) -1 !== M.board[e][i] || M.flagged[e][i] ? -1 !== M.board[e][i] && M.flagged[e][i] && a.push([ e, i ]) : (M.questioned[e][i] = !1, 
@@ -2688,7 +2802,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   w.density.textContent = `格子较少（${o}格），建议降低雷数`));
  }
  function mn(e) {
-  if (hn.open) return void ("Escape" === e.key && (l("sub").classList.contains("show") ? l("sub").classList.remove("show") : w.settings.classList.contains("show") ? ie() : hn.canContinue() && hn.close()));
+  if (hn.open) return void ("Escape" === e.key && (l("sub").classList.contains("show") ? l("sub").classList.remove("show") : w.settings.classList.contains("show") ? ie() : hn.canContinue() && M.difficulty === hn.diff0 && hn.close()));
   const t = w.settings.classList.contains("show"), o = e.key.toLowerCase(), s = !e.ctrlKey && !e.metaKey;
   if ("Escape" === e.key) return t ? ie() : cn();
   if ((e.ctrlKey || e.metaKey) && "z" === o && !e.shiftKey && !t) return e.preventDefault(), 
@@ -2876,7 +2990,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
   } catch {
    return {};
   }
- })()), __pf = (() => {
+ })());
+ (() => {
   const o = e => e && "object" == typeof e && !Array.isArray(e);
   for (const k of [ "played", "wins", "ng", "clean", "camp" ]) Number.isFinite(pn[k]) || (pn[k] = 0);
   for (const k of [ "best", "daily", "ach" ]) o(pn[k]) || (pn[k] = {});
@@ -2884,7 +2999,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
   pn.camp = Math.min(8, Math.max(0, Math.floor(pn.camp)));
   pn.lessons = pn.lessons.filter(e => Number.isInteger(e) && e >= 0);
   for (const k of [ "best", "daily" ]) for (const j in pn[k]) Number.isFinite(pn[k][j]) || delete pn[k][j];
- })(), vn = () => b.set(gn, JSON.stringify(pn)), yn = () => {
+ })();
+ const vn = () => b.set(gn, JSON.stringify(pn)), yn = () => {
   const e = new Date;
   return e.getFullYear() + "-" + String(e.getMonth() + 1).padStart(2, "0") + "-" + String(e.getDate()).padStart(2, "0");
  }, bn = () => {
@@ -3033,12 +3149,14 @@ input,textarea{-webkit-user-select:text;user-select:text}
   } catch {
    return {};
   }
- })()), __tf = (() => {
+ })());
+ (() => {
   "string" == typeof $n.preset || ($n.preset = "default");
   /^#[0-9a-fA-F]{6}$/.test($n.custom) || ($n.custom = null);
   $n.amoled = !!$n.amoled;
   [ "classic", "cb", "hc" ].includes($n.nums) || ($n.nums = "classic");
- })(), Fn = document.head.appendChild(document.createElement("style")), An = () => b.set(Cn, JSON.stringify($n)), Tn = () => k.darkManual ? document.body.classList.contains("dark") ? "dark" : "light" : "auto", Pn = e => {
+ })();
+ const Fn = document.head.appendChild(document.createElement("style")), An = () => b.set(Cn, JSON.stringify($n)), Tn = () => k.darkManual ? document.body.classList.contains("dark") ? "dark" : "light" : "auto", Pn = e => {
   k.darkManual = "auto" !== e, te("auto" === e ? matchMedia("(prefers-color-scheme: dark)").matches : "dark" === e), 
   _();
  };
